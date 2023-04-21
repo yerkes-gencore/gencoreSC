@@ -3,6 +3,7 @@
 export("%>%")
 export(addQCfilter)
 export(addQCmetrics)
+export(plotQC_arranged)
 export(plotQC_joint)
 export(plotQC_ridges)
 export(readCounts10x)

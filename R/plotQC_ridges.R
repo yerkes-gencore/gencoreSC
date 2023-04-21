@@ -4,16 +4,16 @@
 #'
 #' @param metadata Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'
 #' @param cutoffs named list of cutoffs
-#' @param split.by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#' @param split_by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
 #'
 #' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
 #'
 #' @export
-plotQC_ridges <- function(metadata, cutoffs=NULL, split.by) {
+plotQC_ridges <- function(metadata, cutoffs=NULL, split_by) {
 
   # Visualize the number of cell counts per sample
   p.nCells <- metadata %>%
-    ggplot(aes(y=.data[[split.by]], group=.data[[split.by]], fill=.data[[split.by]]), color=NA) +
+    ggplot(aes(y=.data[[split_by]], group=.data[[split_by]], fill=.data[[split_by]]), color=NA) +
     geom_bar() +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
@@ -21,29 +21,29 @@ plotQC_ridges <- function(metadata, cutoffs=NULL, split.by) {
     theme(legend.position="none") +
     ggtitle("N Cells")
 
-  p1 <- plotQC_ridges.helper(metadata, x="nUMI", split.by = split.by,
+  p1 <- plotQC_ridges.helper(metadata, x="nUMI", split_by = split_by,
                              log10x=T, cutoffs=cutoffs)
 
-  p2 <- plotQC_ridges.helper(metadata, x="nGene", split.by = split.by,
+  p2 <- plotQC_ridges.helper(metadata, x="nGene", split_by = split_by,
                              log10x=T, cutoffs=cutoffs)
 
-  p3 <- plotQC_ridges.helper(metadata, x="log10GenesPerUMI", split.by = split.by,
+  p3 <- plotQC_ridges.helper(metadata, x="log10GenesPerUMI", split_by = split_by,
                              cutoffs=cutoffs)
 
-  p.mtRatio <- plotQC_ridges.helper(metadata, x="mitoRatio", split.by = split.by,
+  p.mtRatio <- plotQC_ridges.helper(metadata, x="mitoRatio", split_by = split_by,
                                     cutoffs=cutoffs)
 
-  p.rbRatio <- plotQC_ridges.helper(metadata, x="riboRatio", split.by = split.by,
+  p.rbRatio <- plotQC_ridges.helper(metadata, x="riboRatio", split_by = split_by,
                                     cutoffs=cutoffs)
 
   allCaps_QC_ridges <- ggpubr::ggarrange(p.nCells, p1, p2, p3, p.mtRatio, p.rbRatio, ncol=2, nrow=3)
   return(allCaps_QC_ridges)
 }
 
-plotQC_ridges.helper <- function(metadata, x, split.by, cutoffs=NULL, log10x=F) {
+plotQC_ridges.helper <- function(metadata, x, split_by, cutoffs=NULL, log10x=F) {
 
   p <- metadata %>%
-    ggplot(aes(x=.data[[x]], y=.data[[split.by]], fill=.data[[split.by]]), color=NA) +
+    ggplot(aes(x=.data[[x]], y=.data[[split_by]], fill=.data[[split_by]]), color=NA) +
     ggridges::geom_density_ridges(size = 0, alpha = 0.8) +
     theme_classic() +
     theme(legend.position="none") +

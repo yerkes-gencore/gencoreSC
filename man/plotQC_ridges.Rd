@@ -4,14 +4,14 @@
 \alias{plotQC_ridges}
 \title{Plot QC metadata across multiple captures or samples as density ridges plot}
 \usage{
-plotQC_ridges(metadata, cutoffs = NULL, split.by)
+plotQC_ridges(metadata, cutoffs = NULL, split_by)
 }
 \arguments{
 \item{metadata}{Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'}
 
 \item{cutoffs}{named list of cutoffs}
 
-\item{split.by}{metadata column to split ridge plots by (i.e. usually capture ID or sample ID)}
+\item{split_by}{metadata column to split ridge plots by (i.e. usually capture ID or sample ID)}
 }
 \value{
 an object of class ggarrange, which is a ggplot or a list of ggplot.

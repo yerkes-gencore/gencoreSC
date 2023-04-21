@@ -26,5 +26,5 @@
 ## usethis namespace: end
 NULL
 
-# Enable use of dplyr unquated variables
-utils::globalVariables(c("english", "temp"))
+# Enable .@[["var"]] notation without throwing warning about undefined global variables
+utils::globalVariables(".")
