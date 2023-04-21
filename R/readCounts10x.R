@@ -15,7 +15,7 @@
 #'   - add option to not remove multiplets and undetermined droplets
 #'   - currently only accepts RNA or RNA + ADT assay, add ability to handle arbitrary additional assays (e.g. ATAC)
 #' @export
-readCounts <- function(filepath, min.cells=100, min.features=10, capID) {
+readCounts10x <- function(filepath, min.cells=100, min.features=10, capID) {
 
   counts_in <- Seurat::Read10X(data.dir = filepath)
 

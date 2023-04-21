@@ -6,8 +6,10 @@ Authors@R:
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    dplyr,
     magrittr,
     methods,
+    rlang,
     Seurat,
     SeuratObject,
     utils

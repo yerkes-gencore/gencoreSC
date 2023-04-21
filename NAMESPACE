@@ -2,8 +2,9 @@
 
 export("%>%")
 export(addQCmetrics)
-export(readCounts)
+export(readCounts10x)
 export(readCountsBD)
 importFrom(magrittr,"%>%")
 importFrom(methods,show)
+importFrom(rlang,.data)
 importFrom(utils,read.table)
