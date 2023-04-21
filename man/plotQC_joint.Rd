@@ -8,7 +8,8 @@ plotQC_joint(
   metadata,
   split_by = "capID",
   cutoffs = NULL,
-  color_by = "mitoRato"
+  color_by = "mitoRato",
+  facet_colors = FALSE
 )
 }
 \arguments{
@@ -19,10 +20,12 @@ plotQC_joint(
 \item{cutoffs}{named list of cutoffs}
 
 \item{color_by}{metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))}
+
+\item{facet_colors}{logical; whether to plot facet colors with ggh4x::facet_wrap2 (experimental)}
 }
 \value{
 an object of class ggarrange, which is a ggplot or a list of ggplot.
 }
 \description{
-Plots QC metadata for multiple captures or samples with ggplot2::geom_density_ridges
+Visualize the correlation between genes detected and number of UMIs to determine whether strong presence of cells with low numbers of genes/UMIs
 }
