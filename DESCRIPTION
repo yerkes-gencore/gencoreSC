@@ -15,6 +15,7 @@ Imports:
     rlang,
     Seurat,
     SeuratObject,
+    stats,
     utils
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
