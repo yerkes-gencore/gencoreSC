@@ -24,7 +24,7 @@ plotQC_arranged(
 
 \item{cutoffs}{named list of cutoff values used in 'addQCmetrics()' for the given filtName}
 
-\item{title}{main title of}
+\item{title}{main title}
 }
 \value{
 an object of class ggarrange, which is a ggplot or a list of ggplot.
