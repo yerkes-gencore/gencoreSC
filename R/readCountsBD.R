@@ -13,7 +13,7 @@
 # To do:
 #   - add option to not remove multiplets and undetermined droplets
 #   - allow flexible assays; RNA only, or additional arbitrary assays
-readBD <- function(counts_csv, metadata_csv) {
+readCountsBD <- function(counts_csv, metadata_csv) {
   files <- counts_csv
   counts <- read.table(files, skip = 0, sep = ",", header = TRUE, row.names = 1)
   tcounts <- data.frame(t(counts), check.names = FALSE)
