@@ -7,6 +7,9 @@ Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
     dplyr,
+    ggplot2,
+    ggpubr,
+    ggridges,
     magrittr,
     methods,
     rlang,
