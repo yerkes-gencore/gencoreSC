@@ -17,6 +17,11 @@ Seurat object
 \description{
 Reads in BD counts and metadata and returns Seurat obj
 }
-\examples{
-s <- readBD(counts_csv = here("data/Combined_Exact-Cells_DBEC_MolsPerCell.csv"), metadata_csv = here("data/Exact-Cells_Sample_Tag_Calls.csv"))
+\note{
+To do:
+\itemize{
+\item add option to not remove multiplets and undetermined droplets
+\item allow flexible assays; RNA only, or additional arbitrary assays
+\item add working example
+}
 }

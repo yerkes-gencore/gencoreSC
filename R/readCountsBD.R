@@ -7,12 +7,13 @@
 #'
 #' @return Seurat object
 #'
-#' @examples
-#' s <- readBD(counts_csv = here("data/Combined_Exact-Cells_DBEC_MolsPerCell.csv"), metadata_csv = here("data/Exact-Cells_Sample_Tag_Calls.csv"))
+#' @note
+#' To do:
+#'   - add option to not remove multiplets and undetermined droplets
+#'   - allow flexible assays; RNA only, or additional arbitrary assays
+#'   - add working example
+#'
 #' @export
-# To do:
-#   - add option to not remove multiplets and undetermined droplets
-#   - allow flexible assays; RNA only, or additional arbitrary assays
 readCountsBD <- function(counts_csv, metadata_csv) {
   files <- counts_csv
   counts <- read.table(files, skip = 0, sep = ",", header = TRUE, row.names = 1)
@@ -37,11 +38,11 @@ readCountsBD <- function(counts_csv, metadata_csv) {
   row.names(ADT) <- sub(".AMM.*$", "", row.names(ADT))
 
   # Create the Seurat object using the RNA data as the first assay
-  s <- CreateSeuratObject(counts = RNA, meta.data = remove_un)
-  Assays(s)
+  s <- Seurat::CreateSeuratObject(counts = RNA, meta.data = remove_un)
+  SeuratObject::Assays(s)
 
   # And then add the AbSeq data as a second assay
-  adt_assay <- CreateAssayObject(counts = ADT)
+  adt_assay <- SeuratObject::CreateAssayObject(counts = ADT)
   s[["ADT"]] <- adt_assay
   show(s)
 

@@ -9,10 +9,9 @@
 #'
 #' @return Seurat object with the number of cells and features removed stored in 'nRemoved' in 'misc' slot
 #'
-#' @examples
-#' s <- readBD(counts_csv = here("data/Combined_Exact-Cells_DBEC_MolsPerCell.csv"), metadata_csv = here("data/Exact-Cells_Sample_Tag_Calls.csv"))
 #' @note
 #' To do:
+#'   - add working example
 #'   - add option to not remove multiplets and undetermined droplets
 #'   - currently only accepts RNA or RNA + ADT assay, add ability to handle arbitrary additional assays (e.g. ATAC)
 #' @export
@@ -24,26 +23,26 @@ readCounts <- function(filepath, min.cells=100, min.features=10, capID) {
   # This is uglier than re-assigning the assay to a new mat obj but saves memory
   if ("Gene Expression" %in% names(counts_in)) {
     # Create Seurat obj with no filtering
-    dims0 <- (Seurat::CreateSeuratObject(counts_in$`Gene Expression`,
-                                         project = capID,
-                                         min.cells=0, min.features=0))@assays$RNA@counts %>%
+    dims0 <- (SeuratObject::CreateSeuratObject(counts_in$`Gene Expression`,
+                                               project = capID,
+                                               min.cells=0, min.features=0))@assays$RNA@counts %>%
       dim()
     # Filter min.cells and min.features and report numbers removed
-    obj <- Seurat::CreateSeuratObject(counts_in$`Gene Expression`,
-                                      project = capID,
-                                      min.cells=min.cells, min.features=min.features)
+    obj <- SeuratObject::CreateSeuratObject(counts_in$`Gene Expression`,
+                                            project = capID,
+                                            min.cells=min.cells, min.features=min.features)
 
   } else if(is.null(names(counts_in))) {
     print("Only one assay in counts matrix file. Assuming it is Gene Expression.")
     # Create Seurat obj with no filtering
-    dims0 <- (Seurat::CreateSeuratObject(counts_in,
-                                         project = capID,
-                                         min.cells=0, min.features=0))@assays$RNA@counts %>%
+    dims0 <- (SeuratObject::CreateSeuratObject(counts_in,
+                                               project = capID,
+                                               min.cells=0, min.features=0))@assays$RNA@counts %>%
       dim()
     # Filter min.cells and min.features and report numbers removed
-    obj <- Seurat::CreateSeuratObject(counts_in,
-                                      project = capID,
-                                      min.cells=min.cells, min.features=min.features)
+    obj <- SeuratObject::CreateSeuratObject(counts_in,
+                                            project = capID,
+                                            min.cells=min.cells, min.features=min.features)
     print(paste("RNA assay added to Seurat obj with ", length(rownames(obj[["RNA"]])), "features."))
   } else {
     errorCondition("No Gene Expression assay in counts matrix?")
@@ -52,7 +51,7 @@ readCounts <- function(filepath, min.cells=100, min.features=10, capID) {
   ## Check if ADT data are included, add to Seurat obj if so
   if ("Antibody Capture" %in% names(counts_in)) {
     # Add ADT UMI matrix
-    obj[["ADT"]] <- CreateAssayObject(counts = counts_in$`Antibody Capture`)
+    obj[["ADT"]] <- SeuratObject::CreateAssayObject(counts = counts_in$`Antibody Capture`)
     print(paste("ADT assay added to Seurat obj with the following", length(rownames(obj[["ADT"]])), "features:"))
     print(rownames(obj[["ADT"]]))
   } else {

@@ -24,10 +24,8 @@ Reads in 10X counts and metadata and returns Seurat obj
 \note{
 To do:
 \itemize{
+\item add working example
 \item add option to not remove multiplets and undetermined droplets
 \item currently only accepts RNA or RNA + ADT assay, add ability to handle arbitrary additional assays (e.g. ATAC)
 }
-}
-\examples{
-s <- readBD(counts_csv = here("data/Combined_Exact-Cells_DBEC_MolsPerCell.csv"), metadata_csv = here("data/Exact-Cells_Sample_Tag_Calls.csv"))
 }
