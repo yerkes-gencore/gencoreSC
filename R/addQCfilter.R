@@ -76,7 +76,7 @@ defaultCutoffs <- list(nUMI.max = Inf,
                        riboRatio.min = 0)
 
 ### Outlier detection for a vector of values, based on median absolute deviation
-is_outlier <- function(data, nmads){
+is_outlier_mad <- function(data, nmads){
   data.mad <- stats::mad(data)
   outlier = (
     (data < stats::median(data) - nmads * data.mad) |
@@ -87,9 +87,9 @@ is_outlier <- function(data, nmads){
 
 detect_outliers <- function(obj, nmads=4){
   ## Log transforming data to normalize it
-  outliers <- (is_outlier(log1p(obj$nUMI), nmads) |
-                   is_outlier(log1p(obj$nGene), nmads) |
-                   is_outlier(log1p(obj$log10GenesPerUMI), nmads))
+  outliers <- (is_outlier_mad(log1p(obj$nUMI), nmads) |
+                   is_outlier_mad(log1p(obj$nGene), nmads) |
+                   is_outlier_mad(log1p(obj$log10GenesPerUMI), nmads))
   obj$outlier <- outliers
   return(obj)
 }
