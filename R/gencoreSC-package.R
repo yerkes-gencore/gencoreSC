@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom methods show
+#' @importFrom rlang :=
 #' @importFrom rlang .data
 #' @importFrom utils read.table
 ## usethis namespace: end
