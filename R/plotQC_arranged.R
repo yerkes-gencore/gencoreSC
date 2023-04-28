@@ -23,7 +23,7 @@ plotQC_arranged <- function(obj.unfilt, filtName, split_by, color_by="mitoRatio"
     .@meta.data %>%
     plotQC_joint(cutoffs=cutoffs, split_by=split_by, color_by=color_by)
 
-  p_arranged <- ggpubr::ggarrange(p_ridges, p_joint, ncol=2, nrow=1) +
+  p_arranged <- ggpubr::ggarrange(p_ridges, p_joint, ncol=2, nrow=1) %>%
     ggpubr::annotate_figure(top = title)
   return(p_arranged)
 }
