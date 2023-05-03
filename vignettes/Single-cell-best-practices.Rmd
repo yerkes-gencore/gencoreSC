@@ -1,0 +1,74 @@
+---
+title: "Single cell best practices"
+output: 
+  rmarkdown::html_vignette
+    
+vignette: >
+  %\VignetteIndexEntry{Single cell best practices}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+
+This document is intended to be an SOP for the ENPRC Gencore single-cell RNA 
+processing and analysis workflows. This should be a living document that is 
+updated with alternative methods as we discover them, but should preserve
+old methods for posterity and include rationale for changing them. Whenever 
+possible, we should include links to papers, repos, vignettes, etc. that support
+a practice, and we should attempt to summarize the methods and justifications 
+of a particular step. If we explore a procedure that we decide not to implement,
+it is worth including it here too to avoid revisiting dead topics and save others
+from wasting time. 
+
+```{r setup}
+library(gencoreSC)
+```
+
+# Loading Data
+
+# Processing
+
+## Ambient RNA contamination
+
+"In droplet based, single cell RNA-seq experiments, there is always a certain amount of background mRNAs present in the dilution that gets distributed into the droplets with cells and sequenced along with them. The net effect of this is to produce a background contamination that represents expression not from the cell contained within a droplet, but the solution that contained the cells.
+
+This collection of cell free mRNAs floating in the input solution (henceforth referred to as “the soup”) is created from cells in the input solution being lysed. Because of this, the soup looks different for each input solution and strongly resembles the expression pattern obtained by summing all the individual cells." taken from [SoupX vignette](https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html)
+
+Soup should at worst decrease power in detecting DEG due to shrinking LFC estimates,
+but shouldn't impact highly expressed genes ([Advanced Single-Cell Analysis with Bioconductor](http://bioconductor.org/books/3.16/OSCA.advanced/droplet-processing.html#removing-ambient-contamination)).
+Soup may be a greater problem in more complex / bigger / multiplexed 
+protocols ([Multi-Sample Single-Cell Analyses with Bioconductor](http://bioconductor.org/books/3.16/OSCA.multisample/ambient-problems.html#ambient-problems)).
+
+Relevant tools
+
+* `SoupX`
+* `DropletUtils::removeAmbience()`
+
+## SoupX
+
+[Github](https://github.com/constantAmateur/SoupX)
+
+Requires clustering information, though it claims to be 'not strongly sensitive to the clustering used'
+
+Has wrapper function for pulling in all necessary 10x data, but it doesn't seem
+to work with Cellranger Multi outputs, so you have to manually load them in.
+
+'Even if you decide you don't want to use the SoupX correction methods for whatever reason, you should at least want to know how contaminated your data are.'
+
+
+
+# Term glossary
+
+Term | Explanation
+---- | -----------
+DEG   |   Differentially expressed genes
+Soup  |   Ambient RNA from lysed cells
+
