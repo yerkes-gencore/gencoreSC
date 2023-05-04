@@ -12,11 +12,15 @@ Imports:
     ggridges,
     magrittr,
     methods,
+    plotly,
     rlang,
     scales,
     Seurat,
     SeuratObject,
     stats,
+    SoupX,
+    tibble,
+    tidyr,
     utils
 Suggests:
     ggh4x,
