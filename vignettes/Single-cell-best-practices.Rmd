@@ -88,15 +88,16 @@ Process
 * Look at expression of those genes in non-expressing clusters 
   + not super clear, is this clusters of empty cells? 
 * Contamination is calculated on a per-cell basis for all gene/cluster combinations
-* Update posterior contamination estimate with observations & prior
+* Update global posterior contamination estimate from observations & prior
 * Report contamination fraction as maximum of posterior distribution
-* Update counts matrix, trying to preserve expression and variability in clusters that have 'true' expression of the gene
+* Update counts matrix based on contamination fraction, trying to preserve expression and variability in clusters that have 'true' expression of the gene
 
 #### Runtime considerations
 
 SoupX should be performed on a per-channel basis.
 
-Requires clustering information, though it claims to be 'not strongly sensitive to the clustering used'
+Requires clustering information, though it claims to be 'not strongly sensitive to the clustering used',
+so the default clustering from Cellranger is sufficient
 
 `roundToInt` parameter of `adjustCounts()` is stochastic and is not recommended by the authors.
 
