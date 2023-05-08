@@ -25,6 +25,7 @@
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr drop_na
 #' @importFrom plotly ggplotly
+#' @importFrom Matrix rowSums
 #'
 #' @examples
 #' \dontrun{
@@ -38,11 +39,11 @@ plotSoupXGeneAdjustments <- function(sc,
                                      xlim_min = 0.05,
                                      hide_ensembl = FALSE,
                                      ens_pattern = '^ENS'){
-  cntSoggy = rowSums(sc$toc > 0)
-  cntStrained = rowSums(sc$adjusted_counts > 0)
+  cntSoggy = Matrix::rowSums(sc$toc > 0)
+  cntStrained = Matrix::rowSums(sc$adjusted_counts > 0)
   ratio = (cntSoggy - cntStrained) / cntSoggy
   count_diff <- data.frame(proportion = ratio,
-                           original = rowSums(sc$toc > 0)) %>%
+                           original = Matrix::rowSums(sc$toc > 0)) %>%
     tibble::rownames_to_column('Gene') %>%
     tidyr::drop_na()
 

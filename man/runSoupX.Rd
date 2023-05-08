@@ -2,44 +2,35 @@
 % Please edit documentation in R/runSoupX.R
 \name{runSoupX}
 \alias{runSoupX}
-\title{Small wrapper for running SoupX}
+\title{Wrapper for running SoupX}
 \usage{
-runSoupX(tod, toc, clusters)
+runSoupX(unfiltered_mat_path, filtered_mat_path, clusters_path, doPlot = TRUE)
 }
 \arguments{
-\item{tod}{Table of droplets.  A matrix with columns being each droplet and rows each gene.}
+\item{unfiltered_mat_path}{Path to unfiltered counts matrix file}
 
-\item{toc}{Table of counts.  Just those columns of \code{tod} that contain cells.}
+\item{filtered_mat_path}{Path to Cellranger filtered counts matrix file}
 
-\item{clusters}{A named vector, where entries are the cluster IDs and names are cellIDs.  If no names are provided, the order is assumed to match the order in \code{sc$metaData}.}
+\item{clusters_path}{Path to Cellranger initial clustering data file}
+
+\item{doPlot}{Create a plot showing the density of estimates?}
 }
 \value{
 An object of class SoupChannel
 }
 \description{
 Runs SoupX and saves the adjusted counts to a SoupChannel object for
-downstream diagnostics and QC
+downstream diagnostics and QC. Paths to input files can be provided manually,
+or you can try to search for them with \code{findSoupXFiles()}.
 }
 \examples{
 \dontrun{
-filt <- file.path(here::here(
-  'cellranger_out/outs/per_sample_outs/sample/count/',
-  'sample_filtered_feature_bc_matrix'))
-filt <- Read10X(filt)
-raw <- file.path(here::here(
-  'cellranger_out/outs/per_sample_outs/sample/count/',
-  'multi/count/raw_feature_bc_matrix'))
-raw <- Read10X(raw)
-clus <- file.path(here::here(
-  '../cellranger_out/outs/per_sample_outs/sample/count/',
-  'per_sample_outs/sample/count/',
-  'analysis/clustering/gene_expression_graphclust/clusters.csv'))
-clus <- read.csv(clus)
-clusters <- clus$Cluster
-names(clusters) <- clus$Barcode
-
-sc <- runSoupX(tod = raw$`Gene Expression`,
-               toc = filt$`Gene Expression`,
-               clus = clusters)
+soupx_files <- lapply(samples$FileID, function(x){
+  findSoupXFiles(file.path(config$rootDir, config$alignmentDir, x))
+})
+names(soupx_files) <- samples$Label
+sc <- lapply(soupx_files, function(x){
+  runSoupX(x[['unfiltered_mat_path']], x[['filtered_mat_path']], x[['clusters_path']])
+})
 }
 }
