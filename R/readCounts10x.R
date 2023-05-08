@@ -10,11 +10,11 @@
 #'
 #' @return An object of class Seurat
 #'
-#' @importFrom Seurat Read10X CreateSeuratObject
+#' @importFrom Seurat Read10X CreateSeuratObject CreateAssayObject
 #'
 #' @export
-readCounts10x <- function(filepath,
-                          capID,
+readCounts10x <- function(capID,
+                          filepath,
                           min.cells=0,
                           min.features=0) {
 
@@ -25,6 +25,11 @@ readCounts10x <- function(filepath,
                                             project = capID,
                                             min.cells = min.cells,
                                             min.features=min.features)
+    for (name in names(counts_in)){
+      if (name != 'Gene Expression'){
+        obj[[name]] <- Seurat::CreateAssayObject(counts = counts_in[[name]])
+      }
+    }
 
   } else if(is.null(names(counts_in))) {
     print("Only one assay in counts matrix file. Assuming it is Gene Expression.")
