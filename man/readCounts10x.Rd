@@ -4,28 +4,20 @@
 \alias{readCounts10x}
 \title{Read 10X count data}
 \usage{
-readCounts10x(filepath, min.cells = 100, min.features = 10, capID)
+readCounts10x(filepath, capID, min.cells = 0, min.features = 0)
 }
 \arguments{
 \item{filepath}{path to UMI count matrix (can be raw or unfiltered)}
 
-\item{min.cells}{minimum number of cells per feature for RNA assay}
-
-\item{min.features}{minimum number of features per cell for RNA assay}
-
 \item{capID}{capture ID label, assigned to 'project' in seurat object metadata}
+
+\item{min.cells}{Include features detected in at least this many cells.
+Will subset the counts matrix as well.
+To reintroduce excluded features, create a new object with a lower cutoff.}
 }
 \value{
-Seurat object with the number of cells and features removed stored in 'nRemoved' in 'misc' slot
+An object of class Seurat
 }
 \description{
 Reads in 10X counts and metadata and returns Seurat obj
-}
-\note{
-To do:
-\itemize{
-\item add working example
-\item add option to not remove multiplets and undetermined droplets
-\item currently only accepts RNA or RNA + ADT assay, add ability to handle arbitrary additional assays (e.g. ATAC)
-}
 }
