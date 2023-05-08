@@ -116,8 +116,35 @@ with and without SoupX.
 Compare ratio of adjusted counts to previous counts, see which genes were most
 affected. You should expect to see highly specific markers and mitochondrial genes. 
 
-`SoupX::plotChangeMap()` can layer soup fraction estimations on a Umap or other dim redux plot. 
+`SoupX::plotChangeMap()` can layer soup fraction estimations on a Umap or other
+dim redux plot. 
 
+
+#### Within gencoreSC
+
+The gencoreSC package has several functions to facilitate SoupX integration.
+
+`findSoupXFiles()` Attempts to retrieve paths to the files needed to run SoupX
+from a Cellranger output folder. This returns only paths, so it is not essential
+and can be replaced by manually listing files.
+
+`runSoupX()` takes the files provided by `findSoupXFiles()` (or manually) to 
+load in the unfiltered counts, filtered counts, and initial clustering data. It
+then performs the basic SoupX workflow and returns the final SoupChannel object
+with the adjusted counts stored. 
+
+`plotSoupXGeneAdjustments()` shows the top genes affected by SoupX correction.
+For lightweight rendering and to help focus on only strongly affected genes, it
+limits the viewing window to genes with a minimum overall abundance and minimum
+adjusted frequency proportion. 
+
+The `adjusted_counts` in the object returned by `runSoupX()` can be stored as an 
+assay with the Seurat object, which allows it to be easily associated with other
+metadata from the study and easily be filtered with other QC steps, although 
+this creates a larger memory footprint. Based on the diagnostic plots from 
+`runSoupX()` and `plotSoupXGeneAdjustments()`, you might decide it is/isn't 
+necessary to do SoupX correction, and you can choose to go with either the 
+original counts or the modified counts for your downstream analysis.
 
 ## Batch correction
 
