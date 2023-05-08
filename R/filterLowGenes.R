@@ -1,7 +1,7 @@
 #' Remove genes present in low number of cells
 #'
 #' Remove rows from Seurat object for genes present in fewer than `min.cells`
-#'  cells. This is normally done in `Seurat::CreateSeuratObject()`, but separating
+#'  cells. This is normally done in `SeuratObject::CreateSeuratObject()`, but separating
 #'  this out allows SoupX to be added to the workflow. After SoupX processing,
 #'  this function can be ran to filter the object as you would normally.
 #'
@@ -16,6 +16,12 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#'   ## See the impact of filtering
+#'   objs <- lapply(objs, filterLowGenes, min.cells = 100)
+#'   ## apply filter
+#'   objs <- lapply(objs, filterLowGenes, min.cells = 100, calculate_only = FALSE)
+#' }
 filterLowGenes <- function(obj,
                            min.cells,
                            calculate_only = TRUE){
