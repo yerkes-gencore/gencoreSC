@@ -4,16 +4,25 @@
 \alias{readCounts10x}
 \title{Read 10X count data}
 \usage{
-readCounts10x(filepath, capID, min.cells = 0, min.features = 0)
+readCounts10x(
+  capID,
+  filepath,
+  min.cells = 0,
+  min.features = 0,
+  strip.suffix = TRUE
+)
 }
 \arguments{
-\item{filepath}{path to UMI count matrix (can be raw or unfiltered)}
-
 \item{capID}{capture ID label, assigned to 'project' in seurat object metadata}
 
-\item{min.cells}{Include features detected in at least this many cells.
-Will subset the counts matrix as well.
-To reintroduce excluded features, create a new object with a lower cutoff.}
+\item{filepath}{path to UMI count matrix (can be raw or unfiltered)}
+
+\item{min.cells}{Include features detected in at least this many cells. Will
+subset the counts matrix as well. To reintroduce excluded features, create a
+new object with a lower cutoff.}
+
+\item{min.features}{Include cells where at least this many features are
+detected.}
 }
 \value{
 An object of class Seurat
