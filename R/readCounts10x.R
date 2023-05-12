@@ -4,9 +4,8 @@
 #'
 #' @param filepath path to UMI count matrix (can be raw or unfiltered)
 #' @param capID capture ID label, assigned to 'project' in seurat object metadata
-#' @param min.cells Include features detected in at least this many cells.
-#'  Will subset the counts matrix as well.
-#'  To reintroduce excluded features, create a new object with a lower cutoff.
+#' @param min.cells Include features detected in at least this many cells. Will subset the counts matrix as well. To reintroduce excluded features, create a new object with a lower cutoff.
+#' @param min.features Include cells where at least this many features are detected.
 #'
 #' @return An object of class Seurat
 #'
