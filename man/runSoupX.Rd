@@ -18,7 +18,7 @@ An object of class SoupChannel
 }
 \description{
 Runs SoupX and saves the adjusted counts to a SoupChannel object for
-downstream diagnostics and QC
+downstream diagnostics and QC.
 }
 \examples{
 \dontrun{

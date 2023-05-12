@@ -3,20 +3,53 @@
 #' Adds logical metadata column for a given set of arbitrary cutoffs and/or outliers
 #'
 #' @param obj Seurat object
-#' @param filterName name of new metadata column with logical filter
-#' @param by_threshold logical to control whether to filter on thresholds defined in 'cutoffs'
-#' @param cutoffs named list of cutoffs
-#' @param by_outlier logical to control whether to filter outliers
-#' @param nmads median absolute deviation used to define outliers
+#' @param split.by Metadata column to split by for outlier detection if obj is not already split
+#' @param filterName Name of new metadata column with logical filter
+#' @param by_threshold Logical to control whether to filter on thresholds defined in 'cutoffs'
+#' @param cutoffs Named list of cutoffs
+#' @param by_outlier Logical to control whether to filter outliers
+#' @param nmads Median absolute deviation used to define outliers
 #'
 #'
-#' @return Seurat object with new metadata column
+#' @return Seurat object with new metadata column. If passed a split object, will return split object. Same for a merged/single capture object.
 #'
 #' @export
 # calculate metadata filter column but don't filter yet
-addQCfilter <- function(obj, filterName = "input",
+addQCfilter <- function(obj, split.by = NULL, filterName = "input",
                         by_threshold = FALSE, cutoffs = defaultCutoffs,
                         by_outlier = FALSE, nmads = 4) {
+
+  if (is.list(obj)) {
+    obj <- lapply(obj, FUN = function(x) {
+      x <- addQCfilter.helper(x, filterName = filterName,
+                              by_threshold = by_threshold, cutoffs = cutoffs,
+                              by_outlier = by_outlier, nmads = nmads)
+    })
+  } else if (!is.list(obj)) {
+    if (!by_outlier) {
+      obj <- addQCfilter.helper(obj, filterName = filterName,
+                                by_threshold = by_threshold, cutoffs = cutoffs,
+                                by_outlier = by_outlier, nmads = nmads)
+    } else if (is.null(split.by)) {
+      # split the object
+      obj <- Seurat::SplitObject(obj, split.by = split.by)
+      # lapply over split object with addQCfilter.helper
+      obj <- lapply(obj, FUN = function(x) {
+        x <- addQCfilter.helper(x, filterName = filterName,
+                                by_threshold = by_threshold, cutoffs = cutoffs,
+                                by_outlier = by_outlier, nmads = nmads)
+      })
+      obj <- merge(x=obj[[1]], y=obj[2:length(obj)])
+    } else if (!is.null(split.by)) {
+      warning("Outlier detection on a merged object is not recommended. Either split object or specify split.by param.")
+    }
+  }
+    return(obj)
+  }
+
+addQCfilter.helper <- function(obj, filterName = "input",
+                               by_threshold = FALSE, cutoffs = defaultCutoffs,
+                               by_outlier = FALSE, nmads = 4) {
 
     print(paste0("Creating new metadata column to store filter logical: ", filterName))
 
@@ -26,15 +59,15 @@ addQCfilter <- function(obj, filterName = "input",
       metadata <- metadata %>% dplyr::mutate(
         cutoffsOnly =
           .data$nUMI >= cutoffs$nUMI.min &
-            .data$nUMI <= cutoffs$nUMI.max &
+          .data$nUMI <= cutoffs$nUMI.max &
           .data$nGene >= cutoffs$nGene.min &
-            .data$nGene <= cutoffs$nGene.max &
+          .data$nGene <= cutoffs$nGene.max &
           .data$log10GenesPerUMI >= cutoffs$log10GenesPerUMI.min &
-            .data$log10GenesPerUMI <= cutoffs$log10GenesPerUMI.max &
+          .data$log10GenesPerUMI <= cutoffs$log10GenesPerUMI.max &
           .data$mitoRatio >= cutoffs$mitoRatio.min &
-            .data$mitoRatio <= cutoffs$mitoRatio.max &
+          .data$mitoRatio <= cutoffs$mitoRatio.max &
           .data$riboRatio >= cutoffs$riboRatio.min &
-            .data$riboRatio <= cutoffs$riboRatio.max)
+          .data$riboRatio <= cutoffs$riboRatio.max)
       obj@meta.data <- metadata
     } else {
       metadata <- obj@meta.data
@@ -60,8 +93,8 @@ addQCfilter <- function(obj, filterName = "input",
         dplyr::mutate(!!filterName := .data$cutoffsOnly & !.data$outlier) #%>%
       obj@meta.data <- metadata
     }
-    return(obj)
-  }
+  return(obj)
+}
 
 # Cell-level metrics
 defaultCutoffs <- list(nUMI.max = Inf,
