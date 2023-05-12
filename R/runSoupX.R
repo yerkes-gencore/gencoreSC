@@ -59,5 +59,6 @@ runSoupX <- function(unfiltered_mat_path,
   sc <- SoupX::setClusters(sc, clusters)
   sc <- SoupX::autoEstCont(sc, doPlot = doPlot)
   sc$adjusted_counts <- SoupX::adjustCounts(sc)
+  sc$plot <- grDevices::recordPlot()
   sc
 }
