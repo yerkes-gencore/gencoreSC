@@ -34,7 +34,7 @@ runSoupX <- function(unfiltered_mat_path,
 
   if ("Gene Expression" %in% names(tod)) {
     tod <- tod$`Gene Expression`
-  } else if(is.null(names(counts_in))) {
+  } else if(is.null(names(tod))) {
     tod <- tod
   } else {
     errorCondition("No Gene Expression assay in counts matrix?")
@@ -43,7 +43,7 @@ runSoupX <- function(unfiltered_mat_path,
   toc <- Seurat::Read10X(file.path(filtered_mat_path))
   if ("Gene Expression" %in% names(toc)) {
     toc <- toc$`Gene Expression`
-  } else if(is.null(names(counts_in))) {
+  } else if(is.null(names(toc))) {
     toc <- toc
   } else {
     errorCondition("No Gene Expression assay in counts matrix?")
