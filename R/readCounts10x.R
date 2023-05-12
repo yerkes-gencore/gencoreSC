@@ -7,7 +7,6 @@
 #' @param min.cells Include features detected in at least this many cells. Will subset the counts matrix as well. To reintroduce excluded features, create a new object with a lower cutoff.
 #' @param min.features Include cells where at least this many features are detected.
 #' @param strip.suffix Whether to strip suffix from cellranger cell ID
-#' @inheritParams SeuratObject::CreateSeuratObject
 #'
 #' @return An object of class Seurat
 #'
