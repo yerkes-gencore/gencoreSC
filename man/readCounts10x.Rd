@@ -4,7 +4,13 @@
 \alias{readCounts10x}
 \title{Read 10X count data}
 \usage{
-readCounts10x(capID, filepath, min.cells = 0, min.features = 0)
+readCounts10x(
+  capID,
+  filepath,
+  min.cells = 0,
+  min.features = 0,
+  strip.suffix = TRUE
+)
 }
 \arguments{
 \item{capID}{capture ID label, assigned to 'project' in seurat object metadata}

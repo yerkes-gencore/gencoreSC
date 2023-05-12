@@ -4,12 +4,14 @@
 \alias{filterLowGenes}
 \title{Remove genes present in low number of cells}
 \usage{
-filterLowGenes(obj, min.cells, calculate_only = TRUE)
+filterLowGenes(obj, min.cells, assay = "RNA", calculate_only = TRUE)
 }
 \arguments{
 \item{obj}{Seurat object}
 
 \item{min.cells}{Minimum number of cells a gene must appear in to be kept}
+
+\item{assay}{Assay to perform filtering on, default 'RNA'}
 
 \item{calculate_only}{If \code{TRUE} only show how many genes would be removed,
 but return the unfiltered object. If \code{FALSE}, return the filtered object}
