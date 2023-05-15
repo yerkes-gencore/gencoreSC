@@ -27,7 +27,12 @@
 #'
 #' }
 #'
-#' @note To do:
+#' @note
+#'
+#' This function draws on code from:
+#'   - https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
+#'
+#' To do:
 #'  - Fix namesopace warnings and notes from using methods defined by AnnotationHub
 #'
 #' @export
