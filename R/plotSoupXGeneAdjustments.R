@@ -69,5 +69,9 @@ plotSoupXGeneAdjustments <- function(sc,
                  ylim_min, ' cells in the original dataset',
                  'and a minimum adjustment of ',
                  xlim_min, ' to reduce rendering burden.'))
-  plotly::ggplotly(soup_plot, tooltip = 'text')
+  plotly::ggplotly(soup_plot, tooltip = 'text') %>%
+    config(
+      displaylogo = FALSE,
+      modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", 'lasso2d', 'pan2d', 'autoScale2d', 'zoom2d')
+    )
 }
