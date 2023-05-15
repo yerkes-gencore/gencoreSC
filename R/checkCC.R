@@ -78,6 +78,8 @@ scoreCC <- function(obj, cc.genes) {
   ## i.e. signals separating non-cycling cells and cycling cells will be maintained,
   # but diffs in cell cycle phase among proliferating cells can be regressed out
   obj.phase$CC.Difference <- obj.phase$S.Score - obj.phase$G2M.Score
+
+  return(obj.phase)
 }
 
 checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
