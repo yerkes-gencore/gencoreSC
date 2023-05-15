@@ -9,6 +9,24 @@
 #'
 #' @return Seurat object with Phase metadata column, a plot list with PCAs of features specified by features2plot, or both in a list object.
 #'
+#' @examples
+#' \dontrun{
+#'   # Inferred by orthology searches against Human list published in Tirosh, I, et al.:
+#'   mus_url <- "https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Mus_musculus.csv"
+#'   cc_file <- getURL(mus_url)
+#'   cc_cycle_genes <- read.csv(text = cc_file)
+#'
+#'   # Only return seurat object with new Phase metadata column
+#'   obj <- checkCC(obj, what2return = "seurat_obj", cc.genes = cc_cycle_genes)
+#'
+#'   # Run cell cycle check and only return seurat object
+#'   cc.plots <- checkCC(obj, what2return = "plot_list", cc.genes = cc_cycle_genes)
+#'
+#'   # Run cell cycle check and return both
+#'   list[obj, cc.plots] <- checkCC(obj, what2return = "both", cc.genes = cc_cycle_genes)
+#'
+#' }
+#'
 #' @note To do:
 #'  - Fix namesopace warnings and notes from using methods defined by AnnotationHub
 #'
