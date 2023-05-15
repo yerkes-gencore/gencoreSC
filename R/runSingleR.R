@@ -13,12 +13,41 @@
 #'
 #'@examples
 #' \dontrun{
-#' Add an example!
+#' # Prep / load reference
+#' ref.ImmGen <- celldex::ImmGenData()
+#'
+#' ## Run on highest level of reference
+#' # ImmGen.main
+#' list[obj.seurat, SingleR.ImmGen.main] <- obj.seurat %>%
+#'   Run.SingleR(obj.seurat=.,
+#'               ref=ref.ImmGen,
+#'               labels=ref.ImmGen$label.main,
+#'               de.method="classic",
+#'               meta.prefix = "ImmGen.main")
+#'
+#' ## Run on bare ontology IDs, then convert to human readable cell type labels
+#' # Get cell ontology names and other info
+#' cl <- ontoProc::getOnto('cellOnto')
+#'
+#' # ImmGen.ont
+#' list[obj.seurat, SingleR.ImmGen.ont] <- obj.seurat %>%
+#'   Run.SingleR(obj.seurat=.,
+#'               ref=ref.ImmGen,
+#'               labels=ref.ImmGen$label.ont,
+#'               de.method="classic",
+#'               meta.prefix = "ImmGen.ont")
+#'
+#' # Convert bare cell ontology IDs to informative names
+#' obj.seurat <- clID2clNames(obj.seurat, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
 #' }
+#'
+#' @note
+#' Use `de.method = "classic"` for bulk references (including microarray-based refs such as `celldex::ImmGenData()`).
+#' Use `de.metohd = "wilcox"` for single cell references.
 #'
 #' @export
 # Run SingleR
-Run.SingleR <- function(obj.seurat, ref, labels, de.method, meta.prefix) {
+runSingleR <- function(obj.seurat, ref, labels, de.method, meta.prefix) {
   SingleR.out <- obj.seurat %>%
     as.SingleCellExperiment(assay= "RNA") %>%
     scater::logNormCounts() %>%
@@ -34,4 +63,16 @@ Run.SingleR <- function(obj.seurat, ref, labels, de.method, meta.prefix) {
   obj.seurat@meta.data[[paste0(meta.prefix,".delta.next")]] <- SingleR.out$delta.next
 
   return(list(obj.seurat, SingleR.out))
+}
+
+# Convert bare cell ontology IDs to informative names
+clID2clNames <- function(obj.seurat, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name") {
+  op <- old.prefix
+  np <- new.prefix
+  md <- obj.seurat@meta.data
+  md[[paste0(np, ".labels")]] <- unname(cl$name[unname(md[[paste0(op, ".labels")]])])
+  md[[paste0(np, ".pruned.labels")]] <- unname(cl$name[unname(md[[paste0(op, ".pruned.labels")]])])
+  md[[paste0(np, ".delta.next")]] <- md[[paste0(op, ".delta.next")]]
+  obj.seurat@meta.data <- md
+  return(obj.seurat)
 }
