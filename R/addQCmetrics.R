@@ -23,9 +23,9 @@ addQCmetrics <-
     metadata$cells <- rownames(metadata)
     # Rename columns to be more readable/intuitive
     metadata <- metadata %>%
-      dplyr::rename(capID = .data$orig.ident,
-                    nUMI = .data$nCount_RNA,
-                    nGene = .data$nFeature_RNA)
+      dplyr::rename(capID = "orig.ident",
+                    nUMI = "nCount_RNA",
+                    nGene = "nFeature_RNA")
     obj@meta.data <- metadata
     return(obj)
   }

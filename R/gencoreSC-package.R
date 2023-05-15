@@ -22,6 +22,7 @@
 #' @importFrom rlang :=
 #' @importFrom rlang .data
 #' @importFrom stats lm
+#' @importFrom utils read.csv
 #' @importFrom utils read.table
 ## usethis namespace: end
 NULL
