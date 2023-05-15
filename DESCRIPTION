@@ -22,7 +22,9 @@ Imports:
     SoupX,
     tibble,
     tidyr,
-    utils
+    utils,
+    AnnotationHub,
+    S4Vectors
 Suggests:
     ggh4x,
     knitr,

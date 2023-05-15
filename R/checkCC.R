@@ -1,0 +1,109 @@
+#' Perform cell cycle check analysis
+#'
+#' Calculates phase of cell cycle given a list of cell cycle genes
+#'
+#' @param obj Seurat object
+#' @param what2return c("plot_list", "seurat_obj", "both")
+#' @param cc.genes Vector of gene names for cell cycle genes. If you are starting with Ensembl IDs use gencoreSC::EnsDb2GeneName() first.
+#' @param features2plot Vector of categorical features to plot PCA for e.g. c("Phase", "mitoRatio", "riboRatio"))
+#'
+#' @return Seurat object with Phase metadata column, a plot list with PCAs of features specified by features2plot, or both in a list object.
+#'
+#' @note To do:
+#'  - Fix namesopace warnings and notes from using methods defined by AnnotationHub
+#'
+#' @export
+checkCC <- function(obj, what2return = c("plot_list", "seurat_obj", "both"),
+                    cc.genes, features2plot = c("Phase", "mitoRatio", "riboRatio")) {
+  # Note that this creates a normalized and scaled object with PCA, which may not want to keep depending on downstream analysis
+  obj.cc <- scoreCC(obj, cc.genes)
+
+  if (what2return == "plot_list") {
+    p.list <- checkPCA(obj = obj.cc, features = features2plot)
+    return(p.list)
+  } else if (what2return == "seurat_obj") {
+    # Only return obj with resulting metadata, to avoid returning normalized object
+    obj.out <- obj
+    obj.out@meta.data <- obj.cc@meta.data
+    return(obj.out)
+  } else if (what2return == "both") {
+    p.list <- checkPCA(obj = obj.cc, features = features2plot)
+    obj.out <- obj
+    obj.out@meta.data <- obj.cc@meta.data
+    return(list(p.list, obj.out))
+  }
+}
+
+## Check for effect of cell cycle and mitoRatio on PCA
+scoreCC <- function(obj, cc.genes) {
+  # A list of cell cycle markers, from Tirosh et al, 2015, is loaded with Seurat.  We can
+  # segregate this list into markers of G2/M phase and markers of S phase
+  s_genes <- cc.genes$s.genes
+  g2m_genes <- cc.genes$g2m.genes
+  # Score cells for cell cycle
+  obj.phase <- Seurat::NormalizeData(obj, verbose=FALSE)
+  obj.phase <- Seurat::CellCycleScoring(obj.phase, verbose=FALSE,
+                                   g2m.features = g2m_genes,
+                                   s.features = s_genes)
+  obj.phase <- Seurat::FindVariableFeatures(obj.phase, verbose=FALSE,
+                                       selection.method = "vst",
+                                       nfeatures = 2000)
+  obj.phase <- Seurat::ScaleData(obj.phase, verbose=FALSE)
+  obj.phase <- Seurat::RunPCA(obj.phase, npcs=20, verbose=FALSE)
+
+  # Add CC.Difference
+  ## i.e. signals separating non-cycling cells and cycling cells will be maintained,
+  # but diffs in cell cycle phase among proliferating cells can be regressed out
+  obj.phase$CC.Difference <- obj.phase$S.Score - obj.phase$G2M.Score
+}
+
+checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
+  p.list <- list()
+  for (feature in features) {
+    p.list[feature] <- Seurat::DimPlot(obj,
+                               reduction = "pca",
+                               group.by= feature,
+                               split.by = feature)
+  }
+  p.list <- list()
+  return(p.list)
+}
+
+EnsDb2GeneName <- function(cell_cycle_genes, species = "Mus musculus") {
+  ## Based on https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
+  ## These annotations are Ensemble IDs but we need gene names.
+  # Connect to AnnotationHub
+  ah <- AnnotationHub::AnnotationHub()
+  # Access the Ensembl database for organism
+  ahDb <- query(ah, pattern = c(species, "EnsDb"), ignore.case = TRUE)
+  # Acquire the latest annotation files
+  id <- ahDb %>%
+    mcols() %>%
+    rownames() %>%
+    tail(n=1)
+  # Download the appropriate Ensembldb databases
+  edb <- ah[[id]]
+  # Extract gene-level information from database
+  annotations <- genes(edb, return.type = "data.frame")
+  # Select annotaitons of interest
+  annotations <- annotations %>% dplyr::select(.data$gene_id, .data$gene_name, .data$seq_name, .data$gene_biotype, .data$description)
+  ## These annotations are Ensemble IDs but we need gene names.
+  annotations <- EnsDb2GeneName(species = species)
+
+  ## Now we can use these annotations to get the corresponding gene names for the Ensembl IDs of the cell cycle genes.
+  # Get gene names for Ensemble IDs for each gene
+  cell_cycle_markers <- cell_cycle_genes %>%
+    dplyr::left_join(annotations, by =c("geneID" = "gene_id"))
+
+  cc_genes <- list()
+  # Acquire the S phase
+  cc_genes$s_genes <- cell_cycle_markers %>%
+    dplyr::filter(.data$phase == "S") %>%
+    pull("gene_name")
+  # Acquire the G2M phase genes
+  cc_genes$g2m_genes <- cell_cycle_markers %>%
+    dplyr::filter(.data$phase == "G2/M") %>%
+    pull("gene_name")
+
+  return(cc_genes)
+}

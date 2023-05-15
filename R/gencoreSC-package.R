@@ -21,9 +21,11 @@
 #' @importFrom methods show
 #' @importFrom rlang :=
 #' @importFrom rlang .data
+#' @importFrom S4Vectors mcols
 #' @importFrom stats lm
 #' @importFrom utils read.csv
 #' @importFrom utils read.table
+#' @importFrom utils tail
 ## usethis namespace: end
 NULL
 
