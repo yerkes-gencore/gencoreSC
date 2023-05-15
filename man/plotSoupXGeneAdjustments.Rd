@@ -29,8 +29,9 @@ A plotly object
 }
 \description{
 Uses the results of \code{runSoupX()} to produce a plot of genes with a high
-degree of contamination correction through SoupX. This is defined as genes
-with a high portion of cell-level counts set to 0 after running SoupX.
+degree of contamination correction through SoupX. This can be defined as genes
+with a high portion of cell-level counts set to 0 after running SoupX (\code{plotSoupXGeneAdjustments()}).
+Another metric is the portion of reads removed for a given gene (\code{plotSoupXGeneAdjustments2()}).
 Ideally genes shown here should be strong cell-type markers,
 e.g. hemoglobins or immunoglobulins. For lightweight rendering
 and to focus on non-trivial signal, only genes found in a sufficient number
