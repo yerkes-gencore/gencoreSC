@@ -70,7 +70,7 @@ plotSoupXGeneAdjustments <- function(sc,
                  'and a minimum adjustment of ',
                  xlim_min, ' to reduce rendering burden.'))
   plotly::ggplotly(soup_plot, tooltip = 'text') %>%
-    config(
+    plotly::config(
       displaylogo = FALSE,
       modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", 'lasso2d', 'pan2d', 'autoScale2d', 'zoom2d')
     )
