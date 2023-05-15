@@ -42,20 +42,8 @@ list[obj.seurat, SingleR.ImmGen.main] <- obj.seurat \%>\%
               de.method="classic",
               meta.prefix = "ImmGen.main")
 
-## Run on bare ontology IDs, then convert to human readable cell type labels
-# Get cell ontology names and other info
-cl <- ontoProc::getOnto('cellOnto')
-
-# ImmGen.ont
-list[obj.seurat, SingleR.ImmGen.ont] <- obj.seurat \%>\%
-  Run.SingleR(obj.seurat=.,
-              ref=ref.ImmGen,
-              labels=ref.ImmGen$label.ont,
-              de.method="classic",
-              meta.prefix = "ImmGen.ont")
-
-# Convert bare cell ontology IDs to informative names
-obj.seurat <- clID2clNames(obj.seurat, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
+# Plot heatmap of SingleR delta.next scores
+SingleR::plotScoreHeatmap(SingleR.ImmGen.main, show.pruned = TRUE, fontsize=4)
 }
 
 }

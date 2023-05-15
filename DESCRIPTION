@@ -22,7 +22,10 @@ Imports:
     SoupX,
     tibble,
     tidyr,
-    utils
+    utils,
+    scater,
+    SingleR,
+    SummarizedExperiment
 Suggests:
     ggh4x,
     knitr,

@@ -3,6 +3,7 @@
 export("%>%")
 export(addQCfilter)
 export(addQCmetrics)
+export(clID2clNames)
 export(extractGeneCorrectionsSoupX)
 export(filterLowGenes)
 export(findSoupXFiles)

@@ -25,6 +25,50 @@
 #'               de.method="classic",
 #'               meta.prefix = "ImmGen.main")
 #'
+#' # Plot heatmap of SingleR delta.next scores
+#' SingleR::plotScoreHeatmap(SingleR.ImmGen.main, show.pruned = TRUE, fontsize=4)
+#'}
+#'
+#' @note
+#' Use `de.method = "classic"` for bulk references (including microarray-based refs such as `celldex::ImmGenData()`).
+#' Use `de.metohd = "wilcox"` for single cell references.
+#'
+#' @export
+# Run SingleR
+runSingleR <- function(obj.seurat, ref, labels, de.method, meta.prefix) {
+  SingleR.out <- obj.seurat %>%
+    Seurat::as.SingleCellExperiment(assay= "RNA") %>%
+    scater::logNormCounts() %>%
+    SummarizedExperiment::assays() %>%
+    .$logcounts %>%
+    SingleR::SingleR(test=.,
+                     ref=ref,
+                     labels=labels,
+                     de.method="classic")
+
+  obj.seurat@meta.data[[paste0(meta.prefix,".labels")]] <- SingleR.out$labels
+  obj.seurat@meta.data[[paste0(meta.prefix,".pruned.labels")]] <- SingleR.out$pruned.labels
+  obj.seurat@meta.data[[paste0(meta.prefix,".delta.next")]] <- SingleR.out$delta.next
+
+  return(list(obj.seurat, SingleR.out))
+}
+
+#' Convert cell ontology IDs to names
+#'
+#' Convert bare cell ontology IDs to human-readable names
+#'
+#' @param metadata Data.frame with labels, pruned.labels and delta.next columns. Typically either:
+#'  - Seurat object metadata (after running SingleR), or
+#'  - SingleR output object
+#' @param cl Cell ontology database
+#'  - Can be btained via: `cl <- ontoProc::getOnto('cellOnto')`
+#' @param old.prefix The prefix used for the original runSingleR call (e.g. "ImmGen.ont")
+#' @param new.prefix The new prefix to use for the human readable column (e.g. "ImmGen.ont.name")
+#'
+#' @returns List with obj.seurat and SingleR output. Note: should the SingleR just be in misc. slot?
+#'
+#'@examples
+#' \dontrun{
 #' ## Run on bare ontology IDs, then convert to human readable cell type labels
 #' # Get cell ontology names and other info
 #' cl <- ontoProc::getOnto('cellOnto')
@@ -37,39 +81,26 @@
 #'               de.method="classic",
 #'               meta.prefix = "ImmGen.ont")
 #'
-#' # Convert bare cell ontology IDs to informative names
-#' obj.seurat <- clID2clNames(obj.seurat, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
-#' }
+#' # These labels aren't very informative:
+#' SingleR::plotScoreHeatmap(SingleR.ImmGen.ont, show.pruned = TRUE, fontsize=4)
 #'
-#' @note
-#' Use `de.method = "classic"` for bulk references (including microarray-based refs such as `celldex::ImmGenData()`).
-#' Use `de.metohd = "wilcox"` for single cell references.
+#' # Convert bare cell ontology IDs to informative names in seurat object
+#' obj.seurat@meta.data <- clID2clNames(obj.seurat@meta.data, cl,
+#'                                      old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
+#'
+#' # Convert bare cell ontology IDs to informative names in SingleR output and visualize
+#' SingleR.ImmGen.ont.names <- clID2clNames(SingleR.ImmGen.ont, cl,
+#'                                          old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
+#' SingleR::plotScoreHeatmap(SingleR.ImmGen.ont.names, show.pruned = TRUE, fontsize=4)
+#' }
 #'
 #' @export
 # Run SingleR
-runSingleR <- function(obj.seurat, ref, labels, de.method, meta.prefix) {
-  SingleR.out <- obj.seurat %>%
-    as.SingleCellExperiment(assay= "RNA") %>%
-    scater::logNormCounts() %>%
-    assays() %>%
-    .$logcounts %>%
-    SingleR(test=.,
-            ref=ref.ImmGen,
-            labels=labels,
-            de.method="classic")
-
-  obj.seurat@meta.data[[paste0(meta.prefix,".labels")]] <- SingleR.out$labels
-  obj.seurat@meta.data[[paste0(meta.prefix,".pruned.labels")]] <- SingleR.out$pruned.labels
-  obj.seurat@meta.data[[paste0(meta.prefix,".delta.next")]] <- SingleR.out$delta.next
-
-  return(list(obj.seurat, SingleR.out))
-}
-
 # Convert bare cell ontology IDs to informative names
-clID2clNames <- function(obj.seurat, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name") {
+clID2clNames <- function(metadata, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name") {
   op <- old.prefix
   np <- new.prefix
-  md <- obj.seurat@meta.data
+  md <- metadata
   md[[paste0(np, ".labels")]] <- unname(cl$name[unname(md[[paste0(op, ".labels")]])])
   md[[paste0(np, ".pruned.labels")]] <- unname(cl$name[unname(md[[paste0(op, ".pruned.labels")]])])
   md[[paste0(np, ".delta.next")]] <- md[[paste0(op, ".delta.next")]]
