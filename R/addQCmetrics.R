@@ -17,18 +17,18 @@ addQCmetrics <-
     # Mitochondrial ratio
     obj$mitoRatio <- Seurat::PercentageFeatureSet(object=obj, pattern=mito.pattern)/100
     # Turn mitoRatio into categorical factor vector based on quartile values
-    mito_qs <- summary(obj.phase$mitoRatio)
-    obj$mitoFr <- cut(obj.phase$mitoRatio,
+    mito_qs <- summary(obj$mitoRatio)
+    obj$mitoFr <- cut(obj$mitoRatio,
                       breaks=c(-Inf, mito_qs[2], mito_qs[3], mito_qs[4], Inf),
                       labels=c("Low","Medium","Med-high", "High"))
 
     # Ribosomal ratio
     obj$riboRatio <- Seurat::PercentageFeatureSet(object=obj, pattern=ribo.pattern)/100
     # Turn mitoRatio into categorical factor vector based on quartile values
-    ribo_qs <- summary(obj.phase$riboRatio)
-    obj.phase$riboFr <- cut(obj.phase$riboRatio,
-                                      breaks=c(-Inf, ribo_qs[2], ribo_qs[3], ribo_qs[4], Inf),
-                                      labels=c("Low","Medium","Med-high", "High"))
+    ribo_qs <- summary(obj$riboRatio)
+    obj$riboFr <- cut(obj$riboRatio,
+                      breaks=c(-Inf, ribo_qs[2], ribo_qs[3], ribo_qs[4], Inf),
+                      labels=c("Low","Medium","Med-high", "High"))
 
     # Create metadata dataframe
     metadata <- obj@meta.data
