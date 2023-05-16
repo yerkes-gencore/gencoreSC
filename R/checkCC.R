@@ -90,7 +90,7 @@ checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
                                group.by= feature,
                                split.by = feature)
   }
-  p.list <- list()
+  ## p.list <- list()
   return(p.list)
 }
 
