@@ -27,9 +27,14 @@ Seurat object with Phase metadata column, a plot list with PCAs of features spec
 Calculates phase of cell cycle given a list of cell cycle genes
 }
 \note{
+This function draws on code from:
+\itemize{
+\item https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
+}
+
 To do:
 \itemize{
-\item Fix namesopace warnings and notes from using methods defined by AnnotationHub
+\item Fix namespace warnings and notes from using methods defined by AnnotationHub
 }
 }
 \examples{

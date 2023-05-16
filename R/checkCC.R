@@ -33,7 +33,7 @@
 #'   - https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
 #'
 #' To do:
-#'  - Fix namesopace warnings and notes from using methods defined by AnnotationHub
+#'  - Fix namespace warnings and notes from using methods defined by AnnotationHub
 #'
 #' @export
 checkCC <- function(obj, what2return = c("plot_list", "seurat_obj", "both"),
@@ -57,7 +57,15 @@ checkCC <- function(obj, what2return = c("plot_list", "seurat_obj", "both"),
   }
 }
 
-## Check for effect of cell cycle and mitoRatio on PCA
+#' Add cell cycle metadata
+#'
+#' Calculates phase of cell cycle given a list of cell cycle genes
+#'
+#' @param obj Seurat object
+#' @param cc.genes Vector of gene names for cell cycle genes. If you are starting with Ensembl IDs use gencoreSC::EnsDb2GeneName() first.
+#'
+#' @return Seurat object with cell cycle metadata (plus normalized and scaled data and PCA reduction)
+#' @export
 scoreCC <- function(obj, cc.genes) {
   # A list of cell cycle markers, from Tirosh et al, 2015, is loaded with Seurat.  We can
   # segregate this list into markers of G2/M phase and markers of S phase
@@ -82,6 +90,15 @@ scoreCC <- function(obj, cc.genes) {
   return(obj.phase)
 }
 
+#' Plot PCAs for a list of categorical features
+#'
+#' Take a vector of features and plot PCA plots for each, returning a list.
+#'
+#' @param obj Seurat object
+#' @param features Vector of features to to group.by and split.by in PCA plots
+#'
+#' @return List of plot objects
+#' @export
 checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
   p.list <- list()
   for (feature in features) {
@@ -93,6 +110,15 @@ checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
   return(p.list)
 }
 
+#' Convert cell cycle Ensembl IDs to gene names
+#'
+#' Convert a vector of cell cycle Ensembl IDs to gene symbols
+#'
+#' @param cell_cycle_genes Vector of Ensemble IDs for cell cycle genes
+#' @param species Binomial species epithet for organism (default = "Mus musculus")
+#'
+#' @return Vector of cell cycle gene names
+#' @export
 EnsDb2GeneName <- function(cell_cycle_genes, species = "Mus musculus") {
   ## Based on https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
   ## These annotations are Ensemble IDs but we need gene names.
