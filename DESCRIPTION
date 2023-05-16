@@ -15,6 +15,7 @@ Imports:
     magrittr,
     methods,
     plotly,
+    plyr,
     rlang,
     scales,
     Seurat,
