@@ -85,12 +85,11 @@ scoreCC <- function(obj, cc.genes) {
 checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
   p.list <- list()
   for (feature in features) {
-    p.list[feature] <- Seurat::DimPlot(obj,
+    p.list[[feature]] <- Seurat::DimPlot(obj,
                                reduction = "pca",
                                group.by= feature,
                                split.by = feature)
   }
-  ## p.list <- list()
   return(p.list)
 }
 
