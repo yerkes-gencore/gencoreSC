@@ -26,6 +26,7 @@
 #' @importFrom utils read.csv
 #' @importFrom utils read.table
 #' @importFrom utils tail
+#' @importFrom zeallot %<-%
 ## usethis namespace: end
 NULL
 

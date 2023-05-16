@@ -23,7 +23,7 @@
 #'   cc.plots <- checkCC(obj, what2return = "plot_list", cc.genes = cc_cycle_genes)
 #'
 #'   # Run cell cycle check and return both
-#'   list[obj, cc.plots] <- checkCC(obj, what2return = "both", cc.genes = cc_cycle_genes)
+#'   list[obj, cc.plots] %<-% checkCC(obj, what2return = "both", cc.genes = cc_cycle_genes)
 #'
 #' }
 #'
