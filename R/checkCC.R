@@ -37,7 +37,7 @@
 #'
 #' @export
 checkCC <- function(obj, what2return = c("plot_list", "seurat_obj", "both"),
-                    cc.genes, features2plot = c("Phase", "mitoRatio", "riboRatio")) {
+                    cc.genes, features2plot = c("Phase", "mitoFr", "riboFr")) {
   # Note that this creates a normalized and scaled object with PCA, which may not want to keep depending on downstream analysis
   obj.cc <- scoreCC(obj, cc.genes)
 
