@@ -6,6 +6,7 @@ Authors@R:
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    DoubletFinder,
     dplyr,
     ggplot2,
     ggpubr,
@@ -14,6 +15,7 @@ Imports:
     magrittr,
     methods,
     plotly,
+    plyr,
     rlang,
     scales,
     Seurat,
