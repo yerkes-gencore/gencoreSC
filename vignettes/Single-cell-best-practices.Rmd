@@ -120,7 +120,7 @@ affected. You should expect to see highly specific markers and mitochondrial gen
 dim redux plot. 
 
 
-#### Within gencoreSC
+### Within gencoreSC
 
 The gencoreSC package has several functions to facilitate SoupX integration.
 
@@ -171,7 +171,7 @@ Some approaches to doublet removal are more tailored two resolving one or the ot
 1. Preprocess data, including removing low quality cells/clusters, normalizing, clustering, and possibly annotating cell types (for additional functionality).
 
 1. Create simulated doublets in the dataset by averaging cells
-2. Process real and artificial data using a constant Seurat pipeline
+2. Process mixed data using a constant Seurat pipeline
 3. Cluster mixed data 
 4. Predict doublets as cells with high number of artificial neighbors
 
@@ -185,12 +185,32 @@ the expected doublet rate for your capture.
 Doublet finder overestimates detectable doublets due to difficulty in identifying homotypic doublets. This can be somewhat remedied by providing cell-type annotations and using them to calculate a lower-bound of doublet rate.
 [More info](https://github.com/chris-mcginnis-ucsf/DoubletFinder#doublet-number-estimation)
 
-#### Within gencoreSC
+### Within gencoreSC
 
 `runDoubletFinder()` is a wrapper for the doubletFinder functions. It annotates a capture-level seurat object with doublet calls.
 
 `removeDFDoublets()` is a small convenience function to filter an object by the doublet finder calls.
 
+
+## Cell cycle regression
+
+Cells at different stages of growth can exhibit unique expression profiles. For some studies, detecting signal between cells of different stages in not interesting and can confound or obscure results of interest. A set of cell-cycle marker genes can be used to approximate growth stage and regress expression data to ignore variance due to cell cycle.
+
+Note that this is probably not a desirable outcome for studies focusing on cell differentiation or other inquiries related to cell growth & cycling. 
+
+You should at least check if your data is affected by CC differences and consider regressing. At the very least, you can say you did not see any separation by CC that would call your results into question. 
+
+Related vignettes: [Harvard Chan Bioinformatics Core](https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md)
+
+[Seurat](https://satijalab.org/seurat/articles/cell_cycle_vignette.html)
+
+### Seurat CC regression
+
+Seurat includes a set of genes to use for CC regression for humans. The Seurat function `CellCycleScoring()` can provide estimations of CC that can be passed into `Seurat::ScaleData()` to regress out differences due to CC. 
+
+### Within gencoreSC
+
+`checkCC()` serves as a wrapper for Seurat's functions. It provides plots to visualize separation by CC stage and returns Seurat objects with CC scoring metadata added.
 
 ## Batch correction
 
