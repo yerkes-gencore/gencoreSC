@@ -2,11 +2,12 @@
 
 export("%>%")
 export(EnsDb2GeneName)
+export(NormFindVarFeatScaleData)
 export(addQCfilter)
 export(addQCmetrics)
-export(demuxAntibodyData)
 export(checkCC)
 export(checkPCA)
+export(demuxAntibodyData)
 export(extractGeneCorrectionsSoupX)
 export(filterLowGenes)
 export(findSoupXFiles)
