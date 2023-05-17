@@ -15,18 +15,19 @@
 #' @examples
 #' \dontrun{
 #' # Assign list output of a function to two environmental variables
-#' s <- list(a = "this is a fake suerat_obj", b = seq(1,5))
+#' s <- list(string = "this is a fake suerat obj", numbers = seq(1,5))
 #' max_min_mean <- function(x) {
-#'   result <- c(max = max(s$b), min = min(s$b), mean = mean(s$b))
-#'   return(list(s, result))
+#'   result <- c(max = max(x$numbers), min = min(x$numbers), mean = mean(x$numbers))
+#'   x$new <- result[1]
+#'   return(list(x, result))
 #' }
 #' c(s, result) %<-% max_min_mean(s)
 #'
-#' # This also works for lapply
-#' x <- list(a = 1:10, beta = exp(-3:3), logic = c(TRUE,FALSE,FALSE,TRUE))
-#' c(a, beta, logic) %<-% lapply(x, mean)
-#' a
-#' beta
-#' logic
+#' # This also works for split seurat objects (sort of)
+#' s.split <- list(cap1 = list(string = "this is a fake suerat obj", numbers = seq(1,5)),
+#'                 cap2 = list(string = "this is a fake suerat obj", numbers = seq(6,10)))
+#'
+#' c(c(s.split$cap1, result$cap1),
+#'   c(s.split$cap2, result$cap2)) %<-% lapply(s.split, max_min_mean)
 #' }
 NULL
