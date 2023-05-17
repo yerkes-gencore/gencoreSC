@@ -27,7 +27,9 @@ Imports:
     utils,
     AnnotationHub,
     S4Vectors,
-    zeallot
+    zeallot,
+    harmony,
+    STACAS
 Suggests:
     ggh4x,
     knitr,
