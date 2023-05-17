@@ -1,3 +1,34 @@
+#' Normalize, FindVariableFeatures, ScaleData with optional blacklisting
+#'
+#' Normalize RNA counts with either SCTransform or log normalization; find variable features, with the option of blacklisting sets of genes; and opitonally scaling data.
+#'
+#' Each combination of options requires slightly different operations, so this wrapper helps keep code tidy and reproducible.
+#'
+#' @param s Seurat object
+#' @param norm_method Normalization method
+#' @param nfeatures Number of
+regress.out = NULL,
+feature.blacklist = NULL,
+verbose = F,
+scale_data = NULL
+#'
+#' @returns An object of class SoupChannel
+#'
+#' @import grDevices
+#' @import SoupX
+#' @importFrom Seurat Read10X
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' soupx_files <- lapply(samples$FileID, function(x){
+#'   findSoupXFiles(file.path(config$rootDir, config$alignmentDir, x))
+#' })
+#' names(soupx_files) <- samples$Label
+#' sc <- lapply(soupx_files, function(x){
+#'   runSoupX(x[['unfiltered_mat_path']], x[['filtered_mat_path']], x[['clusters_path']])
+#' })
+#' }
 NormFindVarFeatScaleData <- function(s,
                                      norm_method = "logNorm",
                                      nfeatures = 2000,
