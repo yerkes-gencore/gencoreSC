@@ -6,6 +6,7 @@ Authors@R:
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    Azimuth,
     dplyr,
     ggplot2,
     ggpubr,

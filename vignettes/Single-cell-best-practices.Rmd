@@ -212,9 +212,15 @@ Seurat includes a set of genes to use for CC regression for humans. The Seurat f
 
 `checkCC()` serves as a wrapper for Seurat's functions. It provides plots to visualize separation by CC stage and returns Seurat objects with CC scoring metadata added.
 
+
+
 ## Batch correction
 
+## Reference mapping
 
+### Azimuth
+
+Azimuth requires SCTransformed data
 
 
 # Term glossary
