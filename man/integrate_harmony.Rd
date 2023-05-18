@@ -43,10 +43,25 @@ to try Harmony with multiple parameters and save them as e.g.
 }
 \value{
 Integrated Seurat object
+
+\dontrun{
+# log normalize each capture separately and integrate via Harmony
+# s.split is a Seurat object split by "Sample_Name"
+s.Harmony <- integrate_harmony(s.split, norm_method = "logNorm", group.by.vars = "Sample_Name)
+
+# SCTransform each capture separately and integrate via Harmony
+s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name)
+
+# SCTransform each capture separately, blacklist TCR genes from variable features, and integrate via Harmony
+library(scGate)
+TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
+s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name, feature.blacklist = "TCR_genes")
+
+# SCTransform all captures together and integrate via Harmony
+s <- merge(x = s.split[[1]], y = s.split[2:length(s.split)], merge.data = FALSE)
+s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name)
+}
 }
 \description{
-A wrapper function for integration of RNA assays via Harmony; normalizing, regressing out or blacklisting features etc. as specified.
-}
-\details{
-The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+A wrapper function for integration of RNA assays via \code{\link[Harmony:harmony]{Harmony}}; normalizing, regressing out or blacklisting features etc. as specified. The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
 }
