@@ -38,8 +38,32 @@ alignment}
 Integrated Seurat object
 }
 \description{
-A wrapper function for integration of RNA assays via STACAS; normalizing, regressing out or blacklisting features etc. as specified.
+A wrapper function for integration of RNA assays via \code{\link[STACAS:Run.STACAS]{STACAS}}; normalizing, regressing out or blacklisting features etc. as specified. The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
 }
-\details{
-The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+\examples{
+\dontrun{
+# log normalize, find variable features blacklisting TCR genes (Mus musculus), integrate via unsupervised STACAS
+library(scGate)
+scGate::genes.blacklist.default$Mm \%>\% names()
+TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
+s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = TCR_genes)
+
+# unsupervised STACAS, blacklisting cell cycle, heatshock, mito, ribo, IFn response and TCR genes
+blacklist_all <- scGate::genes.blacklist.default$Mm \%>\% unlist() \%>\% unname()
+s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = blacklist_all)
+
+# "fully-supervised" STACAS, using cell labels from previously running SingleR with the ImmGen dataset stored in the Seurat object metadata
+# see https://carmonalab.github.io/STACAS.demo/STACAS.demo.html for details
+s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = blacklist_all,
+                             cell.labels = "ImmGen.main.pruned.labels")
+
+# "semi-supervised" STACAS, using a subset of cell labels from previously running SingleR with the ImmGen dataset stored in the Seurat object metadata
+# see https://carmonalab.github.io/STACAS.demo/STACAS.demo.html for details
+s.split$Tlike_cells <- ifelse(s.split$ImmGen.main.pruned.labels \%in\% c("T cells", "NKT", "NK cells", "ILC", "Tgd"),
+                              s.split$ImmGen.main.pruned.labels,
+                              NA)
+s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = blacklist_all,
+                             cell.labels = "Tlike_cells")
+}
+
 }
