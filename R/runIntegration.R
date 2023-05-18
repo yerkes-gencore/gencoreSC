@@ -1,6 +1,6 @@
 #' Run integration via Seurat, Harmony, or STACAS
 #'
-#' A wrapper function for integration of RNA assays via Seurat, Harmony, or STACAS; normalizing, regressing out or blacklisting features etc. as specified.
+#' A wrapper function for integration of RNA assays via \code{\link[Seurat:FindIntegrationAnchors]{Seurat}}, \code{\link[harmony:RunHarmony]{Harmony}}, or \code{\link[STACAS:Run.STACAS]{STACAS}}; normalizing, regressing out or blacklisting features etc. as specified.
 #'
 #' The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
 #'
@@ -10,12 +10,25 @@
 #' @param npcs Total Number of PCs to compute and store (30 by default)
 #' @inheritParams integrate_seurat
 #' @inheritParams integrate_harmony
-#' @param harmony.group.by.vars Variable(s) to remove (character vector).
+#' @param harmony.group.by.vars Var to remove (passed to group.by.vars in harmony::RunHarmony)
 #' @param harmony_norm_merged Whether to normalized merged object or normalize each capture separately (logical).
 #' @inheritParams integrate_stacas
 #' @param STACAS.supervision_labels Vector of cell labels to pass to supervised integration with STACAS. See \code{magrittr::\link[STACAS:Run.STACAS]{Run.STACAS}} `cell.labels` parameter for details.
 #'
 #' @returns Integrated Seurat object post Seurat::FindClusters() (with Seurat's default resolution = 0.8), ready for plotting UMAPs etc.
+#' The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
+#'
+#' @examples
+#' \dontrun{
+#' # integrate via Seurat with reciprocal PCA dim reduction method
+#' s.CCA <- runIntegration(s.split, integration_method = "seurat", norm_method = "logNorm",
+#'                         reduction = "rpca")
+#'
+#' # integrate via Harmony, normalizing each sample separately
+#' s.Harmony <- runIntegration(s.split, integration_method = "harmony", norm_method = "logNorm",
+#'                             group.by.vars = "Sample_Name", harmony_norm_merged = FALSE)
+#' }
+#'
 #' @export
 runIntegration <- function(s.split,
                            integration_method = "merge",
@@ -27,7 +40,7 @@ runIntegration <- function(s.split,
                            regress.out = NULL,
                            STACAS.supervision_labels = NULL,
                            dim.reduct = "cca",
-                           harmony_norm_merged = TRUE,
+                           harmony_norm_merged = FALSE,
                            verbose = FALSE) {
 
   # Run integration
@@ -85,19 +98,22 @@ runIntegration <- function(s.split,
 #' @inheritParams Seurat::FindIntegrationAnchors
 #' @inheritParams NormFindVarFeatScaleData
 #'
-#' @returns Integrated Seurat object
+#' @returns A Seurat object with a new "integrated" Assay. See \code{\link[Seurat:IntegrateData]{Seurat::IntegrateData}} for details.
+#' The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
 #'
+#' @examples
 #' \dontrun{
-#' # log normalize each capture separately and integrate using canonical correlation analysis dim reduction
+#' # log normalize and integrate using canonical correlation analysis dim reduction
 #' s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
 #'
-#' # SCTransform each capture separately and integrate using recripocal PCA dim reduction
+#' # SCTransform and integrate using recripocal PCA dim reduction
 #' s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
 #'
-#' # SCTransform each capture separately, blacklist TCR genes from variable features, and integrate using cca
+#' # SCTransform, blacklist TCR genes, and integrate using cca
 #' library(scGate)
 #' TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-#' s.Harmony <- integrate_harmony(s, norm_method = "SCT", dim.reduct = "cca", feature.blacklist = "TCR_genes")
+#' s.Harmony <- integrate_seurat(s, norm_method = "SCT", dim.reduct = "cca",
+#'                               feature.blacklist = "TCR_genes")
 #' }
 #'
 #' @export
@@ -159,15 +175,17 @@ integrate_seurat <- function(s.split, dim.reduct = "cca", nfeatures = 2000, npcs
 
 #' Run integration via Harmony
 #'
-#' A wrapper function for integration of RNA assays via \code{\link[Harmony:harmony]{Harmony}}; normalizing, regressing out or blacklisting features etc. as specified. The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+#' A wrapper function for integration of RNA assays via \code{\link[harmony:RunHarmony]{Harmony}}; normalizing, regressing out or blacklisting features etc. as specified. The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
 #'
 #' @param s A Seurat object. If it is a split object, will run normalize samples separately. If merged, will normalize samples together.
 #' @param npcs Total Number of PCs to compute and store (30 by default)
 #' @inheritParams harmony::RunHarmony
 #' @inheritParams NormFindVarFeatScaleData
 #'
-#' @returns Integrated Seurat object
+#' @returns Seurat (v3) object. Harmony dimensions placed into dimensional reduction object specified by "reduction.save" (default = "harmony"). For downstream Seurat analyses, use reduction='harmony'. See \code{\link[harmony:RunHarmony]{harmony::RunHarmony}} for details.
+#' The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
 #'
+#' @examples
 #' \dontrun{
 #' # log normalize each capture separately and integrate via Harmony
 #' # s.split is a Seurat object split by "Sample_Name"
@@ -176,10 +194,11 @@ integrate_seurat <- function(s.split, dim.reduct = "cca", nfeatures = 2000, npcs
 #' # SCTransform each capture separately and integrate via Harmony
 #' s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name)
 #'
-#' # SCTransform each capture separately, blacklist TCR genes from variable features, and integrate via Harmony
+#' # SCTransform each capture separately, blacklist TCR genes from variable features
 #' library(scGate)
 #' TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-#' s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name, feature.blacklist = "TCR_genes")
+#' s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name,
+#'                                feature.blacklist = "TCR_genes")
 #'
 #' # SCTransform all captures together and integrate via Harmony
 #' s <- merge(x = s.split[[1]], y = s.split[2:length(s.split)], merge.data = FALSE)
@@ -265,31 +284,38 @@ integrate_harmony <- function(s, norm_method = "logNorm", nfeatures = 2000, npcs
 #' @inheritParams NormFindVarFeatScaleData
 #' @param npcs Total Number of PCs to compute and store (30 by default)
 #'
-#' @returns Integrated Seurat object
+#' @returns Returns a Seurat object with a new integrated Assay. Also, centered, scaled variable features data are returned in the scale.data slot, and the pca of these batch-corrected scale data in the pca 'reduction' slot. See \code{\link[STACAS:Run.STACAS]{STACAS::Run.STACAS}} for details.
+#' The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
 #'
 #' @examples
 #' \dontrun{
-#' # log normalize, find variable features blacklisting TCR genes (Mus musculus), integrate via unsupervised STACAS
+#' # log normalize, find variable features blacklisting TCR genes (Mus musculus)
 #' library(scGate)
 #' scGate::genes.blacklist.default$Mm %>% names()
 #' TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = TCR_genes)
+#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm",
+#'                              feature.blacklist = TCR_genes)
 #'
-#' # unsupervised STACAS, blacklisting cell cycle, heatshock, mito, ribo, IFn response and TCR genes
+#' # unsupervised STACAS, blacklisting cc, heatshock, mito, ribo, IFn resp. and TCR genes
 #' blacklist_all <- scGate::genes.blacklist.default$Mm %>% unlist() %>% unname()
-#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = blacklist_all)
+#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm",
+#'                              feature.blacklist = blacklist_all)
 #'
-#' # "fully-supervised" STACAS, using cell labels from previously running SingleR with the ImmGen dataset stored in the Seurat object metadata
+#' # "fully-supervised" STACAS,
+#' # using cell labels from previously running SingleR with the ImmGen dataset
 #' # see https://carmonalab.github.io/STACAS.demo/STACAS.demo.html for details
-#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = blacklist_all,
+#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm",
+#'                              feature.blacklist = blacklist_all,
 #'                              cell.labels = "ImmGen.main.pruned.labels")
 #'
-#' # "semi-supervised" STACAS, using a subset of cell labels from previously running SingleR with the ImmGen dataset stored in the Seurat object metadata
+#' # "semi-supervised" STACAS, using a subset of cell labels
 #' # see https://carmonalab.github.io/STACAS.demo/STACAS.demo.html for details
-#' s.split$Tlike_cells <- ifelse(s.split$ImmGen.main.pruned.labels %in% c("T cells", "NKT", "NK cells", "ILC", "Tgd"),
+#' Tlike <- c("T cells", "NKT", "NK cells", "ILC", "Tgd")
+#' s.split$Tlike_cells <- ifelse(s.split$ImmGen.main.pruned.labels %in% Tlike,
 #'                               s.split$ImmGen.main.pruned.labels,
 #'                               NA)
-#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm", feature.blacklist = blacklist_all,
+#' s.STACAS <- integrate_stacas(s.split, norm_method = "logNorm",
+#'                              feature.blacklist = blacklist_all,
 #'                              cell.labels = "Tlike_cells")
 #' }
 #'

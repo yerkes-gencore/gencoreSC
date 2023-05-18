@@ -15,7 +15,7 @@ runIntegration(
   regress.out = NULL,
   STACAS.supervision_labels = NULL,
   dim.reduct = "cca",
-  harmony_norm_merged = TRUE,
+  harmony_norm_merged = FALSE,
   verbose = FALSE
 )
 }
@@ -32,7 +32,7 @@ runIntegration(
 
 \item{feature.blacklist}{Vector of genes to blacklist from variable features}
 
-\item{harmony.group.by.vars}{Variable(s) to remove (character vector).}
+\item{harmony.group.by.vars}{Var to remove (passed to group.by.vars in harmony::RunHarmony)}
 
 \item{regress.out}{Features to regress out in SCTransform vars.to.regress}
 
@@ -46,10 +46,23 @@ runIntegration(
 }
 \value{
 Integrated Seurat object post Seurat::FindClusters() (with Seurat's default resolution = 0.8), ready for plotting UMAPs etc.
+The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
 }
 \description{
-A wrapper function for integration of RNA assays via Seurat, Harmony, or STACAS; normalizing, regressing out or blacklisting features etc. as specified.
+A wrapper function for integration of RNA assays via \code{\link[Seurat:FindIntegrationAnchors]{Seurat}}, \code{\link[harmony:RunHarmony]{Harmony}}, or \code{\link[STACAS:Run.STACAS]{STACAS}}; normalizing, regressing out or blacklisting features etc. as specified.
 }
 \details{
 The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+}
+\examples{
+\dontrun{
+# integrate via Seurat with reciprocal PCA dim reduction method
+s.CCA <- runIntegration(s.split, integration_method = "seurat", norm_method = "logNorm",
+                        reduction = "rpca")
+
+# integrate via Harmony, normalizing each sample separately
+s.Harmony <- runIntegration(s.split, integration_method = "harmony", norm_method = "logNorm",
+                            group.by.vars = "Sample_Name", harmony_norm_merged = FALSE)
+}
+
 }

@@ -42,8 +42,13 @@ to try Harmony with multiple parameters and save them as e.g.
 'harmony_theta0', 'harmony_theta1', 'harmony_theta2'}
 }
 \value{
-Integrated Seurat object
-
+Seurat (v3) object. Harmony dimensions placed into dimensional reduction object specified by "reduction.save" (default = "harmony"). For downstream Seurat analyses, use reduction='harmony'. See \code{\link[harmony:RunHarmony]{harmony::RunHarmony}} for details.
+The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
+}
+\description{
+A wrapper function for integration of RNA assays via \code{\link[harmony:RunHarmony]{Harmony}}; normalizing, regressing out or blacklisting features etc. as specified. The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+}
+\examples{
 \dontrun{
 # log normalize each capture separately and integrate via Harmony
 # s.split is a Seurat object split by "Sample_Name"
@@ -52,16 +57,15 @@ s.Harmony <- integrate_harmony(s.split, norm_method = "logNorm", group.by.vars =
 # SCTransform each capture separately and integrate via Harmony
 s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name)
 
-# SCTransform each capture separately, blacklist TCR genes from variable features, and integrate via Harmony
+# SCTransform each capture separately, blacklist TCR genes from variable features
 library(scGate)
 TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name, feature.blacklist = "TCR_genes")
+s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name,
+                               feature.blacklist = "TCR_genes")
 
 # SCTransform all captures together and integrate via Harmony
 s <- merge(x = s.split[[1]], y = s.split[2:length(s.split)], merge.data = FALSE)
 s.Harmony <- integrate_harmony(s, norm_method = "SCT", group.by.vars = "Sample_Name)
 }
-}
-\description{
-A wrapper function for integration of RNA assays via \code{\link[Harmony:harmony]{Harmony}}; normalizing, regressing out or blacklisting features etc. as specified. The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+
 }

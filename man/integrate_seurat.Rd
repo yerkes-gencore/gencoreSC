@@ -36,24 +36,28 @@ integrate_seurat(
 \item{k.anchor}{How many neighbors (k) to use when picking anchors}
 }
 \value{
-Integrated Seurat object
-
-\dontrun{
-# log normalize each capture separately and integrate using canonical correlation analysis dim reduction
-s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
-
-# SCTransform each capture separately and integrate using recripocal PCA dim reduction
-s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
-
-# SCTransform each capture separately, blacklist TCR genes from variable features, and integrate using cca
-library(scGate)
-TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-s.Harmony <- integrate_harmony(s, norm_method = "SCT", dim.reduct = "cca", feature.blacklist = "TCR_genes")
-}
+A Seurat object with a new "integrated" Assay. See \code{\link[Seurat:IntegrateData]{Seurat::IntegrateData}} for details.
+The object also includes PCA and UMAP reductions and neighbor graphs and seurat clusters defined at res=0.6.
 }
 \description{
 A wrapper function for integration of RNA assays via Seurat using CCA or RPCA; normalizing, regressing out or blacklisting features etc. as specified.
 }
 \details{
 The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
+}
+\examples{
+\dontrun{
+# log normalize and integrate using canonical correlation analysis dim reduction
+s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
+
+# SCTransform and integrate using recripocal PCA dim reduction
+s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
+
+# SCTransform, blacklist TCR genes, and integrate using cca
+library(scGate)
+TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
+s.Harmony <- integrate_seurat(s, norm_method = "SCT", dim.reduct = "cca",
+                              feature.blacklist = "TCR_genes")
+}
+
 }
