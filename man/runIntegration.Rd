@@ -14,7 +14,7 @@ runIntegration(
   harmony.group.by.vars,
   regress.out = NULL,
   STACAS.supervision_labels = NULL,
-  seurat_method = "cca",
+  dim.reduct = "cca",
   harmony_norm_merged = TRUE,
   verbose = FALSE
 )
@@ -38,7 +38,7 @@ runIntegration(
 
 \item{STACAS.supervision_labels}{Vector of cell labels to pass to supervised integration with STACAS. See \code{magrittr::\link[STACAS:Run.STACAS]{Run.STACAS}} \code{cell.labels} parameter for details.}
 
-\item{seurat_method}{Reduction to use for Seurat integration ("cca" or "rpca"). See \code{magrittr::\link[Seurat:FindIntegrationAnchors]{FindIntegrationAnchors}} \code{reduction} parameter for details.}
+\item{dim.reduct}{Reduction to use for Seurat integration ("cca" or "rpca"). see \code{\link[Seurat:FindIntegrationAnchors]{Seurat::FindIntegrationAnchors}} reduction parameter for details.}
 
 \item{harmony_norm_merged}{Whether to normalized merged object or normalize each capture separately (logical).}
 

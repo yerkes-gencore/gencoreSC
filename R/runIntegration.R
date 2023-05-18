@@ -8,7 +8,6 @@
 #' @param integration_method String specifying integration method; any of c("merge", "seurat", "harmony", "stacas")
 #' @inheritParams NormFindVarFeatScaleData
 #' @param npcs Total Number of PCs to compute and store (30 by default)
-#' @param seurat_method Reduction to use for Seurat integration ("cca" or "rpca"). See \code{magrittr::\link[Seurat:FindIntegrationAnchors]{FindIntegrationAnchors}} `reduction` parameter for details.
 #' @inheritParams integrate_seurat
 #' @inheritParams integrate_harmony
 #' @param harmony.group.by.vars Variable(s) to remove (character vector).
@@ -27,7 +26,7 @@ runIntegration <- function(s.split,
                            harmony.group.by.vars,
                            regress.out = NULL,
                            STACAS.supervision_labels = NULL,
-                           seurat_method = "cca",
+                           dim.reduct = "cca",
                            harmony_norm_merged = TRUE,
                            verbose = FALSE) {
 
@@ -50,7 +49,7 @@ runIntegration <- function(s.split,
                           norm_method = norm_method, feature.blacklist = feature.blacklist,
                           regress.out = regress.out, cell.labels = STACAS.supervision_labels, verbose = verbose)
   } else if (integration_method == "seurat") {
-    s <- integrate_seurat(s.split, method = seurat_method, nfeatures = nfeatures, npcs = npcs,
+    s <- integrate_seurat(s.split, dim.reduct = dim.reduct, nfeatures = nfeatures, npcs = npcs,
                           norm_method = norm_method, feature.blacklist = feature.blacklist,
                           regress.out = regress.out, verbose = verbose)
   } else if (integration_method == "harmony") {
@@ -63,7 +62,6 @@ runIntegration <- function(s.split,
     } else if (harmony_norm_merged) {
       print("Normalizing split object before integrating with Harmony.")
     }
-
     s <- integrate_harmony(s.split, nfeatures = nfeatures, npcs = npcs,
                            norm_method = norm_method, feature.blacklist = feature.blacklist,
                            group.by.vars = harmony.group.by.vars, scale_data = NULL, reduction.save = "harmony",
@@ -82,14 +80,28 @@ runIntegration <- function(s.split,
 #' The intention is to streamline analyses where multiple integration methods or parameter combinations need to be compared. Thus, the input Seurat object need only contain raw RNA counts.
 #'
 #' @param s.split A split Seurat object containing all samples/captures to integrate
-#' @param method Reduction to use for Seurat integration ("cca" or "rpca"). see \code{magrittr::\link[Seurat:FindIntegrationAnchors]{FindIntegrationAnchors}} reduction parameter for details.
+#' @param dim.reduct Reduction to use for Seurat integration ("cca" or "rpca"). see \code{\link[Seurat:FindIntegrationAnchors]{Seurat::FindIntegrationAnchors}} reduction parameter for details.
 #' @param npcs Total Number of PCs to compute and store (30 by default)
 #' @inheritParams Seurat::FindIntegrationAnchors
 #' @inheritParams NormFindVarFeatScaleData
 #'
 #' @returns Integrated Seurat object
+#'
+#' \dontrun{
+#' # log normalize each capture separately and integrate using canonical correlation analysis dim reduction
+#' s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
+#'
+#' # SCTransform each capture separately and integrate using recripocal PCA dim reduction
+#' s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
+#'
+#' # SCTransform each capture separately, blacklist TCR genes from variable features, and integrate using cca
+#' library(scGate)
+#' TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
+#' s.Harmony <- integrate_harmony(s, norm_method = "SCT", dim.reduct = "cca", feature.blacklist = "TCR_genes")
+#' }
+#'
 #' @export
-integrate_seurat <- function(s.split, method = "cca", nfeatures = 2000, npcs = 30, verbose = FALSE,
+integrate_seurat <- function(s.split, dim.reduct = "cca", nfeatures = 2000, npcs = 30, verbose = FALSE,
                              norm_method = "logNorm", feature.blacklist = NULL, regress.out = NULL,
                              k.anchor = 5) {
 
@@ -111,14 +123,14 @@ integrate_seurat <- function(s.split, method = "cca", nfeatures = 2000, npcs = 3
   # Must treat SCTransformed data differently from log normalized data. see: https://satijalab.org/seurat/articles/integration_rpca.html and ?PrepSCTIntegration
   if (s.split[[1]]@active.assay == "SCT") {
     s.split <- Seurat::PrepSCTIntegration(object.list = s.split, anchor.features = anchor.features)
-    if (method == "rpca") {
+    if (dim.reduct == "rpca") {
       s.split <- lapply(X = s.split, FUN = function(x) {
         x <- Seurat::RunPCA(x, features = anchor.features, verbose = verbose)
       })
     }
   } else if (s.split[[1]]@active.assay == "RNA") {
     # Must calculate PCA first if using RPCA integration algorithm
-    if (method == "rpca") {
+    if (dim.reduct == "rpca") {
       s.split <- lapply(X = s.split, FUN = function(x) {
         x <- Seurat::ScaleData(x, features = anchor.features, verbose = verbose)
         x <- Seurat::RunPCA(x, features = anchor.features, verbose = verbose)
@@ -128,7 +140,7 @@ integrate_seurat <- function(s.split, method = "cca", nfeatures = 2000, npcs = 3
 
   # Find integration anchors
   IntegAnchors <- Seurat::FindIntegrationAnchors(s.split, anchor.features = anchor.features,
-                                         reduction = method, dims = 1:npcs,
+                                         reduction = dim.reduct, dims = 1:npcs,
                                          verbose = verbose)
   # Integrate data
   normalization.method <- ifelse(s.split[[1]]@active.assay == "RNA", "LogNormalize", s.split[[1]]@active.assay)
@@ -141,7 +153,6 @@ integrate_seurat <- function(s.split, method = "cca", nfeatures = 2000, npcs = 3
     Seurat::RunUMAP(dims=1:npcs, verbose = verbose) %>%
     Seurat::FindNeighbors(reduction="pca", dims = 1:npcs, verbose = verbose) %>%
     Seurat::FindClusters(verbose = verbose)
-
 
   return(s.Integrated)
 }

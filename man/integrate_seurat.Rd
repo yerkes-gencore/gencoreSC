@@ -6,7 +6,7 @@
 \usage{
 integrate_seurat(
   s.split,
-  method = "cca",
+  dim.reduct = "cca",
   nfeatures = 2000,
   npcs = 30,
   verbose = FALSE,
@@ -19,7 +19,7 @@ integrate_seurat(
 \arguments{
 \item{s.split}{A split Seurat object containing all samples/captures to integrate}
 
-\item{method}{Reduction to use for Seurat integration ("cca" or "rpca"). see \code{magrittr::\link[Seurat:FindIntegrationAnchors]{FindIntegrationAnchors}} reduction parameter for details.}
+\item{dim.reduct}{Reduction to use for Seurat integration ("cca" or "rpca"). see \code{\link[Seurat:FindIntegrationAnchors]{Seurat::FindIntegrationAnchors}} reduction parameter for details.}
 
 \item{nfeatures}{Number of features to pass to Seurat::FindVariableFeatures()}
 
@@ -37,6 +37,19 @@ integrate_seurat(
 }
 \value{
 Integrated Seurat object
+
+\dontrun{
+# log normalize each capture separately and integrate using canonical correlation analysis dim reduction
+s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
+
+# SCTransform each capture separately and integrate using recripocal PCA dim reduction
+s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
+
+# SCTransform each capture separately, blacklist TCR genes from variable features, and integrate using cca
+library(scGate)
+TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
+s.Harmony <- integrate_harmony(s, norm_method = "SCT", dim.reduct = "cca", feature.blacklist = "TCR_genes")
+}
 }
 \description{
 A wrapper function for integration of RNA assays via Seurat using CCA or RPCA; normalizing, regressing out or blacklisting features etc. as specified.
