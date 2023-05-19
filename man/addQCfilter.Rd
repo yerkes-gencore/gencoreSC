@@ -6,6 +6,7 @@
 \usage{
 addQCfilter(
   obj,
+  split.by = NULL,
   filterName = "input",
   by_threshold = FALSE,
   cutoffs = defaultCutoffs,
@@ -16,18 +17,20 @@ addQCfilter(
 \arguments{
 \item{obj}{Seurat object}
 
-\item{filterName}{name of new metadata column with logical filter}
+\item{split.by}{Metadata column to split by for outlier detection if obj is not already split}
 
-\item{by_threshold}{logical to control whether to filter on thresholds defined in 'cutoffs'}
+\item{filterName}{Name of new metadata column with logical filter}
 
-\item{cutoffs}{named list of cutoffs}
+\item{by_threshold}{Logical to control whether to filter on thresholds defined in 'cutoffs'}
 
-\item{by_outlier}{logical to control whether to filter outliers}
+\item{cutoffs}{Named list of cutoffs}
 
-\item{nmads}{median absolute deviation used to define outliers}
+\item{by_outlier}{Logical to control whether to filter outliers}
+
+\item{nmads}{Median absolute deviation used to define outliers}
 }
 \value{
-Seurat object with new metadata column
+Seurat object with new metadata column. If passed a split object, will return split object. Same for a merged/single capture object.
 }
 \description{
 Adds logical metadata column for a given set of arbitrary cutoffs and/or outliers
