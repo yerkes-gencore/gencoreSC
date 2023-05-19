@@ -212,7 +212,6 @@ Seurat includes a set of genes to use for CC regression for humans. The Seurat f
 
 `checkCC()` serves as a wrapper for Seurat's functions. It provides plots to visualize separation by CC stage and returns Seurat objects with CC scoring metadata added.
 
-
 ## Mapping reference annotations
 
 Datasets with cell-type annotations can be used to estimate cell-types in your
@@ -298,7 +297,6 @@ per cluster
 
 `referenceMappingOutcomesFacetPlot()` will give you a more comprehensive look at
 all predicted cell-types and the associated prediction scores for each cluster.
-
 
 ## Batch correction
 
