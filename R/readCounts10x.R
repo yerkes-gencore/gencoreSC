@@ -27,9 +27,13 @@ readCounts10x <- function(capID,
                                       min.cells = min.cells,
                                       min.features = min.features,
                                       strip.suffix = strip.suffix)
-    for (name in names(counts_in)){
-      if (name != 'Gene Expression'){
-        obj[[name]] <- Seurat::CreateAssayObject(counts = counts_in[[name]])
+    for (assay_name in names(counts_in)){
+      if (assay_name != 'Gene Expression'){
+        assay_tag <- ifelse(assay_name == "Antibody Capture", "ADT",
+                            ifelse(assay_name == "Peaks", "ATAC",
+                                   assay_name))
+
+        obj[[assay_tag]] <- Seurat::CreateAssayObject(counts = counts_in[[assay_name]])
       }
     }
 
