@@ -32,5 +32,16 @@ names(soupx_files) <- samples$Label
 sc <- lapply(soupx_files, function(x){
   runSoupX(x[['unfiltered_mat_path']], x[['filtered_mat_path']], x[['clusters_path']])
 })
+
+## Extract contamination estimates
+
+extractSoupXContamEst <- function(sc){
+  rho <- sc$fit$rhoEst
+  rho_low <- sc$fit$rhoFWHM[1]
+  rho_high <- sc$fit$rhoFWHM[2]
+  return(list(rho_low = rho_low, rho = rho, rho_high = rho_high))
+}
+
+tmp <- data.table::rbindlist(lapply(sc, extractSoupXContamEst), idcol = '.id')
 }
 }
