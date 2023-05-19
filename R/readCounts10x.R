@@ -17,7 +17,7 @@ readCounts10x <- function(capID,
                           filepath,
                           min.cells=0,
                           min.features=0,
-                          strip.suffix=TRUE) {
+                          strip.suffix=FALSE) {
 
   counts_in <- Seurat::Read10X(data.dir = filepath)
   # Accommodate count matrices files with only RNA and those with multiple
