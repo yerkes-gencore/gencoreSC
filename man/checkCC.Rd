@@ -8,7 +8,7 @@ checkCC(
   obj,
   what2return = c("plot_list", "seurat_obj", "both"),
   cc.genes,
-  features2plot = c("Phase", "mitoRatio", "riboRatio")
+  features2plot = c("Phase", "mitoFr", "riboFr")
 )
 }
 \arguments{
