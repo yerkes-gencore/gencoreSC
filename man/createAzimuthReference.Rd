@@ -4,21 +4,22 @@
 \alias{createAzimuthReference}
 \title{Create an Azimuth reference and save to file}
 \usage{
-createAzimuthReference(ref, metadata, output_folder, dims = 1:50, ...)
+createAzimuthReference(ref, metadata_column, output_folder, ndims = 50, ...)
 }
 \arguments{
 \item{ref}{A Seurat object with a counts matrix and cell-type annotations}
 
-\item{metadata}{Columns of metadata to transfer onto query datasets}
+\item{metadata_column}{Columns of metadata to transfer onto query datasets}
 
 \item{output_folder}{Where to save the Azimuth reference files for future calls
 of \code{Azimuth::RunAzimuth()}}
 
-\item{dims}{Number of dimensions to use for PCA and UMAP}
+\item{ndims}{Number of dimensions to use for PCA and UMAP}
 
 \item{...}{
   Arguments passed on to \code{\link[Azimuth:AzimuthReference]{Azimuth::AzimuthReference}}
   \describe{
+    \item{\code{dims}}{Dimensions to use in reference neighbor finding}
     \item{\code{k.param}}{Defines k for the k-nearest neighbor algorithm}
     \item{\code{plotref}}{Either the name of the DimReduc in the provided Seurat object
 to use for the plotting reference or the DimReduc object itself.}
@@ -31,6 +32,7 @@ cells.}
 for the metadata. See \code{\link[Azimuth]{CreateColorMap}} for help
 generating your own.}
     \item{\code{assays}}{Assays to retain for transfer}
+    \item{\code{metadata}}{Metadata to retain for transfer}
     \item{\code{reference.version}}{Version of the Azimuth reference}
     \item{\code{verbose}}{Display progress/messages}
   }}
@@ -43,14 +45,21 @@ Create an Azimuth compatible reference from an existing Seurat object
 with a counts matrix and cell-type annotations in a metadata column. This
 wrapper will process the reference in a standard SCTransform workflow.
 The column of metadata with annotations should be specified to the \code{metadata}
-parameter. The resulting
+parameter. The reference will be saved to the specified output folder to
+be referenced in calls to \code{Azimuth::RunAzimuth()}.
+}
+\note{
+Code based on scripts from azimuth-references github, such as
+https://github.com/satijalab/azimuth-references/blob/master/human_motorcortex/scripts/export.R
 }
 \examples{
 \dontrun{
   ## Load reference data as Seurat object
   ref <- readRDS(here('saved_rds/tabula_sapiens_lymph_subset.Rds'))
   ## No processing needed, plug in
-  azimuth_ref <- createAzimuthReference(ref, 'cell_type', output_folder = here('reference/lymph_node_TS'))
+  azimuth_ref <- createAzimuthReference(ref,
+                                        'cell_type',
+                                        output_folder = here('reference/lymph_node_TS'))
 
   ## Don't need the reference object for this, just the files
   combined.obj <- RunAzimuth(combined.obj,
