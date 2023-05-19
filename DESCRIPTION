@@ -6,18 +6,28 @@ Authors@R:
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    DoubletFinder,
     dplyr,
     ggplot2,
     ggpubr,
     ggridges,
+    Matrix,
     magrittr,
     methods,
+    plotly,
+    plyr,
     rlang,
     scales,
     Seurat,
     SeuratObject,
     stats,
-    utils
+    SoupX,
+    tibble,
+    tidyr,
+    utils,
+    AnnotationHub,
+    S4Vectors,
+    zeallot
 Suggests:
     ggh4x,
     knitr,
