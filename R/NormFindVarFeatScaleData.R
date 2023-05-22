@@ -60,7 +60,6 @@ NormFindVarFeatScaleData <- function(s,
     # Remove extra features
     Seurat::VariableFeatures(s) <- Seurat::VariableFeatures(s)[1:nfeatures]
     if (scale_data == T) {
-      print("scaling data")
       s <- Seurat::ScaleData(s, verbose = verbose)
     }
   } else if (norm_method == 'SCT'){
