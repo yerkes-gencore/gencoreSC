@@ -8,39 +8,183 @@
 #' @param color_by metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))
 #' @param cutoffs named list of cutoff values used in 'addQCmetrics()' for the given filtName
 #' @param title main title
-#' @param sample_order Vector of levels for `split_by` used to order figures. Default is to use `gtools::mixedsort()` to deterimine levels.
+#' @param mixed_sort Whether to use `gtools::mixedsort()` to determine level order of `split_by`.
 #'
 #' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
 #'
 #' @importFrom gtools mixedsort
 #' @export
-plotQC_arranged <- function(obj,
+plotQCRidgesJoint <- function(obj,
                             filtName,
                             split_by,
                             color_by="mitoRatio",
                             cutoffs,
                             title,
-                            sample_order = gtools::mixedsort(unique(obj[[split_by]]))[[1]]) {
-  obj <- obj[,which(SeuratObject::FetchData(obj, vars=filtName) == T)]
-
-  if (!is.null(sample_order)){
-    if (all(sample_order %in% unique(obj[[split_by]][[1]]))){
-      obj[[split_by]] <- factor(obj[[split_by]][[1]], levels = sample_order)
-    } else {
-      message("`sample_order` doesn't match levels of 'split_by' argument.\n
-              Not able to order as requested.\n
-              If you did not set sample_order, explicitly set it to NULL to avoid this error.")
-    }
+                            mixed_sort = T) {
+  # if it's a split object, subset with lapply
+  if (!is.list(obj)) {
+    obj <- obj[,which(SeuratObject::FetchData(obj, vars=filtName) == T)]
+  } else if (is.list(obj)) {
+    obj <- lapply(obj, function(x) {
+      x[,which(SeuratObject::FetchData(x, vars=filtName) == T)]
+      })
   }
-  p_ridges <- obj %>%
-    .@meta.data %>%
+
+  # if it's a split object, merge metadata without merging whole object
+  if (!is.list(obj)) {
+    md <- obj@meta.data
+  } else if (is.list(obj)) {
+    md <- lapply(obj, function(x) {x@meta.data}) %>%
+      bind_rows()
+  }
+
+  if (mixed_sort == T) {
+    sample_order <- (md[[split_by]] %>% unique() %>% gtools::mixedsort())[[1]]
+    md[[split_by]] <- factor(md[[split_by]][[1]], levels = sample_order)
+  }
+
+  p_ridges <- md %>%
     plotQC_ridges(cutoffs=cutoffs, split_by=split_by)
 
-  p_joint <- obj %>%
-    .@meta.data %>%
+  p_joint <- md %>%
     plotQC_joint(cutoffs=cutoffs, split_by=split_by, color_by=color_by)
 
   p_arranged <- ggpubr::ggarrange(p_ridges, p_joint, ncol=2, nrow=1) %>%
-    ggpubr::annotate_figure(top = title)
+    ggpubr::annotate_figure(top = title, fig.lab.face = "bold")
   return(p_arranged)
 }
+
+#' Plot QC metadata across multiple captures or samples as density ridges plot
+#'
+#' Plots QC metadata for multiple captures or samples with ggplot2::geom_density_ridges
+#'
+#' @param metadata Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'
+#' @param cutoffs named list of cutoffs
+#' @param split_by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#'
+#' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
+#'
+#' @export
+plotQC_ridges <- function(metadata, cutoffs=NULL, split_by) {
+
+  # Visualize the number of cell counts per sample
+  p.nCells <- metadata %>%
+    ggplot(aes(y=.data[[split_by]], group=.data[[split_by]], fill=.data[[split_by]]), color=NA) +
+    geom_bar() +
+    theme_classic() +
+    theme(plot.title = element_text(hjust=0.5, face="bold")) +
+    theme(legend.position="none") +
+    ggtitle("N Cells")
+
+  p1 <- plotQC_ridges.helper(metadata, x="nUMI", split_by = split_by,
+                             log10x=T, cutoffs=cutoffs)
+
+  p2 <- plotQC_ridges.helper(metadata, x="nGene", split_by = split_by,
+                             log10x=T, cutoffs=cutoffs)
+
+  p3 <- plotQC_ridges.helper(metadata, x="log10GenesPerUMI", split_by = split_by,
+                             cutoffs=cutoffs)
+
+  p.mtRatio <- plotQC_ridges.helper(metadata, x="mitoRatio", split_by = split_by,
+                                    cutoffs=cutoffs)
+
+  p.rbRatio <- plotQC_ridges.helper(metadata, x="riboRatio", split_by = split_by,
+                                    cutoffs=cutoffs)
+
+  allCaps_QC_ridges <- ggpubr::ggarrange(p.nCells, p1, p2, p3, p.mtRatio, p.rbRatio, ncol=2, nrow=3)
+  return(allCaps_QC_ridges)
+}
+
+plotQC_ridges.helper <- function(metadata, x, split_by, cutoffs=NULL, log10x=F, y.text = FALSE) {
+
+  p <- metadata %>%
+    ggplot(aes(x=.data[[x]], y=.data[[split_by]], fill=.data[[split_by]]), color=NA) +
+    ggridges::geom_density_ridges(size = 0, alpha = 0.8) +
+    theme_classic() +
+    theme(legend.position="none") +
+    ggtitle(x) +
+    theme(plot.title = element_text(hjust=0.5, face="bold")) +
+    theme(legend.position="none")
+
+  if (y.text == FALSE) {
+    theme(axis.text.y = element_blank(), axis.title.y = element_blank(),
+          axis.ticks.y = element_blank(), axis.line.y = element_blank())
+  }
+
+  # Add vert line for min cutoff (if provided)
+  cutoff.min <- cutoffs[[paste0(x,".min")]]
+  if (!is.null(cutoff.min)) {
+    if (cutoff.min != 0) {
+      p <- p +
+        geom_vline(xintercept = cutoff.min)
+    }
+  }
+  # Add vert line for max cutoff (if provided)
+  cutoff.max <- cutoffs[[paste0(x,".max")]]
+  if (!is.null(cutoff.max)) {
+    if (cutoff.max != Inf) {
+      p <- p +
+        geom_vline(xintercept = cutoff.max)
+    }
+  }
+
+  if(log10x) {
+    p <- p + scale_x_log10()
+  }
+  return(p)
+}
+
+#' Plot QC nUMI vs nGene
+#'
+#' Visualize the correlation between genes detected and number of UMIs to determine whether strong presence of cells with low numbers of genes/UMIs
+#'
+#' @param metadata Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'
+#' @param cutoffs named list of cutoffs
+#' @param split_by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#' @param color_by metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))
+#' @param facet_colors logical; whether to plot facet colors with ggh4x::facet_wrap2 (experimental)
+#'
+#' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
+#'
+#' @export
+plotQC_joint <- function(metadata, split_by="capID", cutoffs = NULL,
+                         color_by="mitoRato", facet_colors = FALSE) {
+
+  metadata <- metadata %>%
+    mutate(!!split_by := fct_rev(.[[split_by]], ))
+
+  # plot
+  p <- metadata %>%
+    ggplot(aes(x=.data$nUMI, y=.data$nGene, color=.data[[color_by]])) +
+    geom_point(alpha=0.2) +
+    scale_color_gradient(low = "goldenrod1", high = "red", limits=c(0,1)) +
+    stat_smooth(method=lm) +
+    scale_x_log10() +
+    scale_y_log10() +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+  if (!facet_colors) {
+    p <- p +
+      facet_wrap(~fct_rev(.data[[split_by]]))
+  } else {
+    # define facet_wrap strip color as a ggplot aesthetic
+    num_splits <- length(unique(metadata[[split_by]]))
+    default_ggplot_hues <- scales::show_col(scales::hue_pal()(num_splits))
+    strip_color <- ggh4x::strip_themed(
+      background_x = ggh4x::elem_list_rect(fill = default_ggplot_hues)
+    )
+
+    p <- p +
+      ggh4x::facet_wrap2(~fct_rev(.data[[split_by]]), strip = strip_color)
+  }
+
+
+  if (!is.null(cutoffs)) {
+    p <- p +
+      geom_vline(xintercept = cutoffs$nUMI.min) +
+      geom_hline(yintercept = cutoffs$nGene.min)
+  }
+  return(p)
+}
+
