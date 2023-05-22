@@ -3,14 +3,15 @@
 #' Plot both ridges and joint qc plots as an object of class ggarrange
 #'
 #' @param obj Unfiltered Seurat object after running 'addQCmetrics()' and 'addQCfilter()'
-#' @param filtName metadata column to filter by for the plot
-#' @param split_by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
-#' @param color_by metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))
-#' @param cutoffs named list of cutoff values used in 'addQCmetrics()' for the given filtName
-#' @param title main title
+#' @param filtName Metadata column to filter by for the plot
+#' @param split_by Metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#' @param color_by Metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))
+#' @param cutoffs Named list of cutoff values used in 'addQCmetrics()' for the given filtName
+#' @param title Main title
 #' @param mixed_sort Whether to use `gtools::mixedsort()` to determine level order of `split_by`.
+#' @param y.text Whether to include labels for split_by on the y axis on ridge plots. Can set to `TRUE` when labels are very short.
 #'
-#' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
+#' @return An object of class ggarrange, which is a ggplot or a list of ggplot.
 #'
 #' @importFrom gtools mixedsort
 #' @export
@@ -20,7 +21,8 @@ plotQCRidgesJoint <- function(obj,
                             color_by="mitoRatio",
                             cutoffs,
                             title,
-                            mixed_sort = T) {
+                            mixed_sort = T,
+                            y.text = FALSE) {
   # if it's a split object, subset with lapply
   if (!is.list(obj)) {
     obj <- obj[,which(SeuratObject::FetchData(obj, vars=filtName) == T)]
@@ -59,13 +61,14 @@ plotQCRidgesJoint <- function(obj,
 #' Plots QC metadata for multiple captures or samples with ggplot2::geom_density_ridges
 #'
 #' @param metadata Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'
-#' @param cutoffs named list of cutoffs
-#' @param split_by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#' @param cutoffs Named list of cutoffs
+#' @param split_by Metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#' @param y.text Whether to include labels for split_by on the y axis. Can set to `TRUE` when labels are very short.
 #'
-#' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
+#' @return An object of class ggarrange, which is a ggplot or a list of ggplot.
 #'
 #' @export
-plotQC_ridges <- function(metadata, cutoffs=NULL, split_by) {
+plotQC_ridges <- function(metadata, cutoffs=NULL, split_by, y.text = FALSE) {
 
   # Visualize the number of cell counts per sample
   p.nCells <- metadata %>%
@@ -77,19 +80,19 @@ plotQC_ridges <- function(metadata, cutoffs=NULL, split_by) {
     ggtitle("N Cells")
 
   p1 <- plotQC_ridges.helper(metadata, x="nUMI", split_by = split_by,
-                             log10x=T, cutoffs=cutoffs)
+                             log10x=T, cutoffs=cutoffs, y.text = y.text)
 
   p2 <- plotQC_ridges.helper(metadata, x="nGene", split_by = split_by,
-                             log10x=T, cutoffs=cutoffs)
+                             log10x=T, cutoffs=cutoffs, y.text = y.text)
 
   p3 <- plotQC_ridges.helper(metadata, x="log10GenesPerUMI", split_by = split_by,
-                             cutoffs=cutoffs)
+                             cutoffs=cutoffs, y.text = y.text)
 
   p.mtRatio <- plotQC_ridges.helper(metadata, x="mitoRatio", split_by = split_by,
-                                    cutoffs=cutoffs)
+                                    cutoffs=cutoffs, y.text = y.text)
 
   p.rbRatio <- plotQC_ridges.helper(metadata, x="riboRatio", split_by = split_by,
-                                    cutoffs=cutoffs)
+                                    cutoffs=cutoffs, y.text = y.text)
 
   allCaps_QC_ridges <- ggpubr::ggarrange(p.nCells, p1, p2, p3, p.mtRatio, p.rbRatio, ncol=2, nrow=3)
   return(allCaps_QC_ridges)
@@ -139,19 +142,19 @@ plotQC_ridges.helper <- function(metadata, x, split_by, cutoffs=NULL, log10x=F, 
 #' Visualize the correlation between genes detected and number of UMIs to determine whether strong presence of cells with low numbers of genes/UMIs
 #'
 #' @param metadata Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'
-#' @param cutoffs named list of cutoffs
-#' @param split_by metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
-#' @param color_by metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))
-#' @param facet_colors logical; whether to plot facet colors with ggh4x::facet_wrap2 (experimental)
+#' @param cutoffs Named list of cutoffs
+#' @param split_by Metadata column to split ridge plots by (i.e. usually capture ID or sample ID)
+#' @param color_by Metric with to use for scale_color_gradient (i.e. "mitoRatio" or "riboRatio" or any other metric with limits=c(0,1))
+#' @param facet_colors Logical; whether to plot facet colors with ggh4x::facet_wrap2 (experimental)
 #'
-#' @return an object of class ggarrange, which is a ggplot or a list of ggplot.
+#' @return An object of class ggarrange, which is a ggplot or a list of ggplot.
 #'
 #' @export
 plotQC_joint <- function(metadata, split_by="capID", cutoffs = NULL,
                          color_by="mitoRato", facet_colors = FALSE) {
 
   metadata <- metadata %>%
-    mutate(!!split_by := fct_rev(.[[split_by]], ))
+    mutate(!!split_by := forcats::fct_rev(.[[split_by]]))
 
   # plot
   p <- metadata %>%

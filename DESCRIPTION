@@ -28,7 +28,8 @@ Imports:
     utils,
     AnnotationHub,
     S4Vectors,
-    zeallot
+    zeallot,
+    forcats
 Suggests:
     ggh4x,
     knitr,
