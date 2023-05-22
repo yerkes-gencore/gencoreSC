@@ -5,16 +5,17 @@
 \title{Plot both ridges and joint qc plots as a ggarrange object}
 \usage{
 plotQC_arranged(
-  obj.unfilt,
+  obj,
   filtName,
   split_by,
   color_by = "mitoRatio",
   cutoffs,
-  title
+  title,
+  sample_order = gtools::mixedsort(unique(obj[[split_by]]))[[1]]
 )
 }
 \arguments{
-\item{obj.unfilt}{Unfiltered Seurat object after running 'addQCmetrics()' and 'addQCfilter()'}
+\item{obj}{Unfiltered Seurat object after running 'addQCmetrics()' and 'addQCfilter()'}
 
 \item{filtName}{metadata column to filter by for the plot}
 
@@ -25,6 +26,8 @@ plotQC_arranged(
 \item{cutoffs}{named list of cutoff values used in 'addQCmetrics()' for the given filtName}
 
 \item{title}{main title}
+
+\item{sample_order}{Vector of levels for \code{split_by} used to order figures. Default is to use \code{gtools::mixedsort()} to deterimine levels.}
 }
 \value{
 an object of class ggarrange, which is a ggplot or a list of ggplot.

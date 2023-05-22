@@ -11,6 +11,7 @@ Imports:
     ggplot2,
     ggpubr,
     ggridges,
+    gtools,
     Matrix,
     magrittr,
     methods,
