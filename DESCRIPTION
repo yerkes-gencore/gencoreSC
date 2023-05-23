@@ -8,6 +8,7 @@ License: MIT + file LICENSE
 Imports: 
     DoubletFinder,
     dplyr,
+    forcats,
     ggplot2,
     ggpubr,
     ggridges,
@@ -15,7 +16,6 @@ Imports:
     Matrix,
     magrittr,
     methods,
-    plotly,
     plyr,
     rlang,
     scales,
@@ -25,15 +25,14 @@ Imports:
     SoupX,
     tibble,
     tidyr,
-    utils,
-    AnnotationHub,
+    utils
+Suggests:AnnotationHub,
     S4Vectors,
-    zeallot,
-    forcats
-Suggests:
     ggh4x,
     knitr,
-    rmarkdown
+    plotly,
+    rmarkdown,
+    zeallot
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
