@@ -12,7 +12,8 @@ plotQCRidgesJoint(
   cutoffs,
   title,
   mixed_sort = T,
-  y.text = FALSE
+  y.text = FALSE,
+  facet_colors = F
 )
 }
 \arguments{
@@ -29,6 +30,10 @@ plotQCRidgesJoint(
 \item{title}{Main title}
 
 \item{mixed_sort}{Whether to use \code{gtools::mixedsort()} to determine level order of \code{split_by}.}
+
+\item{y.text}{Whether to include labels for split_by on the y axis on ridge plots. Can set to \code{TRUE} when labels are very short.}
+
+\item{facet_colors}{Whether to color facet labels by \code{split_by}. Requires package \code{ggh4x}.}
 }
 \value{
 An object of class ggarrange, which is a ggplot or a list of ggplot.

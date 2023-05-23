@@ -50,7 +50,7 @@ plotQCRidgesJoint <- function(obj,
     plotQC_joint(cutoffs=cutoffs, split_by=split_by, color_by=color_by, facet_colors = facet_colors)
 
   p_arranged <- ggpubr::ggarrange(p_ridges, p_joint, ncol=2, nrow=1) %>%
-    ggpubr::annotate_figure(top = text_grob(title, face = "bold", size = 14))
+    ggpubr::annotate_figure(top = ggpubr::text_grob(title, face = "bold", size = 14))
   return(p_arranged)
 }
 
