@@ -23,26 +23,22 @@ plotQCRidgesJoint <- function(obj,
                             title,
                             mixed_sort = T,
                             y.text = FALSE) {
-  # if it's a split object, subset with lapply
-  if (!is.list(obj)) {
-    obj <- obj[,which(SeuratObject::FetchData(obj, vars=filtName) == T)]
-  } else if (is.list(obj)) {
-    obj <- lapply(obj, function(x) {
-      x[,which(SeuratObject::FetchData(x, vars=filtName) == T)]
-      })
-  }
 
-  # if it's a split object, merge metadata without merging whole object
+  # if it's a split object, merge metadata and subset according to logical in filtName
   if (!is.list(obj)) {
-    md <- obj@meta.data
+    md <- obj@meta.data %>%
+      filter(.[[filtName]])
   } else if (is.list(obj)) {
     md <- lapply(obj, function(x) {x@meta.data}) %>%
-      bind_rows()
+      bind_rows() %>%
+      filter(.[[filtName]])
   }
 
   if (mixed_sort == T) {
-    sample_order <- (md[[split_by]] %>% unique() %>% gtools::mixedsort())[[1]]
-    md[[split_by]] <- factor(md[[split_by]][[1]], levels = sample_order)
+    md <- md %>%
+      mutate(!!split_by := factor(.[[split_by]], levels = gtools::mixedsort(unique(md[[split_by]]))))
+    # sample_order <- unique(md[[split_by]]) %>% gtools::mixedsort()
+    # md[[split_by]] <- factor(md[[split_by]], levels = sample_order)
   }
 
   p_ridges <- md %>%
@@ -52,7 +48,7 @@ plotQCRidgesJoint <- function(obj,
     plotQC_joint(cutoffs=cutoffs, split_by=split_by, color_by=color_by)
 
   p_arranged <- ggpubr::ggarrange(p_ridges, p_joint, ncol=2, nrow=1) %>%
-    ggpubr::annotate_figure(top = title, fig.lab.face = "bold")
+    ggpubr::annotate_figure(top = text_grob(title, face = "bold", size = 14))
   return(p_arranged)
 }
 
@@ -69,6 +65,9 @@ plotQCRidgesJoint <- function(obj,
 #'
 #' @export
 plotQC_ridges <- function(metadata, cutoffs=NULL, split_by, y.text = FALSE) {
+
+  metadata <- metadata %>%
+    mutate(!!split_by := forcats::fct_rev(.[[split_by]]))
 
   # Visualize the number of cell counts per sample
   p.nCells <- metadata %>%
