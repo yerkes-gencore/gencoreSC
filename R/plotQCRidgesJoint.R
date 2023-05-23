@@ -29,16 +29,16 @@ plotQCRidgesJoint <- function(obj,
   # if it's a split object, merge metadata and subset according to logical in filtName
   if (!is.list(obj)) {
     md <- obj@meta.data %>%
-      filter(.[[filtName]])
+      dplyr::filter(.[[filtName]])
   } else if (is.list(obj)) {
     md <- lapply(obj, function(x) {x@meta.data}) %>%
-      bind_rows() %>%
-      filter(.[[filtName]])
+      dplyr::bind_rows() %>%
+      dplyr::filter(.[[filtName]])
   }
 
   if (mixed_sort == T) {
     md <- md %>%
-      mutate(!!split_by := factor(.[[split_by]], levels = gtools::mixedsort(unique(md[[split_by]]))))
+      dplyr::mutate(!!split_by := factor(.[[split_by]], levels = gtools::mixedsort(unique(md[[split_by]]))))
     # sample_order <- unique(md[[split_by]]) %>% gtools::mixedsort()
     # md[[split_by]] <- factor(md[[split_by]], levels = sample_order)
   }
@@ -69,7 +69,7 @@ plotQCRidgesJoint <- function(obj,
 plotQC_ridges <- function(metadata, cutoffs=NULL, split_by, y.text = FALSE) {
 
   metadata <- metadata %>%
-    mutate(!!split_by := forcats::fct_rev(.[[split_by]]))
+    dplyr::mutate(!!split_by := forcats::fct_rev(.[[split_by]]))
 
   # Visualize the number of cell counts per sample
   p.nCells <- metadata %>%
