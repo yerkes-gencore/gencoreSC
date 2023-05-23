@@ -10,6 +10,7 @@
 #' @param title Main title
 #' @param mixed_sort Whether to use `gtools::mixedsort()` to determine level order of `split_by`.
 #' @param y.text Whether to include labels for split_by on the y axis on ridge plots. Can set to `TRUE` when labels are very short.
+#' @param facet_colors Whether to color facet labels by `split_by`. Requires package `ggh4x`.
 #'
 #' @return An object of class ggarrange, which is a ggplot or a list of ggplot.
 #'
@@ -22,7 +23,8 @@ plotQCRidgesJoint <- function(obj,
                             cutoffs,
                             title,
                             mixed_sort = T,
-                            y.text = FALSE) {
+                            y.text = FALSE,
+                            facet_colors = F) {
 
   # if it's a split object, merge metadata and subset according to logical in filtName
   if (!is.list(obj)) {
@@ -45,7 +47,7 @@ plotQCRidgesJoint <- function(obj,
     plotQC_ridges(cutoffs=cutoffs, split_by=split_by)
 
   p_joint <- md %>%
-    plotQC_joint(cutoffs=cutoffs, split_by=split_by, color_by=color_by)
+    plotQC_joint(cutoffs=cutoffs, split_by=split_by, color_by=color_by, facet_colors = facet_colors)
 
   p_arranged <- ggpubr::ggarrange(p_ridges, p_joint, ncol=2, nrow=1) %>%
     ggpubr::annotate_figure(top = text_grob(title, face = "bold", size = 14))
@@ -152,9 +154,6 @@ plotQC_ridges.helper <- function(metadata, x, split_by, cutoffs=NULL, log10x=F, 
 plotQC_joint <- function(metadata, split_by="capID", cutoffs = NULL,
                          color_by="mitoRato", facet_colors = FALSE) {
 
-  metadata <- metadata %>%
-    mutate(!!split_by := forcats::fct_rev(.[[split_by]]))
-
   # plot
   p <- metadata %>%
     ggplot(aes(x=.data$nUMI, y=.data$nGene, color=.data[[color_by]])) +
@@ -168,17 +167,16 @@ plotQC_joint <- function(metadata, split_by="capID", cutoffs = NULL,
 
   if (!facet_colors) {
     p <- p +
-      facet_wrap(~fct_rev(.data[[split_by]]))
+      facet_wrap(~.data[[split_by]])
   } else {
     # define facet_wrap strip color as a ggplot aesthetic
-    num_splits <- length(unique(metadata[[split_by]]))
-    default_ggplot_hues <- scales::show_col(scales::hue_pal()(num_splits))
-    strip_color <- ggh4x::strip_themed(
-      background_x = ggh4x::elem_list_rect(fill = default_ggplot_hues)
-    )
+    num_splits <- unique(metadata[[split_by]]) %>% length()
+    strip_colors <- ggh4x::strip_themed(background_x = ggh4x::elem_list_rect(
+      fill = scales::hue_pal()(num_splits) %>% rev
+      ))
 
     p <- p +
-      ggh4x::facet_wrap2(~fct_rev(.data[[split_by]]), strip = strip_color)
+      ggh4x::facet_wrap2(~.data[[split_by]], strip = strip_colors)
   }
 
 
