@@ -6,6 +6,7 @@ Authors@R:
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    AnnotationHub,
     DoubletFinder,
     dplyr,
     forcats,
@@ -16,23 +17,23 @@ Imports:
     Matrix,
     magrittr,
     methods,
+    plotly,
     plyr,
     rlang,
-    scales,
+    S4Vectors,
     Seurat,
     SeuratObject,
     stats,
     SoupX,
     tibble,
     tidyr,
-    utils
-Suggests:AnnotationHub,
-    S4Vectors,
+    utils,
+    zeallot
+Suggests:
     ggh4x,
     knitr,
-    plotly,
     rmarkdown,
-    zeallot
+    scales
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
