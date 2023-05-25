@@ -90,9 +90,9 @@ plotSoupXGeneAdjustments2 <- function(sc,
     count_diff <- count_diff[!grepl(ens_pattern, count_diff$Gene),]
   }
   soup_plot <- ggplot2::ggplot(count_diff,
-                      aes(x=diff,
-                          y=total,
-                          text=Gene,
+                      aes(x=.data$diff,
+                          y=.data$total,
+                          text=.data$Gene,
                           alpha=0.5)) +
     ggplot2::geom_point() +
     ggplot2::labs(x='Portion of reads removed',
