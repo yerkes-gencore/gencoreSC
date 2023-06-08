@@ -1,8 +1,9 @@
 #' Plot genes with high degree of contamination correction
 #'
 #' Uses the results of `runSoupX()` to produce a plot of genes with a high
-#'  degree of contamination correction through SoupX. This is defined as genes
-#'  with a high portion of cell-level counts set to 0 after running SoupX.
+#'  degree of contamination correction through SoupX. This can be defined as genes
+#'  with a high portion of cell-level counts set to 0 after running SoupX (`plotSoupXGeneAdjustments()`).
+#'  Another metric is the portion of reads removed for a given gene (`plotSoupXGeneAdjustments2()`).
 #'  Ideally genes shown here should be strong cell-type markers,
 #'  e.g. hemoglobins or immunoglobulins. For lightweight rendering
 #'  and to focus on non-trivial signal, only genes found in a sufficient number
@@ -55,20 +56,56 @@ plotSoupXGeneAdjustments <- function(sc,
                               y=.data$original,
                               text=.data$Gene,
                               alpha = 0.5)) +
-    geom_point() +
-    labs(x='Portion of cells set to zero',
+    ggplot2::geom_point() +
+    ggplot2::labs(x='Portion of cells set to zero',
          y='Original number of cells with expression',
          title = 'Genes most affected by SoupX correction') +
-    theme_bw() +
-    guides(alpha = 'none',
+    ggplot2::theme_bw() +
+    ggplot2::guides(alpha = 'none',
            label = 'none') +
-    lims(x = c(xlim_min, 1)) +
-    scale_y_log10(limits=c((ylim_min),NA))
+    ggplot2::lims(x = c(xlim_min, 1)) +
+    ggplot2::scale_y_log10(limits=c((ylim_min),NA))
 
   message(paste0('This plot focuses on genes found in at least ',
                  ylim_min, ' cells in the original dataset',
                  'and a minimum adjustment of ',
                  xlim_min, ' to reduce rendering burden.'))
+  plotly::ggplotly(soup_plot, tooltip = 'text') %>%
+    plotly::config(
+      displaylogo = FALSE,
+      modeBarButtonsToRemove = c("zoomIn2d", "zoomOut2d", 'lasso2d', 'pan2d', 'autoScale2d', 'zoom2d')
+    )
+}
+
+
+plotSoupXGeneAdjustments2 <- function(sc,
+                                      ylim_min = 1e+02,
+                                      xlim_min = 0.05,
+                                      hide_ensembl = FALSE,
+                                      ens_pattern = '^ENS'){
+  compare <- 1 - (rowSums(sc$adjusted_counts) / rowSums(sc$toc))
+  count_diff <- data.frame(diff=compare, total=rowSums(sc$toc)) %>%
+    rownames_to_column('Gene') %>% drop_na()
+  if (hide_ensembl){
+    count_diff <- count_diff[!grepl(ens_pattern, count_diff$Gene),]
+  }
+  soup_plot <- ggplot2::ggplot(count_diff,
+                      aes(x=.data$diff,
+                          y=.data$total,
+                          text=.data$Gene,
+                          alpha=0.5)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(x='Portion of reads removed',
+         y='Original count total',
+         title = 'Genes most affected by SoupX correction',
+         caption = paste0('This plot focuses on genes with at least ',
+                          ylim_min, ' counts and a minimum adjustment of ',
+                          xlim_min, ' to reduce rendering burden.')) +
+    ggplot2::theme_bw() +
+    ggplot2::guides(alpha = 'none',
+           label = 'none') +
+    ggplot2::lims(x = c(xlim_min, 1)) +
+    ggplot2::scale_y_log10(limits=c((ylim_min),NA))
   plotly::ggplotly(soup_plot, tooltip = 'text') %>%
     plotly::config(
       displaylogo = FALSE,
