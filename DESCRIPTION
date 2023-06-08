@@ -29,7 +29,9 @@ Imports:
     S4Vectors,
     zeallot,
     harmony,
-    STACAS
+    STACAS,
+    viridis,
+    clustree
 Suggests:
     ggh4x,
     knitr,

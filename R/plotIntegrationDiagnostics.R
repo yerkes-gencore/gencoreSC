@@ -1,6 +1,6 @@
-#' Generates diagnostic plots for evaluating Integration methods
+#' Generate diagnostic plots for evaluating Integration methods
 #'
-#' Generates (1) UMAP colored by sample label; (2) UMAP colored by cell labels; (3) UMAP colored by seurat_clusters (for all resolution specified); (4) A raster plot showing the number of cells of each given cell type assigned to each given seurat_clusters (for all resolution specified).
+#' Generates (1) UMAP colored by sample label; (2) UMAP colored by cell labels; (3) UMAP colored by seurat_clusters (for all resolution specified); (4) A raster plot showing the number of cells of each given cell type assigned to each given seurat_clusters (for all resolution specified); (5) A clustree looking across all resolutions specified.
 #'
 #' @param plot_list list object to store plots in
 #' @param seurat.obj Seurat object
@@ -24,7 +24,8 @@
 #'        cell_labels = list(
 #'          res
 #'          )
-#'        )
+#'        ),
+#'      "clustree"
 #'      )
 #'    )
 #'  )
@@ -40,17 +41,17 @@
 #'                             group.by.vars = "Sample_Name", harmony_norm_merged = FALSE)
 #'
 #' # Intiialize an empty list to store plots in
-#' plot_list.annotation <- list()
+#' plot_list <- list()
 #'
 #' # Generate diagnostic plots
-#' plot_list.annotation <-
+#' plot_list <-
 #'   plotIntegrationDiagnostics(
 #'     # global params
-#'     plot_list = plot_list.annotation, seurat.obj = s.Harmony_v1,
-#'     sample_col = "Sample_Name", subset_id = "full", cell_labels = "ImmGen.LCMV.collapsed.labels",
+#'     plot_list = plot_list, seurat.obj = s.Harmony_v1,
+#'     sample_col = "Sample_Name", subset_id = "full", cell_labels = "ImmGen.labels",
 #'     res = seq(0.1, 1.0, 0.1),
 #'     # this integration run
-#'     integration_name = "Harmony_logNorm_split"
+#'     integration_name = "Harmony_split"
 #'   )
 #'
 #' #' # Run a different version of the integration (harmony_norm_merged = TRUE)
@@ -58,33 +59,33 @@
 #'                             group.by.vars = "Sample_Name", harmony_norm_merged = TRUE)
 #'
 #' # Generate diagnostic plots
-#' plot_list.annotation <-
+#' plot_list <-
 #'   plotIntegrationDiagnostics(
 #'     # global params
-#'     plot_list = plot_list.annotation, seurat.obj = s.Harmony_v2,
-#'     sample_col = "Sample_Name", subset_id = "full", cell_labels = "ImmGen.LCMV.collapsed.labels",
+#'     plot_list = plot_list, seurat.obj = s.Harmony_v2,
+#'     sample_col = "Sample_Name", subset_id = "full", cell_labels = "ImmGen.labels",
 #'     res = seq(0.1, 1.0, 0.1),
 #'     # this integration run
-#'     integration_name = "Harmony_logNorm_merged"
+#'     integration_name = "Harmony_merged"
 #'   )
 #'
-#' # Plot all the plots in 2x2 grids for Harmony_logNorm_split (Harmony_v1)
+#' # Plot all the plots in 2x2 grids for Harmony_split (Harmony_v1)
 #' for (res in seq(0.1, 1.0, 0.1)) {
-#'   p <- ggarrange(plot_list.annotation$full$Harmony_logNorm_split$Sample_Name,
-#'                  plot_list.annotation$full$Harmony_logNorm_split$ImmGen.LCMV.collapsed.labels,
-#'                  plot_list.annotation$full$Harmony_logNorm_split$seurat_clusters[[paste(res)]],
-#'                  plot_list.annotation$full$Harmony_logNorm_split$clust.ann.compare$ImmGen.LCMV.collapsed.labels[[paste(res)]],
+#'   p <- ggarrange(plot_list$full$Harmony_split$Sample_Name,
+#'                  plot_list$full$Harmony_split$ImmGen.labels,
+#'                  plot_list$full$Harmony_split$seurat_clusters[[paste(res)]],
+#'                  plot_list$full$Harmony_split$clust.ann.compare$ImmGen.labels[[paste(res)]],
 #'                  ncol=2, nrow = 2) %>%
 #'     annotate_figure(top = paste0("res = ", res))
 #'   print(p)
 #' }
 #'
-#' #' # Plot all the plots in 2x2 grids for Harmony_logNorm_merged (Harmony_v2)
+#' #' # Plot all the plots in 2x2 grids for Harmony_merged (Harmony_v2)
 #' for (res in seq(0.1, 1.0, 0.1)) {
-#'   p <- ggarrange(plot_list.annotation$full$Harmony_logNorm_merged$Sample_Name,
-#'                  plot_list.annotation$full$Harmony_logNorm_merged$ImmGen.LCMV.collapsed.labels,
-#'                  plot_list.annotation$full$Harmony_logNorm_merged$seurat_clusters[[paste(res)]],
-#'                  plot_list.annotation$full$Harmony_logNorm_merged$clust.ann.compare$ImmGen.LCMV.collapsed.labels[[paste(res)]],
+#'   p <- ggarrange(plot_list$full$Harmony_merged$Sample_Name,
+#'                  plot_list$full$Harmony_merged$ImmGen.labels,
+#'                  plot_list$full$Harmony_merged$seurat_clusters[[paste(res)]],
+#'                  plot_list$full$Harmony_merged$clust.ann.compare$ImmGen.labels[[paste(res)]],
 #'                  ncol=2, nrow = 2) %>%
 #'     annotate_figure(top = paste0("res = ", res))
 #'   print(p)
@@ -92,7 +93,7 @@
 #'
 #'}
 #' @export
-plotIntegrationDiagnostics <- function(plot_list, s, subset_id, integration_name, sample_col, cell_labels, res) {
+plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integration_name, sample_col, cell_labels, res) {
   # Save plots for comparing integration methods
   print("Saving plots.")
   plot_list[[subset_id]][[integration_name]][[sample_col]] <-
@@ -120,16 +121,28 @@ plotIntegrationDiagnostics <- function(plot_list, s, subset_id, integration_name
   }
 
   plot_list[[subset_id]][[integration_name]][["clustree"]] <-
-    clustree(seurat.obj, prefix = paste0(seurat.obj@active.assay,"_snn_res."), verbose = F)
+    clustree::clustree(seurat.obj, prefix = paste0(seurat.obj@active.assay,"_snn_res."), verbose = F)
 
   return(plot_list)
 }
 
-# Plot UMAP of integrated (or merged) data
-plot.umap.integrated <- function(seurat.obj, group.by, title, label.size, legend=TRUE) {
+#' Plot UMAP of integrated (or merged) data
+#'
+#' Wrapper for DimPlot to plot aspect.ratio=1 plot with some other convenient formatting. Used internally by \code{\link[gencoreSC:plotIntegrationDiagnostics]{PlotIntegrationDiagnostics()}}.
+#'
+#' @param seurat.obj Seurat object
+#' @param group.by Metadata column to group (color) UMAP by
+#' @param title Title of plot
+#' @param label.size Cluster and legend text label size
+#' @param legend Whether to plot legend
+#'
+#' @returns ggplot object UMAP
+#'
+#' @export
+plot.umap.integrated <- function(seurat.obj, group.by, title, label.size, legend=TRUE, ...) {
   p <- DimPlot(seurat.obj, reduction = "umap",
                group.by = group.by,
-               label = F) +
+               label = F, ...) +
     ggtitle(title) +
     theme(aspect.ratio = 1,
           plot.title = element_text(size=8),
@@ -147,7 +160,15 @@ plot.umap.integrated <- function(seurat.obj, group.by, title, label.size, legend
   return(p)
 }
 
-# Modify a UMAP to fit a ggarranged format better
+#' Modify a UMAP to fit a ggarranged format better
+#'
+#' Removes axes and shrinks legend size of \code{\link[Seurat:DimPlot]{DimPlot()}} or \code{\link[gencoreSC:plot.umap.integrated]{plot.umap.integrated()}}.
+#'
+#' @param p ggplot object
+#'
+#' @returns ggplot object UMAP with no axes and smaller legend
+#'
+#' @export
 plot_smaller <- function(p) {
   p +
     theme(axis.line = element_blank(),
@@ -164,19 +185,34 @@ plot_smaller <- function(p) {
                         size=1)))
 }
 
-# Plot raster/tile heatmap shoing % cells in a cluster assigned to each cell annotation
+#' Plot comparing unsupervised clusters to cell annotations
+#'
+#' Plot raster/tile heatmap showing the log10(n+10) cells in a cluster assigned to each cell type. Useful for manually assigning cell type labels to clusters. Used internally by \code{\link[gencoreSC:plotIntegrationDiagnostics]{PlotIntegrationDiagnostics()}}.
+#'
+#' @param obj.seurat Seurat object
+#' @param labels Metadata column name for cell type annotation labels in metadata
+#' @param res Clustering resolution, passed to \code{\link[Seurat:FindClusters]{Seurat::FindClusters()}}
+#' @param assay Assay to use (default "RNA")
+#'
+#' @returns ggplot object UMAP
+#'
+#' @note There definitely better ways to visualize this. At present, the color is on an absolute scale which makes cell type assignment to smaller clusters appear less confident.
+#'
+#' Perhaps a heatmap scaled by column (cluster) would be better?
+#'
+#' @export
 plot.cluster.annot.compare <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
   obj.seurat <- FindClusters(obj.seurat, resolution = res, assay = assay)
 
   p <- obj.seurat@meta.data %>%
-    group_by(seurat_clusters, .data[[labels]]) %>%
+    group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
     summarize(n=n()) %>%
     ungroup() %>%
     group_by(.data[[labels]]) %>%
-    mutate(colSum = sum(n)) %>%
+    mutate(!!colSum := sum(n)) %>%
     ungroup() %>%
-    dplyr::filter(colSum > 10) %>%
-    ggplot(data=., aes(x=seurat_clusters, y = .data[[labels]],
+    dplyr::filter(.data[["colSum"]] > 10) %>%
+    ggplot(data=., aes(x=.data[["seurat_clusters"]], y = .data[[labels]],
                        fill = log10(n+10))) +
     geom_tile() +
     scale_fill_viridis(discrete=FALSE) +

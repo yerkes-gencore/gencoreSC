@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom clustree clustree
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 element_blank
 #' @importFrom ggplot2 element_text
@@ -26,6 +27,7 @@
 #' @importFrom utils read.csv
 #' @importFrom utils read.table
 #' @importFrom utils tail
+#' @importFrom viridis scale_fill_viridis
 #' @importFrom zeallot %<-%
 ## usethis namespace: end
 NULL
