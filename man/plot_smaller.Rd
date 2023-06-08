@@ -13,5 +13,5 @@ plot_smaller(p)
 ggplot object UMAP with no axes and smaller legend
 }
 \description{
-Removes axes and shrinks legend size of \code{\link[Seurat:DimPlot]{DimPlot()}} or \code{\link[gencoreSC:plot.umap.integrated]{plot.umap.integrated()}}.
+Removes axes and shrinks legend size of \code{\link[Seurat:DimPlot]{DimPlot()}} or \code{\link[gencoreSC:plotUmapIntegrated]{plotUmapIntegrated()}}.
 }

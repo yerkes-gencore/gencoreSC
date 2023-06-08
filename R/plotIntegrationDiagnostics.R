@@ -97,12 +97,12 @@ plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integra
   # Save plots for comparing integration methods
   print("Saving plots.")
   plot_list[[subset_id]][[integration_name]][[sample_col]] <-
-    plot.umap.integrated(seurat.obj, group.by=sample_col,
+    plotUmapIntegrated(seurat.obj, group.by=sample_col,
                          title=paste0(integration_name,":\n", sample_col),
                          label.size=0, legend = TRUE)
 
   plot_list[[subset_id]][[integration_name]][[cell_labels]] <-
-    plot.umap.integrated(seurat.obj, group.by=cell_labels,
+    plotUmapIntegrated(seurat.obj, group.by=cell_labels,
                          title=paste0(integration_name,":\n", cell_labels),
                          label.size=2, legend = TRUE)
 
@@ -112,12 +112,12 @@ plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integra
     seurat.obj <- FindClusters(seurat.obj, resolution = resi, assay = seurat.obj@active.assay, verbose = F)
 
     plot_list[[subset_id]][[integration_name]][["seurat_clusters"]][[as.character(resi)]] <-
-      plot.umap.integrated(seurat.obj, group.by="seurat_clusters",
+      plotUmapIntegrated(seurat.obj, group.by="seurat_clusters",
                            title=paste0(integration_name,":\n", "seurat_clusters"),
                            label.size=3, legend = TRUE)
 
     plot_list[[subset_id]][[integration_name]][["clust.ann.compare"]][[cell_labels]][[as.character(resi)]] <-
-      plot.cluster.annot.compare(seurat.obj, labels = cell_labels, res = resi)
+      plotClusterAnnotTile(seurat.obj, labels = cell_labels, res = resi)
   }
 
   plot_list[[subset_id]][[integration_name]][["clustree"]] <-
@@ -139,10 +139,10 @@ plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integra
 #' @returns ggplot object UMAP
 #'
 #' @export
-plot.umap.integrated <- function(seurat.obj, group.by, title, label.size, legend=TRUE, ...) {
+plotUmapIntegrated <- function(seurat.obj, group.by, title, label.size, legend=TRUE) {
   p <- DimPlot(seurat.obj, reduction = "umap",
                group.by = group.by,
-               label = F, ...) +
+               label = F) +
     ggtitle(title) +
     theme(aspect.ratio = 1,
           plot.title = element_text(size=8),
@@ -162,7 +162,7 @@ plot.umap.integrated <- function(seurat.obj, group.by, title, label.size, legend
 
 #' Modify a UMAP to fit a ggarranged format better
 #'
-#' Removes axes and shrinks legend size of \code{\link[Seurat:DimPlot]{DimPlot()}} or \code{\link[gencoreSC:plot.umap.integrated]{plot.umap.integrated()}}.
+#' Removes axes and shrinks legend size of \code{\link[Seurat:DimPlot]{DimPlot()}} or \code{\link[gencoreSC:plotUmapIntegrated]{plotUmapIntegrated()}}.
 #'
 #' @param p ggplot object
 #'
@@ -201,7 +201,7 @@ plot_smaller <- function(p) {
 #' Perhaps a heatmap scaled by column (cluster) would be better?
 #'
 #' @export
-plot.cluster.annot.compare <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
+plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
   obj.seurat <- FindClusters(obj.seurat, resolution = res, assay = assay)
 
   p <- obj.seurat@meta.data %>%
