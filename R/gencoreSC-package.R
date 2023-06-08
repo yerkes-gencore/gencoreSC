@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom clustree clustree
+#' @importFrom forcats fct_rev
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 element_blank
 #' @importFrom ggplot2 element_text

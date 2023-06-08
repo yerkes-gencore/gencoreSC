@@ -2,22 +2,30 @@ Package: gencoreSC
 Title: ENPRC Genomics Core Single Cell Utility Functions
 Version: 0.0.0.1
 Authors@R: 
-    person("Micah", "Fletcher", , "mpfletc@emory.edu", role = c("aut", "cre"))
+    c(person("Micah", "Fletcher", 
+             email = "mpfletc@emory.edu", 
+             role = c("aut", "cre")),
+      person("Derrik", "Gratz", 
+             email = "derrik.gratz@emory.edu", 
+             role = c("aut", "ctb")))
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    AnnotationHub,
     DoubletFinder,
     dplyr,
+    forcats,
     ggplot2,
     ggpubr,
     ggridges,
+    gtools,
     Matrix,
     magrittr,
     methods,
     plotly,
     plyr,
     rlang,
-    scales,
+    S4Vectors,
     Seurat,
     SeuratObject,
     stats,
@@ -25,17 +33,16 @@ Imports:
     tibble,
     tidyr,
     utils,
-    AnnotationHub,
-    S4Vectors,
-    zeallot,
     harmony,
     STACAS,
     viridis,
-    clustree
+    clustree,
+    zeallot
 Suggests:
     ggh4x,
     knitr,
-    rmarkdown
+    rmarkdown,
+    scales
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
