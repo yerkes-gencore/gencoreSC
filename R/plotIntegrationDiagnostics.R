@@ -202,6 +202,9 @@ plot_smaller <- function(p) {
 #'
 #' @export
 plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
+  # Fix undefined global variable devtools::check() note
+  colSum <- NULL
+
   obj.seurat <- FindClusters(obj.seurat, resolution = res, assay = assay)
 
   p <- obj.seurat@meta.data %>%
