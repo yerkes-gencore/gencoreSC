@@ -19,6 +19,7 @@
 #' @param gsub_end_pattern A second pattern to replace, after first is done.
 #'  This is intended for trailing pattern, but technically is just another `gsub()` call.
 #' @param gsub_end_replace Replace term for `gsub_end_pattern`
+#' @param reduction Seurat reduction to pull cell embeddings from
 #'
 #' @importFrom SoupX setDR
 #' @returns A soup channel object from `SoupX`

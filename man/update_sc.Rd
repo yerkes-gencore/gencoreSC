@@ -20,6 +20,8 @@ update_sc(
 
 \item{seur_obj}{A Seurat object processed to only contain cells of interest}
 
+\item{reduction}{Seurat reduction to pull cell embeddings from}
+
 \item{gsub_start_pattern}{Pattern to replace at beginning of cell names}
 
 \item{gsub_start_replace}{Replace term for \code{gsub_start_pattern}}
@@ -42,13 +44,16 @@ allows additional plotting functions from \code{SoupX} to be used.
 \details{
 Since cell names may differ from the processed seurat object and soup channel,
 there is some functionality to make the names agree between the two
-objects. The defaults should catch most changes made by \code{Seurat::RenameCells()} and the suffixes add by \code{Seurat::CreateSeuratObject()}.
+objects. The defaults should catch most changes made by \code{Seurat::RenameCells()}
+and the suffixes add by \code{Seurat::CreateSeuratObject()}.
 }
 \examples{
 \dontrun{
+## Where 'sc' is a list of soup channels and 'objs_filt_mapped' is a list of seurat objects
+sc_parsed <- mapply(update_sc, sc, objs_filt_mapped, SIMPLIFY = FALSE)
 
-sc_parsed <- mapply(update_SC, sc, objs_filt_mapped, SIMPLIFY = FALSE)
+## soup channels can now be used with other SoupX plotting functions
+plotMarkerMap(sc_parsed$R1, 'IGLV2-11')
 
-## Where `sc` is a list of soup channels and `objs_filt_mapped` is a list of seurat objects
 }
 }
