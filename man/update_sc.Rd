@@ -20,6 +20,8 @@ update_sc(
 
 \item{seur_obj}{A Seurat object processed to only contain cells of interest}
 
+\item{reduction}{Reduction to use (default: 'umap')}
+
 \item{gsub_start_pattern}{Pattern to replace at beginning of cell names}
 
 \item{gsub_start_replace}{Replace term for \code{gsub_start_pattern}}
