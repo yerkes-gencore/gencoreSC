@@ -21,7 +21,7 @@
 #' @examples
 #' \dontrun{
 #' # integrate via Seurat with reciprocal PCA dim reduction method
-#' s.CCA <- runIntegration(s.split, integration_method = "seurat", norm_method = "logNorm",
+#' s.RPCA <- runIntegration(s.split, integration_method = "seurat", norm_method = "logNorm",
 #'                         reduction = "rpca")
 #'
 #' # integrate via Harmony, normalizing each sample separately
@@ -104,15 +104,15 @@ runIntegration <- function(s.split,
 #' @examples
 #' \dontrun{
 #' # log normalize and integrate using canonical correlation analysis dim reduction
-#' s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
+#' s.CCA <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
 #'
 #' # SCTransform and integrate using recripocal PCA dim reduction
-#' s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
+#' s.RPCA <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
 #'
 #' # SCTransform, blacklist TCR genes, and integrate using cca
 #' library(scGate)
 #' TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-#' s.Harmony <- integrate_seurat(s, norm_method = "SCT", dim.reduct = "cca",
+#' s.CCA <- integrate_seurat(s, norm_method = "SCT", dim.reduct = "cca",
 #'                               feature.blacklist = "TCR_genes")
 #' }
 #'

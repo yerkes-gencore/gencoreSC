@@ -57,7 +57,7 @@ The intention is to streamline analyses where multiple integration methods or pa
 \examples{
 \dontrun{
 # integrate via Seurat with reciprocal PCA dim reduction method
-s.CCA <- runIntegration(s.split, integration_method = "seurat", norm_method = "logNorm",
+s.RPCA <- runIntegration(s.split, integration_method = "seurat", norm_method = "logNorm",
                         reduction = "rpca")
 
 # integrate via Harmony, normalizing each sample separately

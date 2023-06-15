@@ -48,15 +48,15 @@ The intention is to streamline analyses where multiple integration methods or pa
 \examples{
 \dontrun{
 # log normalize and integrate using canonical correlation analysis dim reduction
-s.Harmony <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
+s.CCA <- integrate_seurat(s.split, norm_method = "logNorm", reduction = "cca")
 
 # SCTransform and integrate using recripocal PCA dim reduction
-s.Harmony <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
+s.RPCA <- integrate_seurat(s.split, norm_method = "SCT", dim.reduct = "rpca")
 
 # SCTransform, blacklist TCR genes, and integrate using cca
 library(scGate)
 TCR_genes <- scGate::genes.blacklist.default$Mm$TCR
-s.Harmony <- integrate_seurat(s, norm_method = "SCT", dim.reduct = "cca",
+s.CCA <- integrate_seurat(s, norm_method = "SCT", dim.reduct = "cca",
                               feature.blacklist = "TCR_genes")
 }
 
