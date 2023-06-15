@@ -9,7 +9,7 @@ readCounts10x(
   filepath,
   min.cells = 0,
   min.features = 0,
-  strip.suffix = TRUE
+  strip.suffix = FALSE
 )
 }
 \arguments{

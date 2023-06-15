@@ -11,5 +11,10 @@ Convenience functions for single cell analyses.
 \author{
 \strong{Maintainer}: Micah Fletcher \email{mpfletc@emory.edu}
 
+Authors:
+\itemize{
+  \item Derrik Gratz \email{derrik.gratz@emory.edu} [contributor]
+}
+
 }
 \keyword{internal}
