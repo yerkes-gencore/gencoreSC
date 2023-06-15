@@ -216,8 +216,6 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #'
 #' @export
 plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
-  # Fix undefined global variable devtools::check() note
-  colSum <- NULL
 
   obj.seurat <- FindClusters(obj.seurat, resolution = res, assay = assay)
 
@@ -226,7 +224,7 @@ plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
     summarize(n=n()) %>%
     ungroup() %>%
     group_by(.data[[labels]]) %>%
-    mutate(!!colSum := sum(n)) %>%
+    mutate(colSum = sum(n)) %>%
     ungroup() %>%
     dplyr::filter(.data[["colSum"]] > 10) %>%
     ggplot(data=., aes(x=.data[["seurat_clusters"]], y = .data[[labels]],
