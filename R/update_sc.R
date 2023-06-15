@@ -14,6 +14,7 @@
 #'
 #' @param sc A soup channel object
 #' @param seur_obj A Seurat object processed to only contain cells of interest
+#' @param reduction Reduction to use (default: 'umap')
 #' @param gsub_start_pattern Pattern to replace at beginning of cell names
 #' @param gsub_start_replace Replace term for `gsub_start_pattern`
 #' @param gsub_end_pattern A second pattern to replace, after first is done.

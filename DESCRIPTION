@@ -33,6 +33,10 @@ Imports:
     tibble,
     tidyr,
     utils,
+    harmony,
+    STACAS,
+    viridis,
+    clustree,
     zeallot
 Suggests:
     ggh4x,
