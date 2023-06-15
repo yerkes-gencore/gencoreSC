@@ -27,7 +27,7 @@ plotIntegrationDiagnostics(
 
 \item{cell_labels}{Name of metadata column where cell annotation labels are stored}
 
-\item{res}{Resolution(s) to use for \code{FindClusters()}. May be scalar or vector of multiple resolutions to loop over.}
+\item{res}{Resolution(s) to use for \code{\link[Seurat:FindClusters]{FindClusters()}}. May be scalar or vector of multiple resolutions to loop over.}
 }
 \value{
 A list of ggplot objects in a structure like so:

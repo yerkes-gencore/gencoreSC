@@ -8,7 +8,7 @@
 #' @param integration_name Name of integration method (e.g. "merge", "STACAS", "Harmony")
 #' @param sample_col Name of metadata column to use as sample name (e.g. "capID")
 #' @param cell_labels Name of metadata column where cell annotation labels are stored
-#' @param res Resolution(s) to use for `FindClusters()`. May be scalar or vector of multiple resolutions to loop over.
+#' @param res Resolution(s) to use for \code{\link[Seurat:FindClusters]{FindClusters()}}. May be scalar or vector of multiple resolutions to loop over.
 #'
 #' @returns A list of ggplot objects in a structure like so:
 #'
@@ -165,24 +165,38 @@ plotUmapIntegrated <- function(seurat.obj, group.by, title, label.size, legend=T
 #' Removes axes and shrinks legend size of \code{\link[Seurat:DimPlot]{DimPlot()}} or \code{\link[gencoreSC:plotUmapIntegrated]{plotUmapIntegrated()}}.
 #'
 #' @param p ggplot object
+#' @param discrete whether to use guide_legend (discrete variables) or guide_colorbar (continuous variables)
+#' @param smaller_legend whether to plot a smaller legend
 #'
 #' @returns ggplot object UMAP with no axes and smaller legend
 #'
 #' @export
-plot_smaller <- function(p) {
-  p +
+# Modify a UMAP to fit a ggarranged format better
+plot_smaller <- function(p, discrete=T, smaller_legend=T) {
+  p <- p +
     theme(axis.line = element_blank(),
           axis.text = element_blank(),
           axis.ticks = element_blank(),
           axis.title = element_blank(),
-          text = element_text(size = 2)) +
-    theme(legend.key.size = unit(0.5, "line"),
-          legend.text = element_text(size=4),
-          legend.spacing.x = unit(0, "line")) +
-    guides(color = guide_legend(
-      ncol=1,
-      override.aes=list(shape=15,
-                        size=1)))
+          text = element_text(size = 2))
+  if (smaller_legend) {
+    p <- p +
+      theme(legend.key.size = unit(0.5, "line"),
+            legend.text = element_text(size=4),
+            legend.spacing.x = unit(0, "line"))
+  }
+  if (discrete) {
+    p <- p +
+      guides(color = guide_legend(ncol=1, override.aes=list(shape=15, size=8),
+                                  label.theme = element_text(size = 10)))
+  } else if (!discrete) {
+    p <- p +
+      guides(color = guide_colorbar(label.position = "right",
+                                    barheight = unit(8, "line"),
+                                    barwidth = unit(1, "line"),
+                                    label.theme = element_text(size = 10)))
+  }
+  return(p)
 }
 
 #' Plot comparing unsupervised clusters to cell annotations

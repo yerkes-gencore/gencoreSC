@@ -6,22 +6,34 @@
 \usage{
 plotUMAP_split(
   obj.split,
-  group.by = "seurat_clusters",
+  reduction = "umap",
+  group.by = NULL,
+  feature = NULL,
+  title.prefix = NULL,
   label.size = 4,
-  title.prefix = "seurat_clusters",
-  title.size = 8
+  plot_smaller = T,
+  legend = F,
+  ...
 )
 }
 \arguments{
-\item{obj.split}{Unfiltered Seurat object after running 'addQCmetrics()' and 'addQCfilter()'}
+\item{obj.split}{Unfiltered Seurat object after running \code{\link[gencoreSC:addQCmetrics]{addQCmetrics()}} and \code{\link[gencoreSC:addQCfilter]{addQCfilter()}}}
 
-\item{group.by}{metadata column to color cells by; passed to Seurat::DimPlot 'group.by'}
+\item{reduction}{Reduction to use (default: "umap")}
 
-\item{label.size}{size of DimPlot labels}
+\item{group.by}{Metadata column to color cells by; passed to \code{\link[Seurat:DimPlot]{DimPlot()}} 'group.by'}
 
-\item{title.prefix}{title prefix; name of obj (i.e. capture or sample ID) will be appended}
+\item{feature}{Metadata column to color cells by; passed to \code{\link[Seurat:FeaturePlot]{FeaturePlot()}} 'features' (but this function doesn't support a vector of features)}
 
-\item{title.size}{size of title; size of axis text will title.size-1}
+\item{title.prefix}{Title prefix; name of obj (i.e. capture or sample ID) will be appended}
+
+\item{label.size}{Size of DimPlot labels}
+
+\item{plot_smaller}{Whether to plot smaller}
+
+\item{legend}{Whether to plot legend (helpful to remove legend if plotting smaller)}
+
+\item{...}{Arguments passed to \code{\link[gencoreSC:plot_smaller]{plot_smaller()}}}
 }
 \value{
 an object of class ggarrange, which is a ggplot or a list of ggplot.

@@ -4,10 +4,14 @@
 \alias{plot_smaller}
 \title{Modify a UMAP to fit a ggarranged format better}
 \usage{
-plot_smaller(p)
+plot_smaller(p, discrete = T, smaller_legend = T)
 }
 \arguments{
 \item{p}{ggplot object}
+
+\item{discrete}{whether to use guide_legend (discrete variables) or guide_colorbar (continuous variables)}
+
+\item{smaller_legend}{whether to plot a smaller legend}
 }
 \value{
 ggplot object UMAP with no axes and smaller legend
