@@ -220,6 +220,27 @@ and compare results. Cell-types in your data may be missing or scarce in a refer
 causing them to be poorly identified when querying. The package has a few
 visualization tools to help compare results from multiple references/methods.
 
+### SingleR
+
+SingleR can map metadata from a reference dataset of bulk or single-cell data.
+It compares the expression profile (of all genes by default) of the query set to
+the reference to find similarities. This can be done on a per-cell level or
+using clusters within the query, which uses the aggregate expression profile. 
+Since it can be done on a per-cell level, without much need for processing,
+it is easy to use SingleR on multiple captures in a single merged object 
+without any integration.
+
+[Vignette](https://bioconductor.org/packages/release/bioc/vignettes/SingleR/inst/doc/SingleR.html)
+[Github](https://github.com/dviraran/SingleR)
+
+#### Runtime considerations
+
+SingleR expects both the query and reference to be normalized and log-transformed.
+You should not use SCTransform data for SingleR since the normalization does 
+not seem to be on a per-cell level [(more on this discussion here)](https://github.com/immunogenomics/harmony/issues/41).
+
+The `de.method` should be set to 'wilcox' for single-cell data ([from vignette](https://bioconductor.org/packages/release/bioc/vignettes/SingleR/inst/doc/SingleR.html)).
+
 ### Azimuth
 
 Azimuth is built by some of the same people who work on Seurat. They have a web
