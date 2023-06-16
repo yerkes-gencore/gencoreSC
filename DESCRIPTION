@@ -38,6 +38,9 @@ Imports:
     viridis,
     clustree,
     zeallot
+Remotes:
+    github::carmonalab/STACAS
+    github::chris-mcginnis-ucsf/DoubletFinder
 Suggests:
     ggh4x,
     knitr,
