@@ -121,6 +121,10 @@ checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
 #' @export
 EnsDb2GeneName <- function(cell_cycle_genes, species = "Mus musculus") {
   ## Based on https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
+  # Fix undefined global variable devtools::check() note
+  genes <- query <- NULL
+
+
   ## These annotations are Ensemble IDs but we need gene names.
   # Connect to AnnotationHub
   ah <- AnnotationHub::AnnotationHub()

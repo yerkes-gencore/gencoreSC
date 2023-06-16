@@ -32,6 +32,34 @@ from wasting time.
 library(gencoreSC)
 ```
 
+# Project setup, organization, and reproducibility
+
+## Renv
+
+[See the site for full details](https://rstudio.github.io/renv/articles/renv.html)
+
+Renv is an R package that captures versions of packages used in a project. It can help you use different versions of packages for different projects. This is useful for making reproducible workflows, allowing you to jump back to old projects and share projects with other users. 
+
+One advantage of Renv is having a cache of packages to avoid having multiple installs of the same package/version. If you plan to consistently use renv on a shared system, it may be worthwhile to edit the shared cache location as part of your user-level .Renviron, so you don't have to set it for each project. `usethis::edit_r_environ()` can help you edit that file.
+This is especially useful if you want to have multiple users access the project on a shared file system. Assuming you've followed the tutorial to set up renv in your project, you can point the project to a shared library cache via an environmental variable.
+[https://support.posit.co/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf](more info)
+
+Edit .Renviron
+
+`RENV_PATHS_CACHE='/Volumes/yerkes/genomelab/illumina/runs/tools/renv/cache'`
+
+Or .Rprofile
+
+`Sys.setenv(RENV_PATHS_CACHE = "/Volumes/yerkes/genomelab/illumina/runs/tools/renv/cache")`
+
+To use renv, run renv::init() in a project opened in rstudio. This can take a long time to run at first, as you will have to copy versions of packages used from your local disk to the server. Once they are in the cache/project, your workflow continues like normal. Note that if you want to set up the project to use the shared drive cache, you should set that up before running init, otherwise it will use a project-local cache.
+
+## GencoreSC versioning
+
+With `devtools::install_github()`, you can install any branch or version of the package. This can be 
+especially useful in the early stages as we continue to develop the package in real-time, but eventually
+it would be a good idea to refer to a stable version in your script (and hopefully your `renv` lockfile too).
+
 # Loading Data
 
 # Processing
@@ -220,6 +248,27 @@ and compare results. Cell-types in your data may be missing or scarce in a refer
 causing them to be poorly identified when querying. The package has a few
 visualization tools to help compare results from multiple references/methods.
 
+### SingleR
+
+SingleR can map metadata from a reference dataset of bulk or single-cell data.
+It compares the expression profile (of all genes by default) of the query set to
+the reference to find similarities. This can be done on a per-cell level or
+using clusters within the query, which uses the aggregate expression profile. 
+Since it can be done on a per-cell level, without much need for processing,
+it is easy to use SingleR on multiple captures in a single merged object 
+without any integration.
+
+[Vignette](https://bioconductor.org/packages/release/bioc/vignettes/SingleR/inst/doc/SingleR.html)
+[Github](https://github.com/dviraran/SingleR)
+
+#### Runtime considerations
+
+SingleR expects both the query and reference to be normalized and log-transformed.
+You should not use SCTransform data for SingleR since the normalization does 
+not seem to be on a per-cell level [(more on this discussion here)](https://github.com/immunogenomics/harmony/issues/41).
+
+The `de.method` should be set to 'wilcox' for single-cell data ([from vignette](https://bioconductor.org/packages/release/bioc/vignettes/SingleR/inst/doc/SingleR.html)).
+
 ### Azimuth
 
 Azimuth is built by some of the same people who work on Seurat. They have a web
@@ -298,13 +347,26 @@ per cluster
 `referenceMappingOutcomesFacetPlot()` will give you a more comprehensive look at
 all predicted cell-types and the associated prediction scores for each cluster.
 
-## Batch correction
+## Integration
 
+### Within gencoreSC
+
+There is a single wrapper function for running Harmony, STACAS, and Seurat integration.
+The idea is to have consistent pre-processing for all method so you can compare 
+and choose the appropriate one for your study. 
+
+<<<<<<< HEAD
 ## Reference mapping
 
 ### Azimuth
 
 Azimuth requires SCTransformed data
+=======
+See the help documentation for `runIntegration()` for more details.
+
+The result of integration can be conveniently visualized via the function
+`plotIntegrationDiagnostics()`. See the help documentation for more details. 
+>>>>>>> origin/main
 
 
 # Term glossary
