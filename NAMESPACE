@@ -3,6 +3,7 @@
 export("%<-%")
 export("%>%")
 export(EnsDb2GeneName)
+export(IdentName)
 export(NormFindVarFeatScaleData)
 export(addQCfilter)
 export(addQCmetrics)
