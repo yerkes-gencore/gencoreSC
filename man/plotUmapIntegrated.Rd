@@ -4,7 +4,7 @@
 \alias{plotUmapIntegrated}
 \title{Plot UMAP of integrated (or merged) data}
 \usage{
-plotUmapIntegrated(seurat.obj, group.by, title, label.size, legend = TRUE)
+plotUmapIntegrated(seurat.obj, group.by, title, label.size, legend = TRUE, ...)
 }
 \arguments{
 \item{seurat.obj}{Seurat object}
@@ -16,6 +16,9 @@ plotUmapIntegrated(seurat.obj, group.by, title, label.size, legend = TRUE)
 \item{label.size}{Cluster and legend text label size}
 
 \item{legend}{Whether to plot legend}
+
+\item{\dots}{Additional arguments passed to \code{Seurat::DimPlot()}, useful for controlling rasterization or
+point size for large datasets}
 }
 \value{
 ggplot object UMAP

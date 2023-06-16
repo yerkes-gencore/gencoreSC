@@ -9,7 +9,8 @@
 #' @param sample_col Name of metadata column to use as sample name (e.g. "capID")
 #' @param cell_labels Name of metadata column where cell annotation labels are stored
 #' @param res Resolution(s) to use for \code{\link[Seurat:FindClusters]{FindClusters()}}. May be scalar or vector of multiple resolutions to loop over.
-#'
+#' @param \dots Additional arguments passed to `Seurat::DimPlot()`, useful for controlling rasterization or
+#'  point size for large datasets
 #' @returns A list of ggplot objects in a structure like so:
 #'
 #' list(
@@ -93,18 +94,25 @@
 #'
 #'}
 #' @export
-plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integration_name, sample_col, cell_labels, res) {
+plotIntegrationDiagnostics <- function(plot_list,
+                                       seurat.obj,
+                                       subset_id,
+                                       integration_name,
+                                       sample_col,
+                                       cell_labels,
+                                       res,
+                                       ...) {
   # Save plots for comparing integration methods
   print("Saving plots.")
   plot_list[[subset_id]][[integration_name]][[sample_col]] <-
     plotUmapIntegrated(seurat.obj, group.by=sample_col,
-                         title=paste0(integration_name,":\n", sample_col),
-                         label.size=0, legend = TRUE)
+                       title=paste0(integration_name,":\n", sample_col),
+                       label.size=0, legend = TRUE, ...)
 
   plot_list[[subset_id]][[integration_name]][[cell_labels]] <-
     plotUmapIntegrated(seurat.obj, group.by=cell_labels,
-                         title=paste0(integration_name,":\n", cell_labels),
-                         label.size=2, legend = TRUE)
+                       title=paste0(integration_name,":\n", cell_labels),
+                       label.size=2, legend = TRUE, ...)
 
   # Save plots for comparing clustering to annotations
   for (resi in res) {
@@ -113,16 +121,20 @@ plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integra
 
     plot_list[[subset_id]][[integration_name]][["seurat_clusters"]][[as.character(resi)]] <-
       plotUmapIntegrated(seurat.obj, group.by="seurat_clusters",
-                           title=paste0(integration_name,":\n", "seurat_clusters"),
-                           label.size=3, legend = TRUE)
+                         title=paste0(integration_name,":\n", "seurat_clusters"),
+                         label.size=3, legend = TRUE, ...)
 
     plot_list[[subset_id]][[integration_name]][["clust.ann.compare"]][[cell_labels]][[as.character(resi)]] <-
       plotClusterAnnotTile(seurat.obj, labels = cell_labels, res = resi)
   }
-
-  plot_list[[subset_id]][[integration_name]][["clustree"]] <-
-    clustree::clustree(seurat.obj, prefix = paste0(seurat.obj@active.assay,"_snn_res."), verbose = F)
-
+  tryCatch({
+    plot_list[[subset_id]][[integration_name]][["clustree"]] <-
+      clustree::clustree(seurat.obj, prefix = paste0(seurat.obj@active.assay,"_snn_res."), verbose = F)
+  }, error = function(e) {
+    warning('\nError generating clustree, possibly due to not having clustering for more than one resolution in the object')
+  }, warning = function(w){
+    warning('\nError generating clustree, possibly due to not having clustering for more than one resolution in the object')
+  })
   return(plot_list)
 }
 
@@ -135,14 +147,17 @@ plotIntegrationDiagnostics <- function(plot_list, seurat.obj, subset_id, integra
 #' @param title Title of plot
 #' @param label.size Cluster and legend text label size
 #' @param legend Whether to plot legend
+#' @param \dots Additional arguments passed to `Seurat::DimPlot()`, useful for controlling rasterization or
+#'  point size for large datasets
 #'
 #' @returns ggplot object UMAP
 #'
 #' @export
-plotUmapIntegrated <- function(seurat.obj, group.by, title, label.size, legend=TRUE) {
-  p <- DimPlot(seurat.obj, reduction = "umap",
+plotUmapIntegrated <- function(seurat.obj, group.by, title, label.size, legend=TRUE, ...) {
+  p <- DimPlot(seurat.obj,
+               reduction = "umap",
                group.by = group.by,
-               label = F) +
+               label = F, ...) +
     ggtitle(title) +
     theme(aspect.ratio = 1,
           plot.title = element_text(size=8),
@@ -210,6 +225,7 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #'
 #' @returns ggplot object UMAP
 #'
+#' @importFrom viridis scale_fill_viridis
 #' @note There definitely better ways to visualize this. At present, the color is on an absolute scale which makes cell type assignment to smaller clusters appear less confident.
 #'
 #' Perhaps a heatmap scaled by column (cluster) would be better?
@@ -230,7 +246,7 @@ plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
     ggplot(data=., aes(x=.data[["seurat_clusters"]], y = .data[[labels]],
                        fill = log10(n+10))) +
     geom_tile() +
-    scale_fill_viridis(discrete=FALSE) +
+    viridis::scale_fill_viridis(discrete=FALSE) +
     theme_bw() +
     theme(aspect.ratio = 1) +
     theme(panel.grid = element_blank(),
