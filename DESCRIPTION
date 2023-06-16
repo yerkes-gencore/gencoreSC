@@ -11,6 +11,7 @@ Authors@R:
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
+    Azimuth,
     AnnotationHub,
     DoubletFinder,
     dplyr,
@@ -41,6 +42,7 @@ Imports:
 Remotes:
     github::carmonalab/STACAS,
     github::chris-mcginnis-ucsf/DoubletFinder
+    github::satijalab/azimuth
 Suggests:
     ggh4x,
     knitr,

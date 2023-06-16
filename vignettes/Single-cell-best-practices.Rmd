@@ -355,10 +355,18 @@ There is a single wrapper function for running Harmony, STACAS, and Seurat integ
 The idea is to have consistent pre-processing for all method so you can compare 
 and choose the appropriate one for your study. 
 
+<<<<<<< HEAD
+## Reference mapping
+
+### Azimuth
+
+Azimuth requires SCTransformed data
+=======
 See the help documentation for `runIntegration()` for more details.
 
 The result of integration can be conveniently visualized via the function
 `plotIntegrationDiagnostics()`. See the help documentation for more details. 
+>>>>>>> origin/main
 
 
 # Term glossary
