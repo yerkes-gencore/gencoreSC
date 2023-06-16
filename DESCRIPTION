@@ -42,6 +42,7 @@ Imports:
 Remotes:
     github::carmonalab/STACAS,
     github::chris-mcginnis-ucsf/DoubletFinder
+    github::satijalab/azimuth
 Suggests:
     ggh4x,
     knitr,
