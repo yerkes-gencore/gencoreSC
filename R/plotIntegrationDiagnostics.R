@@ -127,10 +127,14 @@ plotIntegrationDiagnostics <- function(plot_list,
     plot_list[[subset_id]][[integration_name]][["clust.ann.compare"]][[cell_labels]][[as.character(resi)]] <-
       plotClusterAnnotTile(seurat.obj, labels = cell_labels, res = resi)
   }
-
-  plot_list[[subset_id]][[integration_name]][["clustree"]] <-
-    clustree::clustree(seurat.obj, prefix = paste0(seurat.obj@active.assay,"_snn_res."), verbose = F)
-
+  tryCatch({
+    plot_list[[subset_id]][[integration_name]][["clustree"]] <-
+      clustree::clustree(seurat.obj, prefix = paste0(seurat.obj@active.assay,"_snn_res."), verbose = F)
+  }, error = function(e) {
+    warning('\nError generating clustree, possibly due to not having clustering for more than one resolution in the object')
+  }, warning = function(w){
+    warning('\nError generating clustree, possibly due to not having clustering for more than one resolution in the object')
+  })
   return(plot_list)
 }
 
