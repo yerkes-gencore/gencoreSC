@@ -9,7 +9,6 @@ Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
     AnnotationHub,
-    Azimuth,
     clustree,
     DoubletFinder,
     dplyr,
@@ -36,6 +35,7 @@ Imports:
     viridis,
     zeallot
 Suggests:
+    Azimuth,
     ggh4x,
     knitr,
     rmarkdown,
