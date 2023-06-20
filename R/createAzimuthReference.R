@@ -21,7 +21,6 @@
 #' @note Code based on scripts from azimuth-references github, such as
 #'  https://github.com/satijalab/azimuth-references/blob/master/human_motorcortex/scripts/export.R
 #'
-#' @import Azimuth
 #' @import Seurat
 #' @import dplyr
 #'
