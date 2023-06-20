@@ -1,18 +1,16 @@
 Package: gencoreSC
 Title: ENPRC Genomics Core Single Cell Utility Functions
 Version: 0.1.0
-Authors@R: 
-    c(person("Micah", "Fletcher", 
-             email = "mpfletc@emory.edu", 
-             role = c("aut", "cre")),
-      person("Derrik", "Gratz", 
-             email = "derrik.gratz@emory.edu", 
-             role = c("aut", "ctb")))
+Authors@R: c(
+    person("Micah", "Fletcher", , "mpfletc@emory.edu", role = c("aut", "cre")),
+    person("Derrik", "Gratz", , "derrik.gratz@emory.edu", role = c("aut", "ctb"))
+  )
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
-    Azimuth,
     AnnotationHub,
+    Azimuth,
+    clustree,
     DoubletFinder,
     dplyr,
     forcats,
@@ -20,8 +18,9 @@ Imports:
     ggpubr,
     ggridges,
     gtools,
-    Matrix,
+    harmony,
     magrittr,
+    Matrix,
     methods,
     plotly,
     plyr,
@@ -29,27 +28,26 @@ Imports:
     S4Vectors,
     Seurat,
     SeuratObject,
-    stats,
     SoupX,
+    stats,
     tibble,
     tidyr,
     utils,
-    harmony,
-    STACAS,
     viridis,
-    clustree,
     zeallot
-Remotes:
-    github::carmonalab/STACAS,
-    github::chris-mcginnis-ucsf/DoubletFinder
-    github::satijalab/azimuth
 Suggests:
     ggh4x,
     knitr,
     rmarkdown,
-    scales
+    scales,
+    STACAS
+VignetteBuilder: 
+    knitr
+Remotes:
+    github::carmonalab/STACAS,
+    github::chris-mcginnis-ucsf/DoubletFinder
+    github::satijalab/azimuth
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-VignetteBuilder: knitr
