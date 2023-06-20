@@ -99,6 +99,9 @@ With `devtools::install_github()`, you can install any branch or version of the 
 especially useful in the early stages as we continue to develop the package in real-time, but eventually
 it would be a good idea to refer to a stable version in your script (and hopefully your `renv` lockfile too).
 
+Adding `build_vignettes = TRUE` to the `install_github()` call will build the 
+vignettes as well. 
+
 # Loading Data
 
 # Processing
