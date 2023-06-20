@@ -45,7 +45,7 @@ VignetteBuilder:
     knitr
 Remotes:
     github::carmonalab/STACAS,
-    github::chris-mcginnis-ucsf/DoubletFinder
+    github::chris-mcginnis-ucsf/DoubletFinder,
     github::satijalab/azimuth
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
