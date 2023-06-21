@@ -125,7 +125,7 @@ plotIntegrationDiagnostics <- function(plot_list,
                          label.size=3, legend = TRUE, ...)
 
     plot_list[[subset_id]][[integration_name]][["clust.ann.compare"]][[cell_labels]][[as.character(resi)]] <-
-      plotClusterAnnotTile(seurat.obj, labels = cell_labels, res = resi)
+      plotClusterAnnotTile(seurat.obj, labels = cell_labels)
   }
   tryCatch({
     plot_list[[subset_id]][[integration_name]][["clustree"]] <-
@@ -233,17 +233,22 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #' @export
 plotClusterAnnotTile <- function(obj.seurat,
                                  labels,
-                                 assay = "RNA") {
-  obj.seurat@meta.data %>%
+                                 assay = "RNA",
+                                 plot_portions = FALSE) {
+  plot_data <- obj.seurat@meta.data %>%
     group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
     summarize(n=n()) %>%
+    mutate(m = n/sum(n)) %>%
     ungroup() %>%
     group_by(.data[[labels]]) %>%
     mutate(colSum = sum(n)) %>%
     ungroup() %>%
-    dplyr::filter(.data[["colSum"]] > 10) %>%
-    ggplot(data=., aes(x=.data[["seurat_clusters"]], y = .data[[labels]],
-                       fill = log10(n+10))) +
+    dplyr::filter(.data[["colSum"]] > 10)
+
+  ggplot(data = plot_data,
+         aes(x = .data[["seurat_clusters"]],
+             y = .data[[labels]],
+             fill = if (plot_portions) {m} else {log10(n+10)})) +
     geom_tile() +
     viridis::scale_fill_viridis(discrete=FALSE) +
     theme_bw() +
@@ -252,5 +257,6 @@ plotClusterAnnotTile <- function(obj.seurat,
           axis.text = element_text(size=8),
           axis.title = element_blank(),
           legend.position = "top",
-          panel.background = element_rect(fill = "black"))
+          panel.background = element_rect(fill = "black")) +
+    labs(fill = (if (plot_portions) {'Portion of cluster'} else {'log10(n+10)'}))
 }
