@@ -13,7 +13,7 @@ plotClusterAnnotTile(obj.seurat, labels, assay = "RNA", plot_portions = FALSE)
 
 \item{assay}{Assay to use (default "RNA")}
 
-\item{res}{Clustering resolution, passed to \code{\link[Seurat:FindClusters]{Seurat::FindClusters()}}}
+\item{plot_portions}{Whether to plot portions instead of raw counts, default FALSE}
 }
 \value{
 ggplot object UMAP

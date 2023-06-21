@@ -220,8 +220,8 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #'
 #' @param obj.seurat Seurat object
 #' @param labels Metadata column name for cell type annotation labels in metadata
-#' @param res Clustering resolution, passed to \code{\link[Seurat:FindClusters]{Seurat::FindClusters()}}
 #' @param assay Assay to use (default "RNA")
+#' @param plot_portions Whether to plot portions instead of raw counts, default FALSE
 #'
 #' @returns ggplot object UMAP
 #'
@@ -235,10 +235,11 @@ plotClusterAnnotTile <- function(obj.seurat,
                                  labels,
                                  assay = "RNA",
                                  plot_portions = FALSE) {
+  portion <- NULL
   plot_data <- obj.seurat@meta.data %>%
     group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
-    summarize(n=n()) %>%
-    mutate(m = n/sum(n)) %>%
+    summarize(n = n()) %>%
+    mutate(portion = n/sum(n)) %>%
     ungroup() %>%
     group_by(.data[[labels]]) %>%
     mutate(colSum = sum(n)) %>%
@@ -248,13 +249,13 @@ plotClusterAnnotTile <- function(obj.seurat,
   ggplot(data = plot_data,
          aes(x = .data[["seurat_clusters"]],
              y = .data[[labels]],
-             fill = if (plot_portions) {m} else {log10(n+10)})) +
+             fill = if (plot_portions) {portion} else {log10(n + 10)})) +
     geom_tile() +
-    viridis::scale_fill_viridis(discrete=FALSE) +
+    viridis::scale_fill_viridis(discrete = FALSE) +
     theme_bw() +
     theme(aspect.ratio = 1) +
     theme(panel.grid = element_blank(),
-          axis.text = element_text(size=8),
+          axis.text = element_text(size = 8),
           axis.title = element_blank(),
           legend.position = "top",
           panel.background = element_rect(fill = "black")) +
