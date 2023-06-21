@@ -231,11 +231,10 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #' Perhaps a heatmap scaled by column (cluster) would be better?
 #'
 #' @export
-plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
-
-  obj.seurat <- FindClusters(obj.seurat, resolution = res, assay = assay)
-
-  p <- obj.seurat@meta.data %>%
+plotClusterAnnotTile <- function(obj.seurat,
+                                 labels,
+                                 assay = "RNA") {
+  obj.seurat@meta.data %>%
     group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
     summarize(n=n()) %>%
     ungroup() %>%
