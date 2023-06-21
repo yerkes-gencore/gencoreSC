@@ -13,7 +13,7 @@ Convenience functions for single cell analyses.
 
 Authors:
 \itemize{
-  \item Derrik Gratz \email{derrik.gratz@emory.edu} [contributor]
+  \item Derrik Gratz \email{derrik.gratz@emory.edu} (\href{https://orcid.org/0009-0002-5934-576X}{ORCID}) [contributor]
 }
 
 }

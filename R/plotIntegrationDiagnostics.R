@@ -125,7 +125,7 @@ plotIntegrationDiagnostics <- function(plot_list,
                          label.size=3, legend = TRUE, ...)
 
     plot_list[[subset_id]][[integration_name]][["clust.ann.compare"]][[cell_labels]][[as.character(resi)]] <-
-      plotClusterAnnotTile(seurat.obj, labels = cell_labels, res = resi)
+      plotClusterAnnotTile(seurat.obj, labels = cell_labels)
   }
   tryCatch({
     plot_list[[subset_id]][[integration_name]][["clustree"]] <-
@@ -220,8 +220,8 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #'
 #' @param obj.seurat Seurat object
 #' @param labels Metadata column name for cell type annotation labels in metadata
-#' @param res Clustering resolution, passed to \code{\link[Seurat:FindClusters]{Seurat::FindClusters()}}
 #' @param assay Assay to use (default "RNA")
+#' @param plot_portions Whether to plot portions instead of raw counts, default FALSE
 #'
 #' @returns ggplot object UMAP
 #'
@@ -231,27 +231,33 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #' Perhaps a heatmap scaled by column (cluster) would be better?
 #'
 #' @export
-plotClusterAnnotTile <- function(obj.seurat, labels, res = 0.1, assay = "RNA") {
-
-  obj.seurat <- FindClusters(obj.seurat, resolution = res, assay = assay)
-
-  p <- obj.seurat@meta.data %>%
+plotClusterAnnotTile <- function(obj.seurat,
+                                 labels,
+                                 assay = "RNA",
+                                 plot_portions = FALSE) {
+  portion <- NULL
+  plot_data <- obj.seurat@meta.data %>%
     group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
-    summarize(n=n()) %>%
+    summarize(n = n()) %>%
+    mutate(portion = n/sum(n)) %>%
     ungroup() %>%
     group_by(.data[[labels]]) %>%
     mutate(colSum = sum(n)) %>%
     ungroup() %>%
-    dplyr::filter(.data[["colSum"]] > 10) %>%
-    ggplot(data=., aes(x=.data[["seurat_clusters"]], y = .data[[labels]],
-                       fill = log10(n+10))) +
+    dplyr::filter(.data[["colSum"]] > 10)
+
+  ggplot(data = plot_data,
+         aes(x = .data[["seurat_clusters"]],
+             y = .data[[labels]],
+             fill = if (plot_portions) {portion} else {log10(n + 10)})) +
     geom_tile() +
-    viridis::scale_fill_viridis(discrete=FALSE) +
+    viridis::scale_fill_viridis(discrete = FALSE) +
     theme_bw() +
     theme(aspect.ratio = 1) +
     theme(panel.grid = element_blank(),
-          axis.text = element_text(size=8),
+          axis.text = element_text(size = 8),
           axis.title = element_blank(),
           legend.position = "top",
-          panel.background = element_rect(fill = "black"))
+          panel.background = element_rect(fill = "black")) +
+    labs(fill = (if (plot_portions) {'Portion of cluster'} else {'log10(n+10)'}))
 }
