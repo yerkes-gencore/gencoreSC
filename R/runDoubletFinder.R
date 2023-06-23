@@ -43,6 +43,8 @@ runDoubletFinder <- function(obj,
                                   PCs = 1:PCs,
                                   sct = sct,
                                   num.cores = cores)
+  ## DF internally subsets to 10k cells
+  ground_truth <- ground_truth[rownames(sweep.res.list[[1]])]
   if (!is.null(ground_truth)){
     sweep.stats <- DoubletFinder::summarizeSweep(sweep.res.list,
                                   GT = TRUE,
