@@ -71,6 +71,15 @@ through the port.
 sudo firewall-cmd --add-port=8787/tcp
 ```
 
+For some unknown reason, rstudio server sessions don't seem
+to recognize git tracking set up not through rstudio server.
+So if you want to use rstudio's built in git interface,
+you'll have to create a new project from a git tracked repo,
+rather than creating the git tracked repo first and creating
+a new project later.
+
+The dockerized rstudio also has issues with editing the ~/.local file, not sure why. You may have to mount folders there as necessary to work with things like `SeuratData`, or manually chmod and create the folders from the terminal as sudo. 
+
 ## Renv
 
 [See the site for full details](https://rstudio.github.io/renv/articles/renv.html)
@@ -402,6 +411,15 @@ See the help documentation for `runIntegration()` for more details.
 The result of integration can be conveniently visualized via the function
 `plotIntegrationDiagnostics()`. See the help documentation for more details. 
 
+# Reference data
+
+We are attempting to aggregate marker genes in a git tracked repo.
+
+`/yerkes-cifs/runs/scrna_seq_ref/marker_genes/`
+https://github.com/yerkes-gencore/marker_genes
+
+Other reference datasets live on the server at
+`/yerkes-cifs/runs/scrna_seq_ref/`
 
 # Term glossary
 
