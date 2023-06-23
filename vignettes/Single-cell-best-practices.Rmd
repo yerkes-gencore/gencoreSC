@@ -355,19 +355,29 @@ There is a single wrapper function for running Harmony, STACAS, and Seurat integ
 The idea is to have consistent pre-processing for all method so you can compare 
 and choose the appropriate one for your study. 
 
-<<<<<<< HEAD
-## Reference mapping
-
-### Azimuth
-
-Azimuth requires SCTransformed data
-=======
 See the help documentation for `runIntegration()` for more details.
 
 The result of integration can be conveniently visualized via the function
 `plotIntegrationDiagnostics()`. See the help documentation for more details. 
->>>>>>> origin/main
 
+## Demultiplexing hashed captures
+
+[Paper on cell hashing](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-018-1603-1)
+
+[Seurat vignette](https://satijalab.org/seurat/articles/hashing_vignette.html)
+
+Cells from multiple samples can be loaded in the same capture as a cost saving
+method. The cells are associated with a sample by ADTs. Seurat has methods
+to assign sample names to cells based on the abundance of sample-specific
+ADTs. 
+
+HTO information can also be used to feed ground truth data for doublet detection.
+See the Doublet Removal section of the vignette for more details. 
+
+### Within gencoreSC
+
+The helper function `demuxAntibodyData()` serves as a wrapper to Seurat's
+`HTODemux()`. See the function documentation for more details. 
 
 # Term glossary
 
@@ -375,4 +385,7 @@ Term | Explanation
 ---- | -----------
 DEG   |   Differentially expressed genes
 Soup  |   Ambient RNA from lysed cells
+HTO   |   Hash tag oligos
+ADT   |   Antibody derived tags
+
 
