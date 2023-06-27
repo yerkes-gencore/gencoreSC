@@ -48,7 +48,7 @@ runSingleR <- function(obj.seurat,
     scater::logNormCounts() %>%
     SummarizedExperiment::assays() # %>%
     # .$logcounts %>%
-    SingleR::SingleR(test = singleR.out$logcounts,
+  singleR.out <- SingleR::SingleR(test = singleR.out$logcounts,
                      ref = ref,
                      labels = labels,
                      de.method = de.method,
