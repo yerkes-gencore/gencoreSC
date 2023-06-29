@@ -23,8 +23,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
-          needs: check, Azimuth=?ignore
+          extra-packages: any::rcmdcheck, Azimuth=?ignore
+          needs: check
 
       - uses: r-lib/actions/check-r-package@v2
         env:
