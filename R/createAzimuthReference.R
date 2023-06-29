@@ -5,14 +5,13 @@
 #'  wrapper will process the reference in a standard SCTransform workflow.
 #'  The column of metadata with annotations should be specified to the `metadata`
 #'  parameter. The reference will be saved to the specified output folder to
-#'  be referenced in calls to `Azimuth::RunAzimuth()`.
+#'  be referenced in calls to `Azimuth::RunAzimuth`.
 #'
 #' @param ref A Seurat object with a counts matrix and cell-type annotations
 #' @param metadata_column Columns of metadata to transfer onto query datasets
 #' @param output_folder Where to save the Azimuth reference files for future calls
-#'  of `Azimuth::RunAzimuth()`
+#'  of `RunAzimuth`
 #' @param ndims Number of dimensions to use for PCA and UMAP
-#' @param ... Additional arguments to pass to `Azimuth::AzimuthReference()`
 #' @inheritDotParams Azimuth::AzimuthReference -refUMAP -refDR -object -refAssay
 #'
 #' @returns A Seurat object with AzimuthData stored in the tools slot for use with Azimuth
