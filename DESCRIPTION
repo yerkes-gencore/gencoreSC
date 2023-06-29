@@ -52,8 +52,7 @@ VignetteBuilder:
     knitr
 Remotes:
     github::carmonalab/STACAS,
-    github::chris-mcginnis-ucsf/DoubletFinder,
-    Azimuth=github::satijalab/azimuth
+    github::chris-mcginnis-ucsf/DoubletFinder
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
