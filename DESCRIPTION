@@ -44,8 +44,6 @@ Suggests:
     knitr,
     rmarkdown,
     scales,
-    SeuratData,
-    SeuratDisk,
     STACAS,
     Azimuth
 VignetteBuilder: 
