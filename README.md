@@ -1,3 +1,7 @@
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/yerkes-gencore/gencoreSC/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yerkes-gencore/gencoreSC/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 # gencoreSC - Utility functions for single cell analyses
 
 ## This is an R package
