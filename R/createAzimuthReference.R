@@ -76,6 +76,8 @@ createAzimuthReference <- function(ref,
   ## Create azimuth compatible reference
   ## Can't specify namespace here due to weird stuff with a tools() call
   ## https://github.com/satijalab/azimuth/issues/155
+  ## And can't do an import here cause I want to leave azimuth
+  ## as a suggested package, so settling for 2 notes
   ref <- AzimuthReference(object = ref,
                           refUMAP = "umap",
                           refDR = "pca",
