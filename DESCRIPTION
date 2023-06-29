@@ -39,19 +39,23 @@ Imports:
     viridis,
     zeallot
 Suggests:
-    Azimuth,
     BiocParallel,
     ggh4x,
     knitr,
     rmarkdown,
     scales,
-    STACAS
+    SeuratData,
+    SeuratDisk,
+    STACAS,
+    Azimuth
 VignetteBuilder: 
     knitr
 Remotes:
     github::carmonalab/STACAS,
     github::chris-mcginnis-ucsf/DoubletFinder,
-    Azimuth=github::satijalab/azimuth
+    Azimuth=github::satijalab/azimuth,
+    SeuratData=github::satijalab/seurat-data,
+    SeuratDisk=github::mojaveazure/seurat-disk
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
