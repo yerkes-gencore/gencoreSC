@@ -25,7 +25,7 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
-          env:
-            _R_CHECK_FORCE_SUGGESTS_: false
+        env:
+          _R_CHECK_FORCE_SUGGESTS_: false
 
       - uses: r-lib/actions/check-r-package@v2
