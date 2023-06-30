@@ -12,7 +12,7 @@ createAzimuthReference(ref, metadata_column, output_folder, ndims = 50, ...)
 \item{metadata_column}{Columns of metadata to transfer onto query datasets}
 
 \item{output_folder}{Where to save the Azimuth reference files for future calls
-of \code{Azimuth::RunAzimuth()}}
+of \code{RunAzimuth}}
 
 \item{ndims}{Number of dimensions to use for PCA and UMAP}
 
@@ -46,7 +46,7 @@ with a counts matrix and cell-type annotations in a metadata column. This
 wrapper will process the reference in a standard SCTransform workflow.
 The column of metadata with annotations should be specified to the \code{metadata}
 parameter. The reference will be saved to the specified output folder to
-be referenced in calls to \code{Azimuth::RunAzimuth()}.
+be referenced in calls to \code{Azimuth::RunAzimuth}.
 }
 \note{
 Code based on scripts from azimuth-references github, such as

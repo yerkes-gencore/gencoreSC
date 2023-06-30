@@ -5,6 +5,9 @@
 #'  desired label. The HTO data will be extracted into it's own assay
 #'  (in case there is other antibody data in the original assay), have the
 #'  feature names converted to the desired labels, and run `Seurat::HTODemux()`.
+#'  If any features remaing in the ADT assay, the assay will be kept and have the
+#'  HTO features removed. Otherwise the original assay will be removed from the
+#'  object.
 #'
 #' @param obj A Seurat object with antibody capture / hashtag oligo capture data
 #' @param labels A named character vector, where values are the desired labels
@@ -34,10 +37,18 @@ demuxAntibodyData <- function(obj,
                               normalization.method = 'CLR',
                               ...){
   hto_data <- obj[[assay]]@counts[names(labels),]
+  adt_data <- obj[[assay]]@counts[!(rownames(obj[[assay]]@counts) %in% names(labels)),]
   rownames(hto_data) <- plyr::mapvalues(rownames(hto_data),
                                         from=names(labels),
                                         to=labels)
   obj[['HTO']] <- Seurat::CreateAssayObject(counts = hto_data)
+  if (nrow(adt_data) > 0){
+    print('Pruning remaining cite-seq assay')
+    obj[[assay]] <- Seurat::CreateAssayObject(counts = adt_data)
+  } else {
+    obj[[assay]] <- NULL
+    print('Removing ADT assay as no other features are left')
+  }
   obj <- Seurat::NormalizeData(obj,
                                assay='HTO',
                                normalization.method = normalization.method)

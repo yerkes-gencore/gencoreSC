@@ -39,19 +39,18 @@ Imports:
     viridis,
     zeallot
 Suggests:
-    Azimuth,
     BiocParallel,
     ggh4x,
     knitr,
     rmarkdown,
     scales,
-    STACAS
+    STACAS,
+    Azimuth
 VignetteBuilder: 
     knitr
 Remotes:
     github::carmonalab/STACAS,
-    github::chris-mcginnis-ucsf/DoubletFinder,
-    github::satijalab/azimuth
+    github::chris-mcginnis-ucsf/DoubletFinder
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
