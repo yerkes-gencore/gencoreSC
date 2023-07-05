@@ -48,7 +48,7 @@ referenceMappingOutcomesFacetPlot <- function(obj,
   # Calculate proportion of calls in each cluster
   sample_sizes <- obj@meta.data %>%
     dplyr::select({{ clusters_column }}, {{ label_column }}, {{ label_score_column }}) %>%
-    dplyr::group_by(pick({{ clusters_column }},{{ label_column }})) %>%
+    dplyr::group_by(dplyr::across(c({{ clusters_column }},{{ label_column }}))) %>%
     dplyr::summarise(n = n(), .groups = 'drop_last') %>%
     dplyr::mutate('freq' = .data[[ 'n' ]] / sum(.data[[ 'n' ]])) %>%
     dplyr::filter(.data[[ 'freq' ]] > min_proportion)

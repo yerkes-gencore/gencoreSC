@@ -60,6 +60,9 @@ where the name is the antibody capture feature and the value is the
 desired label. The HTO data will be extracted into it's own assay
 (in case there is other antibody data in the original assay), have the
 feature names converted to the desired labels, and run \code{Seurat::HTODemux()}.
+If any features remaing in the ADT assay, the assay will be kept and have the
+HTO features removed. Otherwise the original assay will be removed from the
+object.
 }
 \examples{
 \dontrun{

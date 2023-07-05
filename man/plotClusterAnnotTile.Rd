@@ -4,16 +4,16 @@
 \alias{plotClusterAnnotTile}
 \title{Plot comparing unsupervised clusters to cell annotations}
 \usage{
-plotClusterAnnotTile(obj.seurat, labels, res = 0.1, assay = "RNA")
+plotClusterAnnotTile(obj.seurat, labels, assay = "RNA", plot_portions = FALSE)
 }
 \arguments{
 \item{obj.seurat}{Seurat object}
 
 \item{labels}{Metadata column name for cell type annotation labels in metadata}
 
-\item{res}{Clustering resolution, passed to \code{\link[Seurat:FindClusters]{Seurat::FindClusters()}}}
-
 \item{assay}{Assay to use (default "RNA")}
+
+\item{plot_portions}{Whether to plot portions instead of raw counts, default FALSE}
 }
 \value{
 ggplot object UMAP

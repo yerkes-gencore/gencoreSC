@@ -3,7 +3,8 @@ Title: ENPRC Genomics Core Single Cell Utility Functions
 Version: 0.1.0
 Authors@R: c(
     person("Micah", "Fletcher", , "mpfletc@emory.edu", role = c("aut", "cre")),
-    person("Derrik", "Gratz", , "derrik.gratz@emory.edu", role = c("aut", "ctb"))
+    person("Derrik", "Gratz", , "derrik.gratz@emory.edu", role = c("aut", "ctb"),
+      comment = c(ORCID = "0009-0002-5934-576X"))
   )
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
@@ -24,10 +25,13 @@ Imports:
     plotly,
     plyr,
     rlang,
+    scater,
     S4Vectors,
     Seurat,
     SeuratObject,
     SoupX,
+    SingleR,
+    SummarizedExperiment,
     stats,
     tibble,
     tidyr,
@@ -35,18 +39,18 @@ Imports:
     viridis,
     zeallot
 Suggests:
-    Azimuth,
+    BiocParallel,
     ggh4x,
     knitr,
     rmarkdown,
     scales,
-    STACAS
+    STACAS,
+    Azimuth
 VignetteBuilder: 
     knitr
 Remotes:
     github::carmonalab/STACAS,
-    github::chris-mcginnis-ucsf/DoubletFinder,
-    github::satijalab/azimuth
+    github::chris-mcginnis-ucsf/DoubletFinder
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)

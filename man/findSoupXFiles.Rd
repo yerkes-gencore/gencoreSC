@@ -4,10 +4,21 @@
 \alias{findSoupXFiles}
 \title{Find SoupX input files in Cellranger output folder}
 \usage{
-findSoupXFiles(base_path)
+findSoupXFiles(
+  base_path,
+  filtered_mat_pattern = "filtered_feature_bc_matrix$",
+  unfiltered_mat_pattern = "raw_feature_bc_matrix$",
+  clusters_pattern = "clustering"
+)
 }
 \arguments{
 \item{base_path}{Path to cellranger outputs}
+
+\item{filtered_mat_pattern}{Pattern to find filtered outputs via \code{dir()}}
+
+\item{unfiltered_mat_pattern}{Pattern to find unfiltered outputs via \code{dir()}}
+
+\item{clusters_pattern}{Pattern to find cellranger clustering info}
 }
 \value{
 A list of file paths
