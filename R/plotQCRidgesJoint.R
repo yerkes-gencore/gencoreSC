@@ -111,7 +111,7 @@ plotQC_ridges.helper <- function(metadata, x, split_by, assay = "ADT", cutoffs=N
       ggridges::geom_density_ridges(stat = "density", size = 0, alpha = 0.8)
   } else if (assay == "ADT") {
     p <- p +
-      ggridges::geom_density_ridges(stat = "binline", binwidth = 1, scale = 0.95, draw_baseline = FALSE, size = 0, alpha = 0.8)
+      ggridges::geom_density_ridges(stat = "binline", binwidth = 1, draw_baseline = FALSE, size = 0, alpha = 0.8)
   }
   p <- p +
     theme_classic() +
@@ -198,3 +198,44 @@ plotQC_joint <- function(metadata, split_by="capID", cutoffs = NULL,
   return(p)
 }
 
+#' Plot ADT QC metadata across multiple captures or samples as histogram
+#'
+#' Plots ADT QC metadata across multiple captures or samples as a histogram using `geom_density_ridges(stat = "binline")`
+#'
+#' @param metadata Seurat object metadata after running 'addQCmetrics()' and 'addQCfilter()'
+#' @param cutoffs Named list of cutoffs
+#' @param split_by Metadata column to split ridge plots by (i.e. usually capture ID or sample ID or hash ID)
+#' @param y.text Whether to include labels for split_by on the y axis. Can set to `TRUE` when labels are very short.
+#'
+#' @return An object of class ggarrange, which is a ggplot or a list of ggplot.
+#'
+#' @export
+plotQC_ADTbinline <- function(metadata, cutoffs=NULL, split_by, y.text = FALSE) {
+
+  metadata <- metadata %>%
+    dplyr::mutate(!!split_by := forcats::fct_rev(.[[split_by]]))
+
+  # Visualize the number of cell counts per sample
+  p.nCells <- metadata %>%
+    ggplot(aes(y=.data[[split_by]], group=.data[[split_by]], fill=.data[[split_by]]), color=NA) +
+    geom_bar() +
+    theme_classic() +
+    theme(plot.title = element_text(hjust=0.5, face="bold")) +
+    theme(legend.position="none") +
+    ggtitle("N Cells")
+
+  p1 <- plotQC_ridges.helper(metadata, x="nCount_ADT", split_by = split_by,
+                             assay = "ADT", binwidth = 1,
+                             log10x=F, cutoffs=NULL, y.text = y.text)
+
+  p2 <- plotQC_ridges.helper(metadata, x="nFeature_ADT", split_by = split_by,
+                             assay = "ADT", binwidth = 1,
+                             log10x=F, cutoffs=NULL, y.text = y.text)
+
+  p3 <- plotQC_ridges.helper(metadata, x="log10ADTPerUMI", split_by = split_by,
+                             assay = "ADT", binwidth = 0.05,
+                             log10x=F, cutoffs=NULL, y.text = y.text)
+
+  allCaps_QC_ridges <- ggpubr::ggarrange(p.nCells, p1, p2, p3, ncol=3, nrow=1)
+  return(allCaps_QC_ridges)
+}
