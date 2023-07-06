@@ -51,6 +51,7 @@ VignetteBuilder:
 Remotes:
     github::carmonalab/STACAS,
     github::chris-mcginnis-ucsf/DoubletFinder
+biocViews: SingleR, scater, SummarizedExperiment
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
 Roxygen: list(markdown = TRUE)
