@@ -81,29 +81,39 @@ plotQC_ridges <- function(metadata, cutoffs=NULL, split_by, y.text = FALSE) {
     ggtitle("N Cells")
 
   p1 <- plotQC_ridges.helper(metadata, x="nUMI", split_by = split_by,
-                             log10x=T, cutoffs=cutoffs, y.text = y.text)
+                             assay = "RNA", log10x=T, cutoffs=cutoffs, y.text = y.text)
 
   p2 <- plotQC_ridges.helper(metadata, x="nGene", split_by = split_by,
-                             log10x=T, cutoffs=cutoffs, y.text = y.text)
+                             assay = "RNA", log10x=T, cutoffs=cutoffs, y.text = y.text)
 
   p3 <- plotQC_ridges.helper(metadata, x="log10GenesPerUMI", split_by = split_by,
-                             cutoffs=cutoffs, y.text = y.text)
+                             assay = "RNA", cutoffs=cutoffs, y.text = y.text)
 
   p.mtRatio <- plotQC_ridges.helper(metadata, x="mitoRatio", split_by = split_by,
-                                    cutoffs=cutoffs, y.text = y.text)
+                                    assay = "RNA", cutoffs=cutoffs, y.text = y.text)
 
   p.rbRatio <- plotQC_ridges.helper(metadata, x="riboRatio", split_by = split_by,
-                                    cutoffs=cutoffs, y.text = y.text)
+                                    assay = "RNA", cutoffs=cutoffs, y.text = y.text)
 
   allCaps_QC_ridges <- ggpubr::ggarrange(p.nCells, p1, p2, p3, p.mtRatio, p.rbRatio, ncol=2, nrow=3)
   return(allCaps_QC_ridges)
 }
 
-plotQC_ridges.helper <- function(metadata, x, split_by, cutoffs=NULL, log10x=F, y.text = FALSE) {
+plotQC_ridges.helper <- function(metadata, x, split_by, assay = "ADT", cutoffs=NULL, log10x=F, y.text = FALSE, binwidth = 1) {
 
+  # Base ggplot object
   p <- metadata %>%
-    ggplot(aes(x=.data[[x]], y=.data[[split_by]], fill=.data[[split_by]]), color=NA) +
-    ggridges::geom_density_ridges(size = 0, alpha = 0.8) +
+    ggplot(aes(x=.data[[x]], y=.data[[split_by]], height = stat(density), fill=.data[[split_by]]), color=NA)
+
+  # Use density if RNA, use histogram if ADTs
+  if (assay == "RNA") {
+    p <- p +
+      ggridges::geom_density_ridges(stat = "density", size = 0, alpha = 0.8)
+  } else if (assay == "ADT") {
+    p <- p +
+      ggridges::geom_density_ridges(stat = "binline", binwidth = 1, scale = 0.95, draw_baseline = FALSE, size = 0, alpha = 0.8)
+  }
+  p <- p +
     theme_classic() +
     theme(legend.position="none") +
     ggtitle(x) +
