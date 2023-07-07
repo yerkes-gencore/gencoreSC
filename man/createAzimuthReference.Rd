@@ -16,26 +16,7 @@ of \code{RunAzimuth}}
 
 \item{ndims}{Number of dimensions to use for PCA and UMAP}
 
-\item{...}{
-  Arguments passed on to \code{\link[Azimuth:AzimuthReference]{Azimuth::AzimuthReference}}
-  \describe{
-    \item{\code{dims}}{Dimensions to use in reference neighbor finding}
-    \item{\code{k.param}}{Defines k for the k-nearest neighbor algorithm}
-    \item{\code{plotref}}{Either the name of the DimReduc in the provided Seurat object
-to use for the plotting reference or the DimReduc object itself.}
-    \item{\code{plot.metadata}}{A data.frame of discrete metadata fields for the cells
-in the plotref.}
-    \item{\code{ori.index}}{Index of the cells used in mapping in the original object on
-which UMAP was run. Only need to provide if UMAP was run on different set of
-cells.}
-    \item{\code{colormap}}{A list of named and ordered vectors specifying the colors and levels
-for the metadata. See \code{\link[Azimuth]{CreateColorMap}} for help
-generating your own.}
-    \item{\code{assays}}{Assays to retain for transfer}
-    \item{\code{metadata}}{Metadata to retain for transfer}
-    \item{\code{reference.version}}{Version of the Azimuth reference}
-    \item{\code{verbose}}{Display progress/messages}
-  }}
+\item{\dots}{}
 }
 \value{
 A Seurat object with AzimuthData stored in the tools slot for use with Azimuth
