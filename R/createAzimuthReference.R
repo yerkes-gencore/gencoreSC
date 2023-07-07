@@ -12,7 +12,7 @@
 #' @param output_folder Where to save the Azimuth reference files for future calls
 #'  of `RunAzimuth`
 #' @param ndims Number of dimensions to use for PCA and UMAP
-#' @param \dots
+#' @param \dots Arguments passed to Azimuth::AzimuthReference()
 #'
 #' @returns A Seurat object with AzimuthData stored in the tools slot for use with Azimuth
 #' @export

@@ -16,7 +16,7 @@ of \code{RunAzimuth}}
 
 \item{ndims}{Number of dimensions to use for PCA and UMAP}
 
-\item{\dots}{}
+\item{\dots}{Arguments passed to Azimuth::AzimuthReference()}
 }
 \value{
 A Seurat object with AzimuthData stored in the tools slot for use with Azimuth
