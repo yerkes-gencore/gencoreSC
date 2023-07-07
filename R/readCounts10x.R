@@ -7,19 +7,30 @@
 #' @param min.cells Include features detected in at least this many cells. Will subset the counts matrix as well. To reintroduce excluded features, create a new object with a lower cutoff.
 #' @param min.features Include cells where at least this many features are detected.
 #' @param strip.suffix Whether to strip suffix from cellranger cell ID
+#' @param format Input format. "tsv" (default) loads in the barcodes.tsv, features.tsv and matrix.mtx files in the directory specified by the `filepath` param. "h5" loads the `*feature_bc_matrix.h5` file specified by the `filepath` param.
 #'
 #' @return An object of class Seurat
 #'
 #' @importFrom Seurat Read10X CreateSeuratObject CreateAssayObject
+#'
+#' @note For `format = "tsv"` (default), `filepath` must specify the path to the *directory* containing `barcodes.tsv`, `features.tsv`, and `matrix.mtx`; whereas for `format = h5`, `filepath` must specify the path to the `*feature_bc_matrix.h5` *file*.
 #'
 #' @export
 readCounts10x <- function(capID,
                           filepath,
                           min.cells=0,
                           min.features=0,
-                          strip.suffix=FALSE) {
+                          strip.suffix=FALSE,
+                          format = "tsv") {
 
-  counts_in <- Seurat::Read10X(data.dir = filepath)
+  if (format == "tsv") {
+    counts_in <- Seurat::Read10X(data.dir = filepath)
+  } else if (format == "h5") {
+    counts_in <- Seurat::Read10X_h5(filepath, use.names = TRUE, unique.features = TRUE)
+  } else {
+    errorCondition("Must specify whether input format is 'tsv' or 'h5'")
+  }
+
   # Accommodate count matrices files with only RNA and those with multiple
   if ("Gene Expression" %in% names(counts_in)) {
     obj <- Seurat::CreateSeuratObject(counts_in$`Gene Expression`,
