@@ -7,7 +7,7 @@
 #' @param min.cells Include features detected in at least this many cells. Will subset the counts matrix as well. To reintroduce excluded features, create a new object with a lower cutoff.
 #' @param min.features Include cells where at least this many features are detected.
 #' @param strip.suffix Whether to strip suffix from cellranger cell ID
-#' @param format Input format. "tsv" (default) uses `Seurat::Read10X` to load in for the barcodes.tsv, features.tsv and matrix.mtx in the directory specified by the `filepat`h param. "h5" loads the `*feature_bc_matrix.h5` file specifed by the `filepath` param.
+#' @param format Input format. "tsv" (default) loads in the barcodes.tsv, features.tsv and matrix.mtx files in the directory specified by the `filepath` param. "h5" loads the `*feature_bc_matrix.h5` file specified by the `filepath` param.
 #'
 #' @return An object of class Seurat
 #'

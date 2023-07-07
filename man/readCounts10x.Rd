@@ -24,7 +24,7 @@ readCounts10x(
 
 \item{strip.suffix}{Whether to strip suffix from cellranger cell ID}
 
-\item{format}{Input format. "tsv" (default) uses \code{Seurat::Read10X} to load in for the barcodes.tsv, features.tsv and matrix.mtx in the directory specified by the \code{filepat}h param. "h5" loads the \verb{*feature_bc_matrix.h5} file specifed by the \code{filepath} param.}
+\item{format}{Input format. "tsv" (default) loads in the barcodes.tsv, features.tsv and matrix.mtx files in the directory specified by the \code{filepath} param. "h5" loads the \verb{*feature_bc_matrix.h5} file specified by the \code{filepath} param.}
 }
 \value{
 An object of class Seurat
