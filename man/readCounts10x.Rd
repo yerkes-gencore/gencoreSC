@@ -9,7 +9,8 @@ readCounts10x(
   filepath,
   min.cells = 0,
   min.features = 0,
-  strip.suffix = FALSE
+  strip.suffix = FALSE,
+  format = "tsv"
 )
 }
 \arguments{
@@ -22,10 +23,15 @@ readCounts10x(
 \item{min.features}{Include cells where at least this many features are detected.}
 
 \item{strip.suffix}{Whether to strip suffix from cellranger cell ID}
+
+\item{format}{Input format. "tsv" (default) uses \code{Seurat::Read10X} to load in for the barcodes.tsv, features.tsv and matrix.mtx in the directory specified by the \code{filepat}h param. "h5" loads the \verb{*feature_bc_matrix.h5} file specifed by the \code{filepath} param.}
 }
 \value{
 An object of class Seurat
 }
 \description{
 Reads in 10X counts and metadata and returns Seurat obj
+}
+\note{
+For \code{format = "tsv"} (default), \code{filepath} must specify the path to the \emph{directory} containing \code{barcodes.tsv}, \code{features.tsv}, and \code{matrix.mtx}; whereas for \code{format = h5}, \code{filepath} must specify the path to the \verb{*feature_bc_matrix.h5} \emph{file}.
 }
