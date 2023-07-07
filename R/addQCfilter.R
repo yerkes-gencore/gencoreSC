@@ -49,7 +49,7 @@ addQCfilter <- function(obj,
   ## filtering
   metadata <- obj@meta.data
   metadata <- metadata %>% dplyr::mutate(
-    QC_filtered =
+    !!(filterName) :=
       .data$nUMI >= cutoffs$nUMI.min &
       .data$nUMI <= cutoffs$nUMI.max &
       .data$nGene >= cutoffs$nGene.min &
