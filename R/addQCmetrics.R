@@ -30,6 +30,10 @@ addQCmetrics <-
                       breaks=c(-Inf, ribo_qs[2], ribo_qs[3], ribo_qs[4], Inf),
                       labels=c("Low","Medium","Med-high", "High"))
 
+    if (!is.null(obj@meta.data$nFeature_ADT) & !is.null(obj@meta.data$nCount_ADT)) {
+      obj$log10ADTPerUMI <- log10(obj$nFeature_ADT)/log10(obj$nCount_ADT)
+    }
+
     # Create metadata dataframe
     metadata <- obj@meta.data
     # Add cell IDs to metadata
