@@ -18,8 +18,12 @@ You can install this package using `devtools` or `remotes`.
 devtools::install_github('yerkes-gencore/gencoreSC')
 ```
 
-Some dependencies don't automatically install for reasons yet to be determined. If you have issues installing the package due to missing dependencies, try installing them directly,
+Some dependencies don't automatically install for various reasons. If you have issues installing the package due to missing dependencies, try installing them directly,
 then reinstalling the package. For example, the `S4Vectors` seems to throw issues occasionally. Run `BiocManager::install("S4Vectors")` then reinstall gencoreSC. 
+
+The package has been tested to install with the docker image
+
+`https://hub.docker.com/r/dgratz100/gencore-singlecell-rstudio`
 
 # Making changes
 
