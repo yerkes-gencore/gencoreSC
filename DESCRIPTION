@@ -39,13 +39,14 @@ Imports:
     viridis,
     zeallot
 Suggests:
+    Azimuth,
     BiocParallel,
     ggh4x,
+    hdf5r,
     knitr,
     rmarkdown,
     scales,
     STACAS,
-    Azimuth,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
