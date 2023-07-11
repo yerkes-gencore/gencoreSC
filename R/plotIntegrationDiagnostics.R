@@ -9,8 +9,8 @@
 #' @param sample_col Name of metadata column to use as sample name (e.g. "capID")
 #' @param cell_labels Name of metadata column where cell annotation labels are stored
 #' @param res Resolution(s) to use for \code{\link[Seurat:FindClusters]{FindClusters()}}. May be scalar or vector of multiple resolutions to loop over.
-#' @param \dots Additional arguments passed to `Seurat::DimPlot()`, useful for controlling rasterization or
-#'  point size for large datasets
+#' @param plot_proportions Whether to plot the proprotion of cells assigned to each cell type in a given cluster for `plotClusterAnnotTile()`
+#' @param \dots Additional arguments passed to `Seurat::DimPlot()`, useful for controlling rasterization or point size for large datasets
 #' @returns A list of ggplot objects in a structure like so:
 #'
 #' list(
@@ -101,6 +101,7 @@ plotIntegrationDiagnostics <- function(plot_list,
                                        sample_col,
                                        cell_labels,
                                        res,
+                                       plot_proportions = TRUE,
                                        ...) {
   # Save plots for comparing integration methods
   print("Saving plots.")
@@ -125,7 +126,7 @@ plotIntegrationDiagnostics <- function(plot_list,
                          label.size=3, legend = TRUE, ...)
 
     plot_list[[subset_id]][[integration_name]][["clust.ann.compare"]][[cell_labels]][[as.character(resi)]] <-
-      plotClusterAnnotTile(seurat.obj, labels = cell_labels)
+      plotClusterAnnotTile(seurat.obj, labels = cell_labels, plot_proportions = plot_proportions)
   }
   tryCatch({
     plot_list[[subset_id]][[integration_name]][["clustree"]] <-
@@ -221,7 +222,7 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 #' @param obj.seurat Seurat object
 #' @param labels Metadata column name for cell type annotation labels in metadata
 #' @param assay Assay to use (default "RNA")
-#' @param plot_portions Whether to plot portions instead of raw counts, default FALSE
+#' @param plot_proportions Whether to plot proportions instead of raw counts, default TRUE
 #'
 #' @returns ggplot object UMAP
 #'
@@ -234,12 +235,12 @@ plot_smaller <- function(p, discrete=T, smaller_legend=T) {
 plotClusterAnnotTile <- function(obj.seurat,
                                  labels,
                                  assay = "RNA",
-                                 plot_portions = FALSE) {
+                                 plot_proportions = TRUE) {
   portion <- NULL
   plot_data <- obj.seurat@meta.data %>%
     group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
     summarize(n = n()) %>%
-    mutate(portion = n/sum(n)) %>%
+    mutate(proportion = n/sum(n)) %>%
     ungroup() %>%
     group_by(.data[[labels]]) %>%
     mutate(colSum = sum(n)) %>%
@@ -249,7 +250,7 @@ plotClusterAnnotTile <- function(obj.seurat,
   ggplot(data = plot_data,
          aes(x = .data[["seurat_clusters"]],
              y = .data[[labels]],
-             fill = if (plot_portions) {portion} else {log10(n + 10)})) +
+             fill = if (plot_proportions) {proportion} else {log10(n + 10)})) +
     geom_tile() +
     viridis::scale_fill_viridis(discrete = FALSE) +
     theme_bw() +
@@ -259,5 +260,5 @@ plotClusterAnnotTile <- function(obj.seurat,
           axis.title = element_blank(),
           legend.position = "top",
           panel.background = element_rect(fill = "black")) +
-    labs(fill = (if (plot_portions) {'Portion of cluster'} else {'log10(n+10)'}))
+    labs(fill = (if (plot_proportions) {'Proportion of cluster'} else {'log10(n+10)'}))
 }

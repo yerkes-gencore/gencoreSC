@@ -4,7 +4,12 @@
 \alias{plotClusterAnnotTile}
 \title{Plot comparing unsupervised clusters to cell annotations}
 \usage{
-plotClusterAnnotTile(obj.seurat, labels, assay = "RNA", plot_portions = FALSE)
+plotClusterAnnotTile(
+  obj.seurat,
+  labels,
+  assay = "RNA",
+  plot_proportions = TRUE
+)
 }
 \arguments{
 \item{obj.seurat}{Seurat object}
@@ -13,7 +18,7 @@ plotClusterAnnotTile(obj.seurat, labels, assay = "RNA", plot_portions = FALSE)
 
 \item{assay}{Assay to use (default "RNA")}
 
-\item{plot_portions}{Whether to plot portions instead of raw counts, default FALSE}
+\item{plot_proportions}{Whether to plot proportions instead of raw counts, default TRUE}
 }
 \value{
 ggplot object UMAP
