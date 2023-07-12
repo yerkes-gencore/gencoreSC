@@ -12,6 +12,7 @@ plotIntegrationDiagnostics(
   sample_col,
   cell_labels,
   res,
+  plot_proportions = TRUE,
   ...
 )
 }
@@ -30,8 +31,9 @@ plotIntegrationDiagnostics(
 
 \item{res}{Resolution(s) to use for \code{\link[Seurat:FindClusters]{FindClusters()}}. May be scalar or vector of multiple resolutions to loop over.}
 
-\item{\dots}{Additional arguments passed to \code{Seurat::DimPlot()}, useful for controlling rasterization or
-point size for large datasets}
+\item{plot_proportions}{Whether to plot the proprotion of cells assigned to each cell type in a given cluster for \code{plotClusterAnnotTile()}}
+
+\item{\dots}{Additional arguments passed to \code{Seurat::DimPlot()}, useful for controlling rasterization or point size for large datasets}
 }
 \value{
 A list of ggplot objects in a structure like so:
