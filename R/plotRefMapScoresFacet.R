@@ -1,7 +1,9 @@
 #' Plot reference mapping calls and scores facetted by cluster
 #'
 #' Creates violin plots of cell annotation calls and confidence scores, facetted
-#'  by query object clusters. Metadata is pulled from columns in the Seurat
+#'  by query object clusters.
+#'
+#'  Metadata is pulled from columns in the Seurat
 #'  object as specified by the user, so it should be agnostic to SingleR, Azimuth,
 #'  or other reference mapping functions that provide labels and scores. You
 #'  can optionally specify a minimum proportion threshold to plot, which will
