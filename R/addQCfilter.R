@@ -70,7 +70,7 @@ addQCfilter <- function(obj,
 #' absolute deviation for the distribution of metric values in the capture.
 #'
 #' @param capture A seurat object
-#' @param nmads number of median absolute deviations, default 4
+#' @param nmads Number of median absolute deviations, default 4
 #' @param metrics Columns of the capture metadata to calculate thresholds for
 #'
 #' @returns a list of min and max thresholds for each of `metrics`
