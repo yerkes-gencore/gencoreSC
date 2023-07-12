@@ -31,7 +31,7 @@ integrate_seurat(
 
 \item{feature.blacklist}{Vector of genes to blacklist from variable features}
 
-\item{regress.out}{Features to regress out in SCTransform vars.to.regress}
+\item{regress.out}{Features to regress out in SCTransform or ScaleData vars.to.regress}
 
 \item{k.anchor}{How many neighbors (k) to use when picking anchors}
 }

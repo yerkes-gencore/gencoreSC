@@ -34,7 +34,7 @@ runIntegration(
 
 \item{harmony.group.by.vars}{Var to remove (passed to group.by.vars in harmony::RunHarmony)}
 
-\item{regress.out}{Features to regress out in SCTransform vars.to.regress}
+\item{regress.out}{Features to regress out in SCTransform or ScaleData vars.to.regress}
 
 \item{STACAS.supervision_labels}{Vector of cell labels to pass to supervised integration with STACAS. See \code{magrittr::\link[STACAS:Run.STACAS]{Run.STACAS}} \code{cell.labels} parameter for details.}
 
