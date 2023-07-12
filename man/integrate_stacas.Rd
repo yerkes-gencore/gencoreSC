@@ -26,7 +26,7 @@ integrate_stacas(
 
 \item{feature.blacklist}{Vector of genes to blacklist from variable features}
 
-\item{regress.out}{Features to regress out in SCTransform vars.to.regress}
+\item{regress.out}{Features to regress out in SCTransform or ScaleData vars.to.regress}
 
 \item{cell.labels}{A metadata column name, storing cell type annotations. These will be taken into account
 for semi-supervised alignment (optional). Cells annotated as NA or NULL will not be penalized in semi-supervised

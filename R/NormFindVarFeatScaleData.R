@@ -7,7 +7,7 @@
 #' @param s Seurat object
 #' @param norm_method Normalization method (either "logNorm" = log transform or "SCT" = SCTransform)
 #' @param nfeatures Number of features to pass to Seurat::FindVariableFeatures()
-#' @param regress.out Features to regress out in SCTransform vars.to.regress
+#' @param regress.out Features to regress out in SCTransform or ScaleData vars.to.regress
 #' @param feature.blacklist Vector of genes to blacklist from variable features
 #' @param verbose Print all messages from wrapped functions
 #' @param scale_data Logical; whether to run Seurat::ScaleData(). If NULL (default), will scale for log normalization but not for SCTransform.
@@ -60,7 +60,7 @@ NormFindVarFeatScaleData <- function(s,
     # Remove extra features
     Seurat::VariableFeatures(s) <- Seurat::VariableFeatures(s)[1:nfeatures]
     if (scale_data == T) {
-      s <- Seurat::ScaleData(s, verbose = verbose)
+      s <- Seurat::ScaleData(s, verbose = verbose, vars.to.regress = regress.out)
     }
   } else if (norm_method == 'SCT'){
     features <- setdiff(rownames(s), feature.blacklist)
