@@ -13,7 +13,7 @@ generate_capture_QC_cutoffs(
 \arguments{
 \item{capture}{A seurat object}
 
-\item{nmads}{number of median absolute deviations, default 4}
+\item{nmads}{Number of median absolute deviations, default 4}
 
 \item{metrics}{Columns of the capture metadata to calculate thresholds for}
 }
