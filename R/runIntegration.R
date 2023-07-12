@@ -258,7 +258,7 @@ integrate_harmony <- function(s, norm_method = "logNorm", nfeatures = 2000, npcs
     # Manually set variable features of merged Seurat object
     Seurat::VariableFeatures(s) <- integ_features
     # Not sure why I need to scale data again after merging?
-    s <- Seurat::ScaleData(s, verbose = verbose)
+    s <- Seurat::ScaleData(s, verbose = verbose, vars.to.regress = regress.out)
     # Calculate PCs using manually set variable features
     s <- Seurat::RunPCA(s, npcs = npcs, verbose = verbose)
   }
