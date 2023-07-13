@@ -86,7 +86,8 @@ plotRefMapScoresFacet <- function(obj,
                                  color = .data[[ label_column ]])) +
     ggplot2::geom_violin(draw_quantiles = c(0.5)) +
     ggplot2::geom_jitter(size=0.2, alpha=0.35) +
-    ggplot2::facet_wrap(. ~ .data[[ clusters_column ]] %>% paste("Cluster",.),
+    ggplot2::facet_wrap(. ~ factor(.data[[ clusters_column ]] %>% paste("Cluster",.),
+                                   levels = gtools::mixedsort(unique(.data[[ clusters_column ]] %>% paste("Cluster",.)))),
                         ncol = ncol,
                         # labeller = ggplot2::labeller(.data[[ clusters_column ]] = medmapscores)
     ) +
