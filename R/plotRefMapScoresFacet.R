@@ -1,7 +1,9 @@
 #' Plot reference mapping calls and scores facetted by cluster
 #'
 #' Creates violin plots of cell annotation calls and confidence scores, facetted
-#'  by query object clusters. Metadata is pulled from columns in the Seurat
+#'  by query object clusters.
+#'
+#'  Metadata is pulled from columns in the Seurat
 #'  object as specified by the user, so it should be agnostic to SingleR, Azimuth,
 #'  or other reference mapping functions that provide labels and scores. You
 #'  can optionally specify a minimum proportion threshold to plot, which will
@@ -35,15 +37,15 @@
 #' min_freq = 0.05
 #' )
 #' }
-referenceMappingOutcomesFacetPlot <- function(obj,
-                                     label_column,
-                                     label_score_column,
-                                     clusters_column = 'seurat_clusters',
-                                     #mapping_score_column,
-                                     min_proportion = 0,
-                                     ncol = 3,
-                                     n_font_size = 2.5,
-                                     facet_order = NULL){
+plotRefMapScoresFacet <- function(obj,
+                                  label_column,
+                                  label_score_column,
+                                  clusters_column = 'seurat_clusters',
+                                  #mapping_score_column,
+                                  min_proportion = 0,
+                                  ncol = 3,
+                                  n_font_size = 2.5,
+                                  facet_order = NULL){
 
   # Calculate proportion of calls in each cluster
   sample_sizes <- obj@meta.data %>%
@@ -55,8 +57,8 @@ referenceMappingOutcomesFacetPlot <- function(obj,
 
   data <- obj@meta.data %>%
     dplyr::select({{ clusters_column }},
-      {{ label_column }},
-      {{ label_score_column }})
+                  {{ label_column }},
+                  {{ label_score_column }})
 
   # Old, for median mapping scores, specific to Azimuth
   # med_map_scores <- data %>%
@@ -76,21 +78,22 @@ referenceMappingOutcomesFacetPlot <- function(obj,
     factor(plot_data[[clusters_column]],
            levels = if (is.null(facet_order)){
              sort(unique(plot_data[[clusters_column]]), decreasing = FALSE)
-             } else {
-               facet_order})
+           } else {
+             facet_order})
 
   ggplot2::ggplot(plot_data, aes(x = .data[[ label_column ]],
-                        y = .data[[ label_score_column ]],
-                        color = .data[[ label_column ]])) +
+                                 y = .data[[ label_score_column ]],
+                                 color = .data[[ label_column ]])) +
     ggplot2::geom_violin(draw_quantiles = c(0.5)) +
     ggplot2::geom_jitter(size=0.2, alpha=0.35) +
-    ggplot2::facet_wrap(. ~ .data[[ clusters_column ]],
-               ncol = ncol,
-               # labeller = ggplot2::labeller(.data[[ clusters_column ]] = medmapscores)
-               ) +
+    ggplot2::facet_wrap(. ~ .data[[ clusters_column ]] %>% paste("Cluster",.),
+                        ncol = ncol,
+                        # labeller = ggplot2::labeller(.data[[ clusters_column ]] = medmapscores)
+    ) +
     ggplot2::theme_bw() +
     ggplot2::theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    ggplot2::geom_text(aes(label=n, y = 0.15), angle = 30, size = n_font_size) +
+    ggplot2::geom_text(aes(label=n, y = -0.1), angle = 45, size = n_font_size, show.legend = FALSE) +
+    ggplot2::ylim(-0.15,NA) +
     ggplot2::labs(x='Predicted cell type',
                   color = 'Predicted cell type',
                   y = 'Prediction score',
@@ -103,5 +106,7 @@ referenceMappingOutcomesFacetPlot <- function(obj,
                       paste0("\nCalls for less than ",
                              min_proportion*100,
                              "% of a cluster population are omitted for clarity.")
-                      } else NULL ))
+                    } else NULL )) +
+    ggplot2::guides(color = guide_legend(override.aes=list(shape = 15, size = 5, alpha = 1, linetype = 0))) +
+    ggplot2::coord_cartesian(clip = "off")
 }
