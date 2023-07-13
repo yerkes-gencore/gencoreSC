@@ -1,5 +1,6 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/yerkes-gencore/gencoreSC/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yerkes-gencore/gencoreSC/actions/workflows/R-CMD-check.yaml)
+![Docker Pulls](https://img.shields.io/docker/pulls/dgratz100/gencore-singlecell-rstudio)
 <!-- badges: end -->
 
 # gencoreSC - Utility functions for single cell analyses
