@@ -4,34 +4,31 @@
 \alias{addQCfilter}
 \title{Add QC filters}
 \usage{
-addQCfilter(
-  obj,
-  split.by = NULL,
-  filterName = "input",
-  by_threshold = FALSE,
-  cutoffs = defaultCutoffs,
-  by_outlier = FALSE,
-  nmads = 4
-)
+addQCfilter(obj, filterName = NULL, cutoffs = NULL)
 }
 \arguments{
 \item{obj}{Seurat object}
 
-\item{split.by}{Metadata column to split by for outlier detection if obj is not already split}
-
 \item{filterName}{Name of new metadata column with logical filter}
 
-\item{by_threshold}{Logical to control whether to filter on thresholds defined in 'cutoffs'}
-
-\item{cutoffs}{Named list of cutoffs}
-
-\item{by_outlier}{Logical to control whether to filter outliers}
-
-\item{nmads}{Median absolute deviation used to define outliers}
+\item{cutoffs}{Named list of cutoffs with the following values:
+nUMI.max, nUMI.min, nGene.max, nGene.min, log10GenesPerUMI.max,
+log10GenesPerUMI.min, mitoRatio.max, mitoRatio.min, riboRatio.max, riboRatio.min
+You can provide a single list of values to be used for all captures (not recommended),
+or you can provide a list of lists, where each entry is thresholds for a single capture.
+See \code{generate_capture_QC_cutoffs()} for help making a cutoffs list.}
 }
 \value{
-Seurat object with new metadata column. If passed a split object, will return split object. Same for a merged/single capture object.
+Seurat object(s) with a new metadata column indicating if the cell is within thresholds
 }
 \description{
 Adds logical metadata column for a given set of arbitrary cutoffs and/or outliers
+}
+\examples{
+\dontrun{
+  ## where objs is a list of Seurat objects for each capture
+  cutoffs <- lapply(objs, generate_cutoffs)
+  objs <- mapply(addQCfilter, objs, 'outliers', cutoffs)
+}
+
 }
