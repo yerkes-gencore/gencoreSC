@@ -121,10 +121,17 @@ findSoupXFiles <- function(base_path,
                              recursive = TRUE, pattern = unfiltered_mat_pattern,
                              include.dirs = TRUE, full.names = TRUE)
 
-  clusters_path <- file.path(dir(file.path(base_path, 'outs'),
-                                 recursive = TRUE, pattern = clusters_pattern,
-                                 include.dirs = TRUE, full.names = TRUE),
-                             'graphclust/clusters.csv')
+  clusters_base_dir <- dir(file.path(base_path, 'outs'),
+                           recursive = TRUE, pattern = clusters_pattern,
+                           include.dirs = TRUE, full.names = TRUE)
+  if (dir.exists(paste0(clusters_base_dir, "/graphclust"))) {
+    clusters_path <- file.path(clusters_base_dir, "/graphclust/clusters.csv")
+  } else if (dir.exists(paste0(clusters_base_dir, "/gene_expression_graphclust"))) {
+    clusters_path <- file.path(clusters_base_dir, "/gene_expression_graphclust/clusters.csv")
+  } else {
+    errorCondition(paste0("Could not find cluster.csv file in ", clusters_base_dir, "/graphclust/ or gene_expression_graphclust/"))
+  }
+
   return(list(unfiltered_mat_path = unfiltered_mat_path,
               filtered_mat_path = filtered_mat_path,
               clusters_path = clusters_path))
