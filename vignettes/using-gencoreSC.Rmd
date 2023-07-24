@@ -1,0 +1,325 @@
+---
+title: "using-gencoreSC"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{using-gencoreSC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  eval = FALSE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(gencoreSC)
+```
+
+# Overview
+
+This vignette walks you through how to use the package for single cell analysis.
+Detailed rationale for why and how we do things is in the 'single-cell best
+practices vignette'. This is intended to be more practical. 
+
+## Ambient RNA correction
+
+Ambient RNA correction within the package is performed by SoupX.
+
+[Github](https://github.com/constantAmateur/SoupX)
+
+[Vignette](https://rawcdn.githack.com/constantAmateur/SoupX/204b602418df12e9fdb4b68775a8b486c6504fe4/inst/doc/pbmcTutorial.html)
+
+```
+Even if you decide you don't want to use the SoupX correction methods for whatever reason, you should at least want to know how contaminated your data are... 
+In our experience most experiments have somewhere between 2-10% contamination.
+```
+- From SoupX Github
+
+SoupX should be performed on a per-channel basis.
+
+It seems worthwhile to run, estimate contamination fraction, and possibly look
+at results with and without SoupX. 
+
+`findSoupXFiles()` Attempts to retrieve paths to the files needed to run SoupX
+from a Cellranger output folder. This returns only paths, so it is not essential
+and can be replaced by manually listing files.
+
+```{r}
+## Here we use a config sheet to specify parent directories and a 
+## samplesheet to specify output filenames, but you could do this differently
+soupx_files <- lapply(samples$FileID, function(x){
+ findSoupXFiles(file.path(config$rootDir, config$alignmentDir, x))
+})
+names(soupx_files) <- samples$Label
+```
+
+`runSoupX()` takes the files provided by `findSoupXFiles()` (or manually) to 
+load in the unfiltered counts, filtered counts, and initial clustering data. It
+then performs the basic SoupX workflow and returns the final SoupChannel object
+with the adjusted counts stored. 
+
+```{r}
+sc <- lapply(soupx_files, function(x){
+ runSoupX(x[['unfiltered_mat_path']], x[['filtered_mat_path']], x[['clusters_path']])
+})
+```
+
+You can retrieve the rho posterior plot from the `runSoupX` output. Ideally, you
+have a single large peak around your max estimate. If you see multimodal or 
+relatively flat posterior, your rho estimate may be less certain, and you should
+inspect your data quality in other ways to decide how much value to place in 
+soup correction.
+
+```{r}
+sc[['Your sample name']]$plot
+```
+
+
+`plotSoupXGeneAdjustments()` shows the top genes affected by SoupX correction.
+For lightweight rendering and to help focus on only strongly affected genes, it
+limits the viewing window to genes with a minimum overall abundance and minimum
+adjusted frequency proportion. There's also an option to hide genes with only
+Ensembl identifiers to focus on genes that might be of interest to the study.
+
+```{r}
+plotSoupXGeneAdjustments(sc, hide_ensembl = TRUE)
+```
+
+The `adjusted_counts` in the object returned by `runSoupX()` can be stored as an 
+assay with the Seurat object, which allows it to be easily associated with other
+metadata from the study and easily be filtered with other QC steps, although 
+this creates a larger memory footprint. 
+
+You can look in the soup channel object returned from runSoupX to compare the
+ratio of adjusted counts to previous counts and see which genes were most
+affected. You should expect to see highly specific markers and mitochondrial genes. 
+
+Based on the diagnostic plots from 
+`runSoupX()` and `plotSoupXGeneAdjustments()`, you might decide it is/isn't 
+necessary to do SoupX correction, and you can choose to go with either the 
+original counts or the modified counts for your downstream analysis.
+
+`SoupX::plotChangeMap()` can layer soup fraction estimations on a Umap or other
+dim redux plot. 
+
+## Reading in Data
+
+`readCounts10x()` acts as a wrapper to Seurat's Read10X. It mostly ensures
+consistent assay naming for downstream functions.
+
+```{r}
+path.list <- file.path(config$rootDir, config$alignmentDir, samples$FileID, 'outs/per_sample_outs/',
+                        samples$FileID, 'count/sample_filtered_feature_bc_matrix')
+names(path.list) <- samples$Label
+
+pbmc.split <- mapply(readCounts10x, capID = samples$Label, filepath = path.list, USE.NAMES = TRUE)
+```
+
+
+## Filtering data
+
+### Remove low count genes
+
+`filterLowGenes()` exists to perform the `min.genes` functionality of `Seurat::Read10X()`
+on existing captures. The process is separated so you can know how many genes
+are being filtered on a per-capture basis. You can set th `calculate_only` flag
+to see how many genes would be filtered, then set it to FALSE to actually
+filter the captures
+
+```{r}
+pbmc.split <- lapply(pbmc.split, filterLowGenes, min.cells = 50, assay = 'RNA', calculate_only = FALSE)
+```
+
+### Remove low quality cells
+
+`addQCmetrics` adds metadata to captures for QC metrics.
+
+```{r}
+pbmc.split <- lapply(pbmc.split,
+              addQCmetrics,
+              mito.pattern = "^MT", ## edit patterns as needed
+              ribo.pattern = "^RP[SL]")
+```
+
+You can then calculate outlier thresholds across metrics using `generate_capture_QC_cutoffs`.
+Outliers are calculated using median absolute deviations. You can set the number
+of nMADs lower or higher to make the outlier detection threshold more or less stringent.
+The 'default' is 4 nMADs.
+
+```{r}
+cutoffs <- lapply(pbmc.split, generate_capture_QC_cutoffs)
+```
+
+This generates a list of cutoff values for each capture in the list. You can
+use those cutoffs (or any arbitary user-defined cutoffs in the same format)
+to filter your cells via `addQCfilter`. This adds a new metadata boolean column
+named `<filterName>` that says if a cell is outside any of the thresholds. 
+
+```{r}
+pbmc.split <- mapply(addQCfilter, pbmc.split, filterName = 'outliers', cutoffs)
+```
+
+You can visualize the changes to your data with different filtering regimes by
+using `plotQCRidgesJoint` with boolean metadata columns. This code produces
+two plots, one of the 'input data' with no filtering applied, and one with
+the outlier filtering applied. You can switch between the dashboard plots
+to see the effects of filtering on a per-capture basis. 
+
+```{r, message=TRUE, warning=FALSE, fig.width=18, fig.height=15}
+## Generate dashboard plots of filtering regimes
+cell_filtering_plots <- list()
+## if you added multiple filters, say one with default settings and one with
+## modified thresholds, you can plot all of them here. Specifying 'input'
+## shows the unfiltered cells in a separate dashboard
+for (filtName in c('input', 'outliers')) {
+  cell_filtering_plots[[filtName]] <- plotQCRidgesJoint(pbmc.split, 
+                                              filtName = filtName,
+                                              title = filtName, 
+                                              split_by = "capID", 
+                                              color_by = "mitoRatio",
+                                              cutoffs = cutoffs,
+                                              facet_colors = TRUE)
+}
+```
+
+## Doublet Removal
+
+`runDoubletFinder()` is a wrapper for the doubletFinder functions. It annotates a capture-level seurat object with doublet calls.
+
+`removeDFDoublets()` is a small convenience function to filter an object by the doublet finder calls.
+
+Pre-processing captures (normalization, variable features, scaling, PCA)
+
+```{r}
+objs_filt <- lapply(objs_filt, NormFindVarFeatScaleData, norm_method = 'logNorm')
+objs_filt <- lapply(objs_filt, RunPCA)
+```
+
+Run doubletFinder. You can pass in ground truth from hashing data here if you
+have it.
+
+```{r}
+objs_filt <- lapply(objs_filt, runDoubletFinder, 
+                    PCs = 30,
+                    sct = FALSE,
+                    cores = 4) ## adjust for your machine
+```
+
+See the numbe of doublets in your captures. It should be around the expected
+doublet value used in `runDoubletFinder` (the default is 7.5%).
+
+```{r}
+doubletfinder_results <- data.table::rbindlist(
+  lapply(objs_filt, function(x) {
+    as.list(table(x$DF_classifications))
+  }), idcol = 'Sample')
+doubletfinder_results %>%
+  knitr::kable()
+```
+
+A convenience function removes doublets from the object. It may be prudent
+to collect more information (e.g. predicted cell type) prior to removing doublets,
+so only call this function when you're ready to drop them.
+
+```{r}
+## This will remove doublets
+objs_filt <- lapply(objs_filt, removeDFDoublets)
+qc_receipts$doublet_removal <- lapply(objs_filt, dim)
+```
+
+
+## Cell cycle regression
+
+Seurat includes a set of genes to use for CC regression for humans. 
+The Seurat function `CellCycleScoring()` can provide estimations of CC 
+that can be passed into `Seurat::ScaleData()` to regress out differences due to CC. 
+
+`gencoreSC::checkCC()` serves as a wrapper for Seurat's functions. It provides plots to visualize separation by CC stage and returns Seurat objects with CC scoring metadata added.
+
+## Mapping reference annotations
+
+### SingleR
+
+The `de.method` should be set to 'wilcox' for single-cell data ([from vignette](https://bioconductor.org/packages/release/bioc/vignettes/SingleR/inst/doc/SingleR.html)).
+
+### Azimuth
+
+A reference dataset can be prepared using `createAzimuthReference()`, a wrapper
+for Azimuth's reference creation functions. You need only pass in an annotated
+Seurat dataset, and the wrapper will handle the processing and reference creation
+for compatibility with Azimuth.
+
+```{r}
+## Where ref is a seurat object with a metadata column 'annotations'
+createAzimuthReference(ref, 'annotations', 'reference/pbmc_ref', ndims = 50)
+```
+
+
+Once you have an Azimuth compatible reference, you can run `Azimuth::RunAzimuth()`
+with your dataset and reference. 
+
+### GencoreSC visualization tools
+
+`extractTopRefMapResults()` will give you a table of the top cell-type predictions
+per cluster
+
+`referenceMappingOutcomesFacetPlot()` will give you a more comprehensive look at
+all predicted cell-types and the associated prediction scores for each cluster.
+
+## Integration
+
+There is a single wrapper function for running Harmony, STACAS, and Seurat integration.
+The idea is to have consistent pre-processing for all method so you can compare 
+and choose the appropriate one for your study. 
+
+```{r}
+obj_post_harmony_int <- runIntegration(objs_filt_mapped,
+                                       integration_method = 'harmony',
+                                       dim.reduct = "rpca",
+                                       harmony.group.by.vars = c('capID', 'hash.ID'))
+```
+
+The result of integration can be conveniently visualized via the function
+`plotIntegrationDiagnostics()`. 
+
+```{r}
+plot_list <- list()
+## The pt.size argument is needed as sometimes high volume datasets
+## won't render otherwise
+plot_list <- plotIntegrationDiagnostics(plot_list = plot_list,
+                                        seurat.obj = obj_post_harmony_int,
+                                        sample_col = 'capID',
+                                        subset_id = 'full',
+                                        integration_name = 'Harmony',
+                                        cell_labels = 'predicted.cell_type_lvl1',
+                                        res = c(0.9),
+                                        pt.size = .1)
+```
+
+## Demultiplexing hashed captures
+
+The helper function `demuxAntibodyData()` serves as a wrapper to Seurat's
+`HTODemux()`. It requires a named list of hash labels.
+
+```{r}
+HTO_table <- read.csv(here('config/HTO_table.csv')) %>%
+  mutate(Hashtag = paste0('Hash', substr(Hashtag, 9, 10))) %>%
+  column_to_rownames('Sample')
+## Labels need to be a named list
+HTO_labels <- setNames(rownames(HTO_table), HTO_table$Hashtag)
+objs_filt <- lapply(objs_filt, demuxAntibodyData, labels = HTO_labels, assay = 'ADT')
+```
+
+# Term glossary
+
+Term  | Explanation
+----- | -----------
+DEG   |   Differentially expressed genes
+Soup  |   Ambient RNA from lysed cells
+HTO   |   Hash tag oligos
+ADT   |   Antibody derived tags
+GEM   |   Gel emulsion bead

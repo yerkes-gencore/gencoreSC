@@ -39,7 +39,9 @@ library(gencoreSC)
 Dockerized sessions of Rstudio ensure a reproducible architecture for all analyses. 
 There is a dockerfile for the gencore Rstudio image at
 `/yerkes-cifs/runs/tools/rstudio-server/`, or better yet at
-https://github.com/yerkes-gencore/rstudio-server. Using the gencore dockerized Rstudio
+https://github.com/yerkes-gencore/rstudio-server, or even better yet at
+https://hub.docker.com/repository/docker/dgratz100/gencore-singlecell-rstudio/general.
+Using the gencore dockerized Rstudio
 allows use of the Renv cache to avoid re-downloading packages in each container (see the
 next session). We try to keep the dockerfile minimal, but if there are linux dependencies
 or other installations that are useful, consider updating the dockerfile for 
@@ -53,12 +55,18 @@ git pull ## make sure the dockerfile is up-to-date!
 podman build -t gencore/rstudio:<your r version here> .
 ```
 
+or by just pointing to the dockerhub version
+
+```
+podman build dgratz100/gencore-singlecell-rstudio
+```
+
 then you can run the container (ideally behind a screen or other session manager
 to avoid random detachments). It can be useful to set `ROOT=TRUE` in case you 
 need to install linux dependencies from the terminal.
 
 ```
-podman run -e PASSWORD=password -e ROOT=TRUE -p 8787:8787 gencore/rstudio:4.2.1
+podman run -e PASSWORD=password -e ROOT=TRUE -p 8787:8787 dgratz100/gencore-singlecell-rstudio
 ```
 
 Note that the port number may need to change to avoid conflicts with other users, 
@@ -77,6 +85,22 @@ So if you want to use rstudio's built in git interface,
 you'll have to create a new project from a git tracked repo,
 rather than creating the git tracked repo first and creating
 a new project later.
+
+### Mounts
+
+You will likely want to just mount the whole server in the same style as the actual server.
+This will keep filepaths consistent between the server and the dockerized image, which
+is especially relevant for symlinks or paths in your code. 
+
+`-v /yerkes-cifs:/yerkes-cifs`
+
+You will also likely want to have an `.Renviron` file that is mounted with
+your containers. This can store variables like your github PAT and 
+Renv shared cache path (see Renv section) across sessions and projects.
+
+`-v <path_to_saved_configs/.Renviron:/root/.Renviron`
+
+The path for these user level mounted
 
 The dockerized rstudio also has issues with editing the ~/.local file, not sure why. You may have to mount folders there as necessary to work with things like `SeuratData`, or manually chmod and create the folders from the terminal as sudo. 
 
@@ -153,6 +177,8 @@ Our experiments indicate that adding 5% extra removes 90-95% of the soup, 10% ge
 ...mitochondrial genes are over represented in the background compared to cells, presumably as a result of the soup being generated from distressed cells.
 ```
 
+SoupX is incorporated in the gencoreSC package. See the 'using-gencoreSC' package for more details on using it in our standard workflow.
+
 #### How it works
 
 Input
@@ -198,34 +224,6 @@ affected. You should expect to see highly specific markers and mitochondrial gen
 `SoupX::plotChangeMap()` can layer soup fraction estimations on a Umap or other
 dim redux plot. 
 
-
-### Within gencoreSC
-
-The gencoreSC package has several functions to facilitate SoupX integration.
-
-`findSoupXFiles()` Attempts to retrieve paths to the files needed to run SoupX
-from a Cellranger output folder. This returns only paths, so it is not essential
-and can be replaced by manually listing files.
-
-`runSoupX()` takes the files provided by `findSoupXFiles()` (or manually) to 
-load in the unfiltered counts, filtered counts, and initial clustering data. It
-then performs the basic SoupX workflow and returns the final SoupChannel object
-with the adjusted counts stored. 
-
-`plotSoupXGeneAdjustments()` shows the top genes affected by SoupX correction.
-For lightweight rendering and to help focus on only strongly affected genes, it
-limits the viewing window to genes with a minimum overall abundance and minimum
-adjusted frequency proportion. 
-
-The `adjusted_counts` in the object returned by `runSoupX()` can be stored as an 
-assay with the Seurat object, which allows it to be easily associated with other
-metadata from the study and easily be filtered with other QC steps, although 
-this creates a larger memory footprint. Based on the diagnostic plots from 
-`runSoupX()` and `plotSoupXGeneAdjustments()`, you might decide it is/isn't 
-necessary to do SoupX correction, and you can choose to go with either the 
-original counts or the modified counts for your downstream analysis.
-
-
 ## Doublet Removal
 
 Most single-cell technologies are imperfect at isolating a single-cells. 
@@ -259,17 +257,12 @@ doublets in your dataset identified by conflicting sets of antibody
 tags in hashed studies (see cell hashing section). This can help seed
 the expected doublet rate for your capture. 
 
+DoubletFinder is incorporated in the gencoreSC package. See the 'using-gencoreSC' package for more details on using it in our standard workflow.
+
 #### Runtime considerations
 
 Doublet finder overestimates detectable doublets due to difficulty in identifying homotypic doublets. This can be somewhat remedied by providing cell-type annotations and using them to calculate a lower-bound of doublet rate.
 [More info](https://github.com/chris-mcginnis-ucsf/DoubletFinder#doublet-number-estimation)
-
-### Within gencoreSC
-
-`runDoubletFinder()` is a wrapper for the doubletFinder functions. It annotates a capture-level seurat object with doublet calls.
-
-`removeDFDoublets()` is a small convenience function to filter an object by the doublet finder calls.
-
 
 ## Cell cycle regression
 
@@ -283,13 +276,7 @@ Related vignettes: [Harvard Chan Bioinformatics Core](https://github.com/hbctrai
 
 [Seurat](https://satijalab.org/seurat/articles/cell_cycle_vignette.html)
 
-### Seurat CC regression
-
-Seurat includes a set of genes to use for CC regression for humans. The Seurat function `CellCycleScoring()` can provide estimations of CC that can be passed into `Seurat::ScaleData()` to regress out differences due to CC. 
-
-### Within gencoreSC
-
-`checkCC()` serves as a wrapper for Seurat's functions. It provides plots to visualize separation by CC stage and returns Seurat objects with CC scoring metadata added.
+Cell cycle regression checking is incorporated in the gencoreSC package. See the 'using-gencoreSC' package for more details on using it in our standard workflow.
 
 ## Mapping reference annotations
 
@@ -364,16 +351,8 @@ across the datasets. These anchors are used to normalize differences between the
 datasets, which can then be mapped in shared space. Annotations are then predicted
 by the annotations of a cell's nearest neighbors from the reference dataset. 
 
-
-#### Within gencoreSC
-
-A reference dataset can be prepared using `createAzimuthReference()`, a wrapper
-for Azimuth's reference creation functions. You need only pass in an annotated
-Seurat dataset, and the wrapper will handle the processing and reference creation
-for compatibility with Azimuth.
-
-Once you have an Azimuth compatible reference, you can run `Azimuth::RunAzimuth()`
-with your dataset and reference. 
+gencoreSC has a helper function to create a custom reference dataset for use
+with Azimuth. See the 'using-gencoreSC' vignette for more information.
 
 #### Runtime considerations
 
@@ -400,16 +379,11 @@ all predicted cell-types and the associated prediction scores for each cluster.
 
 ## Integration
 
-### Within gencoreSC
-
-There is a single wrapper function for running Harmony, STACAS, and Seurat integration.
+There is a single wrapper function for running Harmony, STACAS, and Seurat integration
+within the gencoreSC package. See the 'using-gencoreSC' vignette for mroe details.
 The idea is to have consistent pre-processing for all method so you can compare 
 and choose the appropriate one for your study. 
 
-See the help documentation for `runIntegration()` for more details.
-
-The result of integration can be conveniently visualized via the function
-`plotIntegrationDiagnostics()`. See the help documentation for more details. 
 ## Demultiplexing hashed captures
 
 [Paper on cell hashing](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-018-1603-1)
@@ -429,7 +403,7 @@ HTO data should be separated from other antibodies for the purpose of normalizat
 ### Within gencoreSC
 
 The helper function `demuxAntibodyData()` serves as a wrapper to Seurat's
-`HTODemux()`. See the function documentation for more details. 
+`HTODemux()`. See the 'using-gencoreSC' vignette for more details.
 
 # Reference data
 
