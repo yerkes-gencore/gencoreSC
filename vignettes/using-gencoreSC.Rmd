@@ -106,6 +106,86 @@ original counts or the modified counts for your downstream analysis.
 `SoupX::plotChangeMap()` can layer soup fraction estimations on a Umap or other
 dim redux plot. 
 
+## Reading in Data
+
+`readCounts10x()` acts as a wrapper to Seurat's Read10X. It mostly ensures
+consistent assay naming for downstream functions.
+
+```{r}
+path.list <- file.path(config$rootDir, config$alignmentDir, samples$FileID, 'outs/per_sample_outs/',
+                        samples$FileID, 'count/sample_filtered_feature_bc_matrix')
+names(path.list) <- samples$Label
+
+pbmc.split <- mapply(readCounts10x, capID = samples$Label, filepath = path.list, USE.NAMES = TRUE)
+```
+
+
+## Filtering data
+
+### Remove low count genes
+
+`filterLowGenes()` exists to perform the `min.genes` functionality of `Seurat::Read10X()`
+on existing captures. The process is separated so you can know how many genes
+are being filtered on a per-capture basis. You can set th `calculate_only` flag
+to see how many genes would be filtered, then set it to FALSE to actually
+filter the captures
+
+```{r}
+pbmc.split <- lapply(pbmc.split, filterLowGenes, min.cells = 50, assay = 'RNA', calculate_only = FALSE)
+```
+
+### Remove low quality cells
+
+`addQCmetrics` adds metadata to captures for QC metrics.
+
+```{r}
+pbmc.split <- lapply(pbmc.split,
+              addQCmetrics,
+              mito.pattern = "^MT", ## edit patterns as needed
+              ribo.pattern = "^RP[SL]")
+```
+
+You can then calculate outlier thresholds across metrics using `generate_capture_QC_cutoffs`.
+Outliers are calculated using median absolute deviations. You can set the number
+of nMADs lower or higher to make the outlier detection threshold more or less stringent.
+The 'default' is 4 nMADs.
+
+```{r}
+cutoffs <- lapply(pbmc.split, generate_capture_QC_cutoffs)
+```
+
+This generates a list of cutoff values for each capture in the list. You can
+use those cutoffs (or any arbitary user-defined cutoffs in the same format)
+to filter your cells via `addQCfilter`. This adds a new metadata boolean column
+named `<filterName>` that says if a cell is outside any of the thresholds. 
+
+```{r}
+pbmc.split <- mapply(addQCfilter, pbmc.split, filterName = 'outliers', cutoffs)
+```
+
+You can visualize the changes to your data with different filtering regimes by
+using `plotQCRidgesJoint` with boolean metadata columns. This code produces
+two plots, one of the 'input data' with no filtering applied, and one with
+the outlier filtering applied. You can switch between the dashboard plots
+to see the effects of filtering on a per-capture basis. 
+
+```{r, message=TRUE, warning=FALSE, fig.width=18, fig.height=15}
+## Generate dashboard plots of filtering regimes
+cell_filtering_plots <- list()
+## if you added multiple filters, say one with default settings and one with
+## modified thresholds, you can plot all of them here. Specifying 'input'
+## shows the unfiltered cells in a separate dashboard
+for (filtName in c('input', 'outliers')) {
+  cell_filtering_plots[[filtName]] <- plotQCRidgesJoint(pbmc.split, 
+                                              filtName = filtName,
+                                              title = filtName, 
+                                              split_by = "capID", 
+                                              color_by = "mitoRatio",
+                                              cutoffs = cutoffs,
+                                              facet_colors = TRUE)
+}
+```
+
 ## Doublet Removal
 
 `runDoubletFinder()` is a wrapper for the doubletFinder functions. It annotates a capture-level seurat object with doublet calls.
