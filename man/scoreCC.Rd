@@ -9,7 +9,9 @@ scoreCC(obj, s.genes, g2m.genes)
 \arguments{
 \item{obj}{Seurat object}
 
-\item{cc.genes}{Named list of vectors of S and G2M gene names. The names must be \code{s.genes} and \code{g2m.genes}. If you are starting with Ensembl IDs see examples for code to convert them to gene names.}
+\item{s.genes}{Vector of S phase genes as gene names.}
+
+\item{g2m.genes}{Vector of G2M phase genes as gene names.}
 }
 \value{
 Seurat object with cell cycle metadata (plus normalized and scaled data and PCA reduction)
@@ -17,22 +19,29 @@ Seurat object with cell cycle metadata (plus normalized and scaled data and PCA 
 \description{
 Calculates phase of cell cycle given a list of cell cycle genes
 }
+\note{
+If you are starting with Ensembl IDs see examples for code to convert them to gene names (see examples below).
+}
 \examples{
 \dontrun{
-## For human data, it's easy because a list of cc genes, `cc.genes`, are loaded with Seurat automatically
+## For human data, a list of cc genes, `cc.genes`, are loaded with Seurat automatically
 load(Seurat)
-seurat_objs <- lapply(seurat_objs, scoreCC, s.genes = cc.genes$s.genes, g2m.genes = cc.genes$g2m.genes) # here seurat_objs is a list of seurat objects
+# where seurat_objs list of seurat objects:
+seurat_objs <- lapply(seurat_objs, scoreCC,
+                      s.genes = cc.genes$s.genes, g2m.genes = cc.genes$g2m.genes)
 qc_pca_plots <- lapply(seurat_objs, plotPCAs)
 ggarrange(plotlist = lapply(qc_pca_plots, function(x) x$Phase))
 
 ## For another species, you may need to convert from ensembl ids to gene names, like so:
-# Getting cell cycle genes for Mus musculus (see https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md)
+# Getting cell cycle genes for Mus musculus
+# See https://github.com/hbctraining/scRNA-seq_online/blob/master/lessons/cell_cycle_scoring.md
 library(RCurl)
 library(AnnotationHub)
 library(dplyr)
 
 # Inferred by orthology searches against Human list published in Tirosh, I, et al.:
-cc_file <- getURL("https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Mus_musculus.csv")
+url <- "https://raw.githubusercontent.com/hbc/tinyatlas/master/cell_cycle/Mus_musculus.csv"
+cc_file <- getURL(url)
 cc_cycle_genes <- read.csv(text = cc_file)
 
 # These annotations are Ensemble IDs but we need gene names.
@@ -47,18 +56,23 @@ edb <- ah[[id]]
 # Extract gene-level information from database
 annotations <- genes(edb, return.type = "data.frame")
 # Select annotations of interest
-annotations <- annotations \%>\% dplyr::select(gene_id, gene_name, seq_name, gene_biotype, description)
+annotations <- annotations \%>\%
+  dplyr::select(gene_id, gene_name, seq_name, gene_biotype, description)
 
-# Now we can use these annotaitons to get teh corresponding gene names for the Ensembl IDs of the cell cycle genes.
+# Now we can use these annotations to get the corresponding gene names for the Ensembl IDs.
 # Get gene names for Ensemble IDs for each gene
-cell_cycle_markers <- cc_cycle_genes \%>\% dplyr::left_join(annotations, by =c("geneID" = "gene_id"))
+cell_cycle_markers <- cc_cycle_genes \%>\%
+  dplyr::left_join(annotations, by =c("geneID" = "gene_id"))
 
-cc_genes <- list()
-cc_genes$s.genes <- cell_cycle_markers \%>\% dplyr::filter(phase == "S") \%>\% pull("gene_name")
-cc_genes$g2m.genes <- cell_cycle_markers \%>\% dplyr::filter(phase == "G2/M") \%>\% pull("gene_name")
+s.genes <- cell_cycle_markers \%>\%
+  dplyr::filter(phase == "S") \%>\%
+  pull("gene_name")
+g2m.genes <- cell_cycle_markers \%>\%
+  dplyr::filter(phase == "G2/M") \%>\%
+  pull("gene_name")
 
 ## Now you can run scoreCC and check the PCAs as you would for humans
-seurat_objs <- lapply(seurat_objs, scoreCC, s.genes = cc.genes$s.genes, g2m.genes = cc.genes$g2m.genes) # here seurat_objs is a list of seurat objects
+seurat_objs <- lapply(seurat_objs, scoreCC, s.genes = s.genes, g2m.genes = g2m.genes)
 qc_pca_plots <- lapply(seurat_objs, plotPCAs)
 ggarrange(plotlist = lapply(qc_pca_plots, function(x) x$Phase))
 }
