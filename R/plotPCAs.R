@@ -7,7 +7,7 @@
 #'
 #' @return List of plot objects
 #' @export
-checkPCA <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
+plotPCAs <- function(obj, features = c("Phase", "mitoRatio", "riboRatio")) {
   p.list <- list()
   for (feature in features) {
     p.list[[feature]] <- Seurat::DimPlot(obj,

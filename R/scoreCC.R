@@ -70,8 +70,8 @@ scoreCC <- function(obj, s.genes, g2m.genes) {
   # Score cells for cell cycle
   obj.phase <- Seurat::NormalizeData(obj, verbose=FALSE)
   obj.phase <- Seurat::CellCycleScoring(obj.phase, verbose=FALSE,
-                                   g2m.features = g2m_genes,
-                                   s.features = s_genes)
+                                   g2m.features = g2m.genes,
+                                   s.features = s.genes)
   obj.phase <- Seurat::FindVariableFeatures(obj.phase, verbose=FALSE,
                                        selection.method = "vst",
                                        nfeatures = 2000)
