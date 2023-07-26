@@ -24,7 +24,7 @@ then reinstalling the package. For example, the `S4Vectors` seems to throw issue
 
 The package has been tested to install with the docker image
 
-`https://hub.docker.com/r/dgratz100/gencore-singlecell-rstudio`
+`https://hub.docker.com/r/yerkesgencore/gencore-singlecell-rstudio`
 
 # Making changes
 
