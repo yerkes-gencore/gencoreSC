@@ -9,7 +9,6 @@ Authors@R: c(
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports: 
-    AnnotationHub,
     clustree,
     DoubletFinder,
     dplyr,
@@ -17,7 +16,6 @@ Imports:
     ggplot2,
     ggpubr,
     ggridges,
-    ggh4x,
     gtools,
     harmony,
     magrittr,

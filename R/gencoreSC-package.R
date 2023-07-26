@@ -24,6 +24,7 @@
 #' @importFrom rlang :=
 #' @importFrom rlang .data
 #' @importFrom S4Vectors mcols
+#' @importFrom stats density
 #' @importFrom stats lm
 #' @importFrom utils read.csv
 #' @importFrom utils read.table

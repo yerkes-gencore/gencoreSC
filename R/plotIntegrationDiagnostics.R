@@ -236,7 +236,7 @@ plotClusterAnnotTile <- function(obj.seurat,
                                  labels,
                                  assay = "RNA",
                                  plot_proportions = TRUE) {
-  portion <- NULL
+  proportion <- NULL
   plot_data <- obj.seurat@meta.data %>%
     group_by(.data[["seurat_clusters"]], .data[[labels]]) %>%
     summarize(n = n()) %>%
