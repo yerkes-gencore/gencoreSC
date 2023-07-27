@@ -36,8 +36,9 @@ demuxAntibodyData <- function(obj,
                               assay = 'Antibody.Capture',
                               normalization.method = 'CLR',
                               ...){
-  hto_data <- obj[[assay]]@counts[names(labels),]
-  adt_data <- obj[[assay]]@counts[!(rownames(obj[[assay]]@counts) %in% names(labels)),]
+  hto_feature_list <- rownames(obj[[assay]]@counts) %in% names(labels)
+  hto_data <- obj[[assay]]@counts[hto_feature_list,]
+  adt_data <- obj[[assay]]@counts[!hto_feature_list,]
   rownames(hto_data) <- plyr::mapvalues(rownames(hto_data),
                                         from=names(labels),
                                         to=labels)
