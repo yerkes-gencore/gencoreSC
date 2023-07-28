@@ -36,7 +36,8 @@ Imports:
     tidyr,
     utils,
     viridis,
-    zeallot
+    zeallot,
+    scran
 Suggests:
     Azimuth,
     BiocParallel,
