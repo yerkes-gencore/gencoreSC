@@ -8,7 +8,8 @@ Authors@R: c(
   )
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
-Imports: 
+Imports:
+    BiocParallel,
     clustree,
     DoubletFinder,
     dplyr,
@@ -25,6 +26,7 @@ Imports:
     plyr,
     rlang,
     scater,
+    scDblFinder,
     S4Vectors,
     Seurat,
     SeuratObject,
@@ -39,7 +41,6 @@ Imports:
     zeallot
 Suggests:
     Azimuth,
-    BiocParallel,
     ggh4x,
     hdf5r,
     knitr,
