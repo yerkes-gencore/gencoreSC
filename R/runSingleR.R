@@ -25,16 +25,31 @@
 #' \dontrun{
 #' ## Install reference dataset
 #' SeuratData::InstallData('pbmc3k')
+#'
 #' singler_out <- runSingleR(obj.seurat = pbmc.merged,
 #'                           ref = pbmc3k.final@assays$RNA@data,
 #'                           labels = pbmc3k.final$seurat_annotations,
 #'                           de.method = 'wilcox',
-#'                           meta.prefix = 'singleR')
+#'                           meta.prefix = 'singleR.pbmc3k')
 #' ## Spliting the list
-#' write_rds(singler_out[[2]], 'saved_rds/singleR_out.Rds')
 #' pbmc.merged <- singler_out[[1]]
 #' singler_out <- singler_out[[2]]
-#' write_rds(pbmc.merged, 'saved_rds/merged_post_singleR.Rds')
+#'
+#' ## Using the `%<-%` pipe saves typing and memory
+#' library(zealot)
+#' c(pbmc.merged, singler_out) %<-% runSingleR(obj.seurat = pbmc.merged,
+#'                                             ref = pbmc3k.final@assays$RNA@data,
+#'                                             labels = pbmc3k.final$seurat_annotations,
+#'                                             de.method = 'wilcox',
+#'                                             meta.prefix = 'singleR.pbmc3k')
+#'
+#' ## Using ImmGen data for mouse immune cells
+#' # Prep / load reference
+#' ref.ImmGen <- celldex::ImmGenData()
+#'
+#' Get cell ontology names and other info
+#' cl <- ontoProc::getOnto('cellOnto')
+#'
 #' }
 runSingleR <- function(obj.seurat,
                        ref,
