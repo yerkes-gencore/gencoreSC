@@ -49,6 +49,7 @@ featureHeatmapByCluster <- function(obj,
     message(paste0('Only plotting ', n_features_to_plot, ' features, you can adjust this with the "n_features_to_plot" parameter'))
     feats <- feats[1:n_features_to_plot]
   }
+  DefaultAssay(obj) <- assay
   obj <- obj[feats,]
   plot_data <- cbind(obj@meta.data, as.data.frame(t(obj[[assay]]@data))) %>%
     dplyr::group_by(.data[[ cluster_column ]]) %>%
