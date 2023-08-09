@@ -94,11 +94,11 @@ runSingleR <- function(obj.seurat,
 #' SingleR::plotScoreHeatmap(SingleR.ImmGen.ont, show.pruned = TRUE, fontsize=4)
 #'
 #' # Convert bare cell ontology IDs to informative names in seurat object
-#' obj.seurat@meta.data <- clID2clNames(metadata = obj.seurat@meta.data, cl = cl,
+#' obj.seurat@meta.data <- convertClID2Name(metadata = obj.seurat@meta.data, cl = cl,
 #'                                      old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
 #'
 #' # Convert bare cell ontology IDs to informative names in SingleR output and visualize
-#' SingleR.ImmGen.ont.names <- clID2clNames(metadata = SingleR.ImmGen.ont, cl = cl,
+#' SingleR.ImmGen.ont.names <- convertClID2Name(metadata = SingleR.ImmGen.ont, cl = cl,
 #'                                          old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
 #'
 #' SingleR::plotScoreHeatmap(SingleR.ImmGen.ont.names, show.pruned = TRUE, fontsize=4)
