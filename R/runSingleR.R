@@ -76,3 +76,59 @@ runSingleR <- function(obj.seurat,
 
   return(list(obj.seurat, singleR.out))
 }
+
+#' Convert cell ontology IDs to names in SingleR output
+#'
+#' Convert bare cell ontology IDs used in SingleR to human-readable names
+#'
+#' @param metadata data.frame with labels, pruned.labels and delta.next columns. Typically either:
+#'  - Seurat object metadata (after running SingleR), or
+#'  - SingleR output object
+#' @param cl Cell ontology database
+#'  - Can be btained via: `cl <- ontoProc::getOnto('cellOnto')`
+#' @param old.prefix The prefix used for the original runSingleR call (e.g. "ImmGen.ont")
+#' @param new.prefix The new prefix to use for the human readable column (e.g. "ImmGen.ont.name")
+#'
+#' @returns data.frame with three new columns: `{new.prefix}.labels`, `{new.prefix}.pruned.labels`, `{new.prefix}.delta.next`.
+#'
+#'@examples
+#' \dontrun{
+#' ## Run on bare ontology IDs, then convert to human readable cell type labels
+#' # Get cell ontology names and other info
+#' cl <- ontoProc::getOnto('cellOnto')
+#'
+#' # ImmGen.ont
+#' c(obj.seurat, SingleR.ImmGen.ont) %<-% obj.seurat %>%
+#'   Run.SingleR(obj.seurat=.,
+#'               ref=ref.ImmGen,
+#'               labels=ref.ImmGen$label.ont,
+#'               de.method="classic",
+#'               meta.prefix = "ImmGen.ont")
+#'
+#' # These labels aren't very informative:
+#' SingleR::plotScoreHeatmap(SingleR.ImmGen.ont, show.pruned = TRUE, fontsize=4)
+#'
+#' # Convert bare cell ontology IDs to informative names in seurat object
+#' obj.seurat@meta.data <- convertClID2Name(metadata = obj.seurat@meta.data, cl = cl,
+#'                                      old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
+#'
+#' # Convert bare cell ontology IDs to informative names in SingleR output and visualize
+#' SingleR.ImmGen.ont.names <- convertClID2Name(metadata = SingleR.ImmGen.ont, cl = cl,
+#'                                          old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name")
+#'
+#' SingleR::plotScoreHeatmap(SingleR.ImmGen.ont.names, show.pruned = TRUE, fontsize=4)
+#' }
+#'
+#' @export
+# Run SingleR
+# Convert bare cell ontology IDs to informative names
+convertClID2Name <- function(metadata, cl, old.prefix = "ImmGen.ont", new.prefix = "ImmGen.ont.name") {
+  op <- old.prefix
+  np <- new.prefix
+  md <- metadata
+  md[[paste0(np, ".labels")]] <- unname(cl$name[unname(md[[paste0(op, ".labels")]])])
+  md[[paste0(np, ".pruned.labels")]] <- unname(cl$name[unname(md[[paste0(op, ".pruned.labels")]])])
+  md[[paste0(np, ".delta.next")]] <- md[[paste0(op, ".delta.next")]]
+  metadata <- md
+  return(metadata)
+}
