@@ -12,6 +12,7 @@
 #' @export
 #'
 #' @import openxlsx
+#' @importFrom here here
 #'
 #' @examples
 #' \dontrun{
