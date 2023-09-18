@@ -25,6 +25,7 @@ Imports:
     openxlsx,
     plotly,
     plyr,
+    reshape2,
     rlang,
     scater,
     S4Vectors,
@@ -43,6 +44,7 @@ Imports:
 Suggests:
     Azimuth,
     BiocParallel,
+    ggforce,
     ggh4x,
     hdf5r,
     knitr,
