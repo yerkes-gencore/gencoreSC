@@ -22,7 +22,6 @@ Imports:
     magrittr,
     Matrix,
     methods,
-    openxlsx,
     plotly,
     plyr,
     reshape2,
