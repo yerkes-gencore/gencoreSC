@@ -44,7 +44,7 @@ gcoreVlnPlot <- function(obj,
   if (!is.null(subset)){
     obj <- obj[,obj@meta.data[[subset_var]] %in% subset]
   }
-  mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data[genes,]))
+  mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data)[genes,])
   mat_to_plot <- merge(mat_to_plot,
                        obj@meta.data %>%
                          as.data.frame() %>%
