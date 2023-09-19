@@ -42,7 +42,7 @@ optional filtering criteria. Mainly intended for quick returns of
 interesting genes to plot.
 }
 \examples{
-\dontrun {
+\dontrun{
 ## get the top diff. expressed genes, then plot them
 
 gcoreVlnPlot(myeloid_obj,

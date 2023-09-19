@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun {
+#' \dontrun{
 #' ## get the top diff. expressed genes, then plot them
 #'
 #' gcoreVlnPlot(myeloid_obj,
@@ -41,7 +41,7 @@ getTopNGenesSC <- function (result,
   }
   if (!is.null(exclusion_patterns)) {
     message('Excluding genes from return based on "exclusion_patterns" parameter. See help for details')
-    for (pattern in exclusion_patterns){
+    for (pattern in exclusion_patterns) {
       result <- result[!grepl(pattern, rownames(result)),]
     }
   }
@@ -50,6 +50,7 @@ getTopNGenesSC <- function (result,
     dplyr::filter(!is.na(.data$p_val_adj)) %>%
     dplyr::filter(.data$p_val_adj <= min_padj) %>%
     dplyr::filter(abs(.data$avg_log2FC) > min_logFC) %>%
+    dplyr::filter(.data$`pct.1` > min_pct | .data$`pct.2` > min_pct) %>%
     tibble::rownames_to_column("Gene") %>%
     dplyr::arrange(.data$p_val_adj)
 
