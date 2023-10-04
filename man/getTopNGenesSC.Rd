@@ -11,11 +11,13 @@ getTopNGenesSC(
   min_padj = 0.05,
   min_pct = 0.25,
   exclusion_patterns = c("^ENS", "^MT", "^RP[SL]"),
-  direction = "mixed"
+  direction = "mixed",
+  lfc_col = "avg_log2FC",
+  pval_col = "p_val_adj"
 )
 }
 \arguments{
-\item{result}{data.frame from \code{Seurat::FindMarkers}}
+\item{result}{data.frame from \code{Seurat::FindMarkers} or similar function}
 
 \item{N}{Number of genes to return, max}
 
@@ -32,14 +34,18 @@ genes, and ribosomal genes}
 of expression for returned genes. 'Mixed' does no filtering based on direction.
 Up and down specify positive and negative log FC. Equal returns an equal
 number of up and down regulated genes.}
+
+\item{lfc_col}{Column containing log-fold change values}
+
+\item{pval_col}{Column containing adjusted p values}
 }
 \value{
 A vector of gene names
 }
 \description{
-Returns top N genes from a \code{Seurat::Findmarkers} result, based on some
-optional filtering criteria. Mainly intended for quick returns of
-interesting genes to plot.
+Returns top N genes from a \code{Seurat::Findmarkers} or other differential expression
+result, based on some optional filtering criteria. Mainly intended for quick
+returns of interesting genes to plot.
 }
 \examples{
 \dontrun{
