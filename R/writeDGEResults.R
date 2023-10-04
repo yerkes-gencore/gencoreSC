@@ -7,6 +7,9 @@
 #' @param sheet_names List of names for sheets, defaults to names of `results`
 #' @param output_name Name of file
 #' @param outdir Location of file
+#' @param p_val_colname Name of column with adjusted P value data
+#' @param drop_NA Exclude values with NA for adjusted P value?
+#' @param write_rownames Write rownames of `results` to sheet?
 #'
 #' @return `NULL`
 #' @export
@@ -35,28 +38,40 @@
 writeDGEResults <- function(results,
                             sheet_names = names(results),
                             output_name = paste0("differentially_expressed_genes.xlsx"),
-                            outdir = here::here('outputs')){
+                            outdir = here::here('outputs'),
+                            p_val_colname = 'p_val_adj',
+                            drop_NA = FALSE,
+                            write_rownames = TRUE){
   outfile <- file.path(outdir, output_name)
   message(paste0('Writing results to ', outfile))
   wb <- openxlsx::createWorkbook('ENPRC Gencore')
   mapply(FUN = .addWorksheet_DGEres,
          result = results,
          sheet_name = sheet_names,
-         MoreArgs = list(wb = wb)
+         MoreArgs = list(wb = wb,
+                         drop_NA = drop_NA,
+                         p_val_colname = p_val_colname,
+                         write_rownames = write_rownames)
   )
   openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE)
 }
 
 .addWorksheet_DGEres <- function(wb,
                                  result,
-                                 sheet_name){
+                                 sheet_name,
+                                 drop_NA,
+                                 p_val_colname,
+                                 write_rownames){
   if (nchar(sheet_name) > 31) {
     sheet_name <- substr(sheet_name, 1, 31)
   }
-  result <- result[order(result$p_val_adj),]
+  if (drop_NA) {
+    result <- result[!is.na(result[[pval_col_name]]),]
+  }
+  result <- result[order(result[[pval_col_name]]),]
   openxlsx::addWorksheet(wb, sheet_name)
   openxlsx::writeData(wb,
                       sheet = sheet_name,
                       x = as.data.frame(result),
-                      rowNames = TRUE)
+                      rowNames = write_rownames)
 }

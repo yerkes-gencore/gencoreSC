@@ -8,7 +8,10 @@ writeDGEResults(
   results,
   sheet_names = names(results),
   output_name = paste0("differentially_expressed_genes.xlsx"),
-  outdir = here::here("outputs")
+  outdir = here::here("outputs"),
+  p_val_colname = "p_val_adj",
+  drop_NA = FALSE,
+  write_rownames = TRUE
 )
 }
 \arguments{
@@ -19,6 +22,12 @@ writeDGEResults(
 \item{output_name}{Name of file}
 
 \item{outdir}{Location of file}
+
+\item{p_val_colname}{Name of column with adjusted P value data}
+
+\item{drop_NA}{Exclude values with NA for adjusted P value?}
+
+\item{write_rownames}{Write rownames of \code{results} to sheet?}
 }
 \value{
 \code{NULL}
