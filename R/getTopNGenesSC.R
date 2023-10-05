@@ -1,10 +1,10 @@
 #' Return top genes from Seurat::FindMarkers result
 #'
-#' Returns top N genes from a `Seurat::Findmarkers` result, based on some
-#'  optional filtering criteria. Mainly intended for quick returns of
-#'  interesting genes to plot.
+#' Returns top N genes from a `Seurat::Findmarkers` or other differential expression
+#' result, based on some optional filtering criteria. Mainly intended for quick
+#' returns of interesting genes to plot.
 #'
-#' @param result data.frame from `Seurat::FindMarkers`
+#' @param result data.frame from `Seurat::FindMarkers` or similar function
 #' @param N Number of genes to return, max
 #' @param min_logFC Minimum absolute value for logFC
 #' @param min_padj Minimum adjusted p value
@@ -15,6 +15,8 @@
 #'  of expression for returned genes. 'Mixed' does no filtering based on direction.
 #'  Up and down specify positive and negative log FC. Equal returns an equal
 #'  number of up and down regulated genes.
+#' @param lfc_col Column containing log-fold change values
+#' @param pval_col Column containing adjusted p values
 #'
 #' @returns A vector of gene names
 #' @export
@@ -28,13 +30,15 @@
 #'  grouping_var = 'stage',
 #'  groups = c('Pre', 'Post'))
 #' }
-getTopNGenesSC <- function (result,
-                            N = 30,
-                            min_logFC = log2(1.5),
-                            min_padj = 0.05,
-                            min_pct = 0.25,
-                            exclusion_patterns = c("^ENS", '^MT', '^RP[SL]'),
-                            direction = "mixed")
+getTopNGenesSC <- function(result,
+                           N = 30,
+                           min_logFC = log2(1.5),
+                           min_padj = 0.05,
+                           min_pct = 0.25,
+                           exclusion_patterns = c("^ENS", '^MT', '^RP[SL]'),
+                           direction = "mixed",
+                           lfc_col = 'avg_log2FC',
+                           pval_col = 'p_val_adj')
 {
   if (!is.data.frame(result)) {
     stop('Result is not a data.frame. Please provide output from Seurat::FindMarkers')
