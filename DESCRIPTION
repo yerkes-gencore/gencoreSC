@@ -1,6 +1,6 @@
 Package: gencoreSC
 Title: ENPRC Genomics Core Single Cell Utility Functions
-Version: 0.1.1
+Version: 0.2.0
 Authors@R: c(
     person("Micah", "Fletcher", , "mpfletc@emory.edu", role = c("aut", "cre")),
     person("Derrik", "Gratz", , "derrik.gratz@emory.edu", role = c("aut", "ctb"),
