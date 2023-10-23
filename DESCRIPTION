@@ -45,6 +45,7 @@ Suggests:
     ggh4x,
     hdf5r,
     knitr,
+    MAST,
     openxlsx,
     rmarkdown,
     scales,

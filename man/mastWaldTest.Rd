@@ -22,7 +22,9 @@ A dataframe of Wald test results
 }
 \description{
 Run a Wald test on a MAST fit model with a specified hypothesis and baseline
-to extract P value and LogFoldChange
+to extract P value and LogFoldChange. The function is set up so the
+Wald test is run on the \code{hypothesis - baseline} and the logFC is calculated
+using the full \code{hypothesis} and \code{baseline} matrices.
 }
 \examples{
 \dontrun{

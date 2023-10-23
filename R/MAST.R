@@ -70,6 +70,7 @@ prepare_MAST_obj <- function(obj,
 #' @param p_adj_method Method for multiple testing correction of pvalues
 #'
 #' @returns A dataframe of Wald test results
+#'
 #' @export
 #'
 #' @examples
@@ -86,6 +87,8 @@ mastWaldTest <- function(zlmFit, hypothesis, baseline, p_adj_method = 'fdr'){
                          contrast0 = MAST::Hypothesis(baseline, colnames(zlmFit@coefC)),
                          contrast1 = MAST::Hypothesis(hypothesis, colnames(zlmFit@coefC)))
   result <- merge(result[,,3], result_lfc, by.x = 0, by.y = 'primerid')
-  result$padj <- p.adjust(result$hurdle, method = p_adj_method)
+  result$padj <- stats::p.adjust(result$hurdle, method = p_adj_method)
+  result$gene <- result$Row.names
+  result$Row.names <- NULL
   result
 }
