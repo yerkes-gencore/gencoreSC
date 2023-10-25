@@ -1,6 +1,6 @@
 Package: gencoreSC
 Title: ENPRC Genomics Core Single Cell Utility Functions
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Micah", "Fletcher", , "mpfletc@emory.edu", role = c("aut", "cre")),
     person("Derrik", "Gratz", , "derrik.gratz@emory.edu", role = c("aut", "ctb"),
@@ -8,7 +8,7 @@ Authors@R: c(
   )
 Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
-Imports: 
+Imports:
     clustree,
     DoubletFinder,
     dplyr,
@@ -19,14 +19,18 @@ Imports:
     ggridges,
     gtools,
     harmony,
+    here,
     magrittr,
     Matrix,
     methods,
     pheatmap,
+    openxlsx,
     plotly,
     plyr,
+    reshape2,
     rlang,
     scater,
+    scDblFinder,
     S4Vectors,
     Seurat,
     SeuratObject,
@@ -38,10 +42,12 @@ Imports:
     tidyr,
     utils,
     viridis,
-    zeallot
+    zeallot,
+    scran
 Suggests:
     Azimuth,
     BiocParallel,
+    ggforce,
     ggh4x,
     hdf5r,
     knitr,
