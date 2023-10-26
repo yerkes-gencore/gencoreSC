@@ -7,7 +7,6 @@
 #' @param unfiltered_mat_path Path to unfiltered counts matrix file
 #' @param filtered_mat_path   Path to Cellranger filtered counts matrix file
 #' @param clusters_path       Path to Cellranger initial clustering data file
-#' @param h5                  Whether the matrices are in h5 or mat format
 #' @inheritParams SoupX::autoEstCont
 #'
 #' @returns An object of class SoupChannel
@@ -41,9 +40,8 @@
 runSoupX <- function(unfiltered_mat_path,
                      filtered_mat_path,
                      clusters_path,
-                     doPlot = TRUE,
-                     h5 = TRUE){
-  if (h5) {
+                     doPlot = TRUE){
+  if (grepl(x = unfiltered_mat_path, pattern = '\\.h5$')) {
     tod <- Seurat::Read10X_h5(file.path(unfiltered_mat_path))
   } else {
     tod <- Seurat::Read10X(file.path(unfiltered_mat_path))
@@ -58,7 +56,7 @@ runSoupX <- function(unfiltered_mat_path,
     errorCondition("No Gene Expression assay in counts matrix?")
   }
 
-  if (h5) {
+  if (grepl(x = filtered_mat_path, pattern = '\\.h5$')) {
     toc <- Seurat::Read10X_h5(file.path(filtered_mat_path))
   } else {
     toc <- Seurat::Read10X(file.path(filtered_mat_path))
@@ -77,7 +75,7 @@ runSoupX <- function(unfiltered_mat_path,
   names(clusters) <- clus$Barcode
 
   sc <- SoupX::SoupChannel(tod = tod,
-                    toc = toc)
+                           toc = toc)
   sc <- SoupX::setClusters(sc, clusters)
   sc <- SoupX::autoEstCont(sc, doPlot = doPlot)
   sc$adjusted_counts <- SoupX::adjustCounts(sc)

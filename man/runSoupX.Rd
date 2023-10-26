@@ -4,13 +4,7 @@
 \alias{runSoupX}
 \title{Wrapper for running SoupX}
 \usage{
-runSoupX(
-  unfiltered_mat_path,
-  filtered_mat_path,
-  clusters_path,
-  doPlot = TRUE,
-  h5 = TRUE
-)
+runSoupX(unfiltered_mat_path, filtered_mat_path, clusters_path, doPlot = TRUE)
 }
 \arguments{
 \item{unfiltered_mat_path}{Path to unfiltered counts matrix file}
@@ -20,8 +14,6 @@ runSoupX(
 \item{clusters_path}{Path to Cellranger initial clustering data file}
 
 \item{doPlot}{Create a plot showing the density of estimates?}
-
-\item{h5}{Whether the matrices are in h5 or mat format}
 }
 \value{
 An object of class SoupChannel
