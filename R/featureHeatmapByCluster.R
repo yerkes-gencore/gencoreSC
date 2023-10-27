@@ -51,7 +51,7 @@ featureHeatmapByCluster <- function(obj,
   }
   DefaultAssay(obj) <- assay
   obj <- obj[feats,]
-  plot_data <- cbind(obj@meta.data, as.data.frame(t(obj[[assay]]@data))) %>%
+  plot_data <- cbind(obj@meta.data, as.data.frame(t(as.matrix(obj[[assay]]@data)))) %>%
     dplyr::group_by(.data[[ cluster_column ]]) %>%
     dplyr::summarize_at(.vars = feats, .funs = median) %>%
     tibble::remove_rownames() %>%
