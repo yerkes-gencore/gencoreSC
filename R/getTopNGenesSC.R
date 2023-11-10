@@ -17,6 +17,8 @@
 #'  number of up and down regulated genes.
 #' @param lfc_col Column containing log-fold change values
 #' @param pval_col Column containing adjusted p values
+#' @param gene_name_col Column containing gene names. If set to NULL, rownames
+#'  will be used
 #'
 #' @returns A vector of gene names
 #' @export
@@ -37,8 +39,9 @@ getTopNGenesSC <- function(result,
                            min_pct = 0.25,
                            exclusion_patterns = c("^ENS", '^MT', '^RP[SL]'),
                            direction = "mixed",
-                           lfc_col = 'avg_log2FC',
-                           pval_col = 'p_val_adj')
+                           lfc_col = 'logFC',
+                           pval_col = 'padj',
+                           gene_name_col = 'Row.names')
 {
   if (!is.data.frame(result)) {
     stop('Result is not a data.frame. Please provide output from Seurat::FindMarkers')
@@ -51,36 +54,40 @@ getTopNGenesSC <- function(result,
   }
 
   filtered_results <- result %>%
-    dplyr::filter(!is.na(.data$p_val_adj)) %>%
-    dplyr::filter(.data$p_val_adj <= min_padj) %>%
-    dplyr::filter(abs(.data$avg_log2FC) > min_logFC) %>%
-    dplyr::filter(.data$`pct.1` > min_pct | .data$`pct.2` > min_pct) %>%
-    tibble::rownames_to_column("Gene") %>%
-    dplyr::arrange(.data$p_val_adj)
+    dplyr::filter(!is.na(.data[[pval_col]])) %>%
+    dplyr::filter(.data[[pval_col]] <= min_padj) %>%
+    dplyr::filter(abs(.data[[lfc_col]]) > min_logFC) %>%
+    # dplyr::filter(min(.data[[pct_cols]]) > min_pct) %>%
+    # tibble::rownames_to_column("Gene") %>%
+    dplyr::arrange(.data[[pval_col]])
+  if (is.null(gene_name_col)) {
+    filtered_results <- rownames_to_column(filtered_results, 'Gene')
+    gene_name_col <- 'Gene'
+  }
 
   if (direction == "mixed") {
     filtered_results <- filtered_results %>% utils::head(N)
   }
   else if (direction == "up") {
     filtered_results <- filtered_results %>%
-      dplyr::filter(.data$avg_log2FC > 0) %>%
+      dplyr::filter(.data[[lfc_col]] > 0) %>%
       utils::head(N)
   }
   else if (direction == "down") {
     filtered_results <- filtered_results %>%
-      dplyr::filter(.data$avg_log2FC < 0) %>%
+      dplyr::filter(.data[[lfc_col]] < 0) %>%
       utils::head(N)
   }
   else if (direction == "equal") {
     filtered_results_up <- filtered_results %>%
-      dplyr::filter(.data$avg_log2FC < 0) %>% utils::head(round(N/2))
+      dplyr::filter(.data[[lfc_col]] < 0) %>% utils::head(round(N/2))
     filtered_results_down <- filtered_results %>%
-      dplyr::filter(.data$avg_log2FC > 0) %>%
+      dplyr::filter(.data[[lfc_col]] > 0) %>%
       utils::head(round(N/2))
     filtered_results <- rbind(filtered_results_up, filtered_results_down)
   }
   else {
     stop('Set "direction" to one of "equal", "mixed", "up", or "down"')
   }
-  return(filtered_results$Gene)
+  return(filtered_results[[gene_name_col]])
 }
