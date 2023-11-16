@@ -52,7 +52,6 @@ Suggests:
     hdf5r,
     knitr,
     MAST,
-    openxlsx,
     rmarkdown,
     scales,
     STACAS,
