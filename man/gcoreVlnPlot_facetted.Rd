@@ -17,12 +17,35 @@ gcoreVlnPlot_facetted(
 )
 }
 \arguments{
+\item{obj}{Seurat object}
+
 \item{gene}{Gene to plot}
 
 \item{facet_var}{Metadata variable to facet plot on}
+
+\item{grouping_var}{Column of \code{obj@meta.data} to group data by.}
+
+\item{groups}{Optional. Levels of \code{grouping_var} to include in the plot. Also used
+to specify order of levels.}
+
+\item{subset}{Levels of \code{subset_var} to subset data to}
+
+\item{subset_var}{Optional. Column of \code{obj@meta.data} to subset on. Default
+is \code{seurat_clusters} so you could \code{subset} on a specific cluster.}
+
+\item{filter_zeros}{Remove 0s from plot: default \code{TRUE}.}
+
+\item{assay}{Assay to pull expression data from, default \code{RNA}}
+}
+\value{
+A ggplot
 }
 \description{
 An extension of gcoreVlnPlot, focusing on a single gene but facetting
 it by a metadata variable. The intended use case for this was to facet
-by individual/capture to see if a single individual is driving an effect
+by individual/capture to see if a single individual is driving an effect.
+See \code{gencoreSC::gcoreVlnPlot()} for more details.
+}
+\details{
+Requires \code{ggforce} to be installed
 }

@@ -136,11 +136,25 @@ gcoreVlnPlot <- function(obj,
 #'
 #' An extension of gcoreVlnPlot, focusing on a single gene but facetting
 #' it by a metadata variable. The intended use case for this was to facet
-#' by individual/capture to see if a single individual is driving an effect
+#' by individual/capture to see if a single individual is driving an effect.
+#' See `gencoreSC::gcoreVlnPlot()` for more details.
 #'
+#' Requires `ggforce` to be installed
+#'
+#' @param obj Seurat object
 #' @param gene Gene to plot
 #' @param facet_var Metadata variable to facet plot on
-#' @inheritParams gencoreSC::gcoreVlnPlot
+#' @param grouping_var Column of `obj@meta.data` to group data by.
+#' @param groups Optional. Levels of `grouping_var` to include in the plot. Also used
+#'  to specify order of levels.
+#' @param subset_var  Optional. Column of `obj@meta.data` to subset on. Default
+#'  is `seurat_clusters` so you could `subset` on a specific cluster.
+#' @param subset Levels of `subset_var` to subset data to
+#' @param filter_zeros Remove 0s from plot: default `TRUE`.
+#' @param assay Assay to pull expression data from, default `RNA`
+#'
+#' @returns A ggplot
+#' @export
 
 gcoreVlnPlot_facetted <- function(obj,
                                   gene,
