@@ -45,7 +45,6 @@ Imports:
     zeallot,
     scran
 Suggests:
-    Azimuth,
     BiocParallel,
     ggforce,
     ggh4x,
