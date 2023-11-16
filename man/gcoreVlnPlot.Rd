@@ -2,7 +2,7 @@
 % Please edit documentation in R/gcoreVlnPlot.R
 \name{gcoreVlnPlot}
 \alias{gcoreVlnPlot}
-\title{Violin plot of gene(s) expression}
+\title{Violin plot of gene(s) expression grouped by metadata}
 \usage{
 gcoreVlnPlot(
   obj,
@@ -10,7 +10,7 @@ gcoreVlnPlot(
   grouping_var,
   groups = NULL,
   subset = NULL,
-  subset_var = "seurat_clusters",
+  subset_var = NULL,
   filter_zeros = TRUE,
   assay = "RNA"
 )
