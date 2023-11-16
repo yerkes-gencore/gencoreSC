@@ -156,7 +156,8 @@ gcoreVlnPlot <- function(obj,
 #' @returns A ggplot
 #' @export
 #'
-#' #' \dontrun{
+#' @examples
+#' \dontrun{
 #' ## Plots only the 'Intermediate' cells (as labeled in 'coarse_labels' column)
 #' ## Groups results by 'Pre' and 'Post', as labeled in the 'stage' column'
 #' ## Facets by individual

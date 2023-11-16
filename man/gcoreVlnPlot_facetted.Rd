@@ -49,3 +49,15 @@ See \code{gencoreSC::gcoreVlnPlot()} for more details.
 \details{
 Requires \code{ggforce} to be installed
 }
+\examples{
+\dontrun{
+## Plots only the 'Intermediate' cells (as labeled in 'coarse_labels' column)
+## Groups results by 'Pre' and 'Post', as labeled in the 'stage' column'
+## Facets by individual
+  gcoreVlnPlot_facetted(obj,
+    gene = 'ISG15',
+    facet_var = 'sample',
+    subset = 'Intermediate', subset_var = 'coarse_labels',
+    grouping_var = 'stage', groups = c('Pre', 'Post'))
+}
+}
