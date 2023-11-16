@@ -7,12 +7,12 @@
 gcoreVlnPlot(
   obj,
   genes,
-  assay = "RNA",
+  grouping_var,
+  groups = NULL,
   subset = NULL,
   subset_var = "seurat_clusters",
-  grouping_var,
-  groups,
-  filter_zeros = TRUE
+  filter_zeros = TRUE,
+  assay = "RNA"
 )
 }
 \arguments{
@@ -20,19 +20,19 @@ gcoreVlnPlot(
 
 \item{genes}{Genes to plot}
 
-\item{assay}{Assay to pull expression data from, default \code{RNA}}
+\item{grouping_var}{Column of \code{obj@meta.data} to group data by.}
+
+\item{groups}{Optional. Levels of \code{grouping_var} to include in the plot. Also used
+to specify order of levels.}
 
 \item{subset}{Levels of \code{subset_var} to subset data to}
 
 \item{subset_var}{Optional. Column of \code{obj@meta.data} to subset on. Default
 is \code{seurat_clusters} so you could \code{subset} on a specific cluster.}
 
-\item{grouping_var}{Optional. Column of \code{obj@meta.data} to group data by.}
-
-\item{groups}{Levels of \code{grouping_var} to include in the plot. Also used
-to specify order of levels.}
-
 \item{filter_zeros}{Remove 0s from plot: default \code{TRUE}.}
+
+\item{assay}{Assay to pull expression data from, default \code{RNA}}
 }
 \value{
 A ggplot
@@ -42,9 +42,8 @@ Similar to \code{Seurat::VlnPlot} but more customizable. Pass a seurat object an
 genes to plot. Optionally subset the data by a meta.data variable defined
 with \code{subset_var}, selecting level(s) \code{subset}. Useful to plot expression
 in one subset of your data without having to make separate objects.
-Optionally group the data
-by meta.data variable \code{grouping_var}, selecting levels \code{groups}. Optionally
-filter zeros to focus on cells expressing gene.
+Group the data by meta.data variable \code{grouping_var}, selecting levels \code{groups}.
+Optionally filter zeros to focus on cells expressing gene.
 }
 \details{
 Requires \code{ggforce} to be installed

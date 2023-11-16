@@ -4,20 +4,19 @@
 #'  genes to plot. Optionally subset the data by a meta.data variable defined
 #'  with `subset_var`, selecting level(s) `subset`. Useful to plot expression
 #'  in one subset of your data without having to make separate objects.
-#'  Optionally group the data
-#'  by meta.data variable `grouping_var`, selecting levels `groups`. Optionally
-#'  filter zeros to focus on cells expressing gene.
+#'  Group the data by meta.data variable `grouping_var`, selecting levels `groups`.
+#'  Optionally filter zeros to focus on cells expressing gene.
 #'
 #'  Requires `ggforce` to be installed
 #'
 #' @param obj Seurat object
 #' @param genes Genes to plot
+#' @param grouping_var Column of `obj@meta.data` to group data by.
+#' @param groups Optional. Levels of `grouping_var` to include in the plot. Also used
+#'  to specify order of levels.
 #' @param subset_var  Optional. Column of `obj@meta.data` to subset on. Default
 #'  is `seurat_clusters` so you could `subset` on a specific cluster.
 #' @param subset Levels of `subset_var` to subset data to
-#' @param grouping_var Optional. Column of `obj@meta.data` to group data by.
-#' @param groups Levels of `grouping_var` to include in the plot. Also used
-#'  to specify order of levels.
 #' @param filter_zeros Remove 0s from plot: default `TRUE`.
 #' @param assay Assay to pull expression data from, default `RNA`
 #'
@@ -35,14 +34,30 @@
 #' }
 gcoreVlnPlot <- function(obj,
                          genes,
-                         assay = 'RNA',
+                         grouping_var,
+                         groups = NULL,
                          subset = NULL,
                          subset_var = 'seurat_clusters',
-                         grouping_var,
-                         groups,
-                         filter_zeros = TRUE){
-  if (!is.null(subset)){
-    obj <- obj[,obj@meta.data[[subset_var]] %in% subset]
+                         filter_zeros = TRUE,
+                         assay = 'RNA'){
+  if (is.null(grouping_var)) {
+    stop('Use the "grouping_var" argument
+                   to specify a metadata variable to group observations')
+  }
+  if (!is.null(subset)) {
+    if (subset_var %in% colnames(obj@meta.data)) {
+      if (subset %in% unique(obj@meta.data[[subset_var]])) {
+        obj <- obj[,obj@meta.data[[subset_var]] %in% subset]
+      } else {
+        stop('Error: subset value :"',subset,
+             '" not present as a value of ',
+             subset_var, 'column in object metadata.')
+      }
+    } else {
+      stop('Error: subset_var value :"',subset_var,
+           '" not present as a column in the object metadata.')
+    }
+
   }
   mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data)[genes,])
   mat_to_plot <- merge(mat_to_plot,
@@ -50,10 +65,27 @@ gcoreVlnPlot <- function(obj,
                          as.data.frame() %>%
                          dplyr::select(.data[[grouping_var]]),
                        by.x = 'Var2', by.y = 0)
-  mat_to_plot[[grouping_var]] <- factor(mat_to_plot[[grouping_var]],
-                                        levels = groups)
-  mat_to_plot <- mat_to_plot %>%
-    filter(.data[[grouping_var]] %in% groups)
+  if (grouping_var %in% colnames(obj@meta.data)) {
+    if (!is.null(groups)) {
+      if (all(groups %in% unique(obj@meta.data[[grouping_var]]))) {
+        mat_to_plot <- mat_to_plot %>%
+          filter(.data[[grouping_var]] %in% groups)
+        mat_to_plot[[grouping_var]] <- factor(mat_to_plot[[grouping_var]],
+                                              levels = groups)
+      } else {
+        stop('Error: Specified groups are not all present in the ',
+             grouping_var, ' column of the object metadata.')
+      }
+    }  else {
+      ## Groups aren't specified
+      mat_to_plot[[grouping_var]] <- factor(mat_to_plot[[grouping_var]])
+    }
+  } else {
+    stop('Error: grouping_var value :"',grouping_var,
+         '" not present as a column in the object metadata.')
+  }
+
+
 
   if (filter_zeros) {mat_to_plot <- mat_to_plot %>% filter(.data[['value']] != 0)}
 
