@@ -19,20 +19,20 @@
 #'
 #' @examples
 #' \dontrun{
-#' dge_results$NK_adaptive.post.1D3_vs_cnt <- FindMarkers(object = cd8_obj,
-#'                                                        group.by = 'condition.timepoint',
-#'                                                        ident.1 = 'post-ATI.1D3', ident.2 = 'post-ATI.control',
-#'                                                        subset.ident = 'NK (adaptive)',
-#'                                                        features = dge_genes,
-#'                                                        logfc.threshold = 0, min.pct = 0,
-#'                                                        test.use = 'MAST', assay = 'RNA')
-#' dge_results$NK_adaptive.pre.1D3_vs_cnt <- FindMarkers(object = cd8_obj,
-#'                                                       group.by = 'condition.timepoint',
-#'                                                       ident.1 = 'pre-ATI.1D3', ident.2 = 'pre-ATI.control',
-#'                                                       subset.ident = 'NK (adaptive)',
-#'                                                       features = dge_genes,
-#'                                                       logfc.threshold = 0, min.pct = 0,
-#'                                                       test.use = 'MAST', assay = 'RNA')
+#' dge_results$1 <- FindMarkers(object = cd8_obj,
+#'                              group.by = 'condition.timepoint',
+#'                              ident.1 = 'post-ATI.1D3', ident.2 = 'post-ATI.control',
+#'                              subset.ident = 'NK (adaptive)',
+#'                              features = dge_genes,
+#'                              logfc.threshold = 0, min.pct = 0,
+#'                              test.use = 'MAST', assay = 'RNA')
+#' dge_results$2 <- FindMarkers(object = cd8_obj,
+#'                              group.by = 'condition.timepoint',
+#'                              ident.1 = 'pre-ATI.1D3', ident.2 = 'pre-ATI.control',
+#'                              subset.ident = 'NK (adaptive)',
+#'                              features = dge_genes,
+#'                              logfc.threshold = 0, min.pct = 0,
+#'                              test.use = 'MAST', assay = 'RNA')
 #' writeDGEResults(dge_results)
 #' }
 writeDGEResults <- function(results,
@@ -66,9 +66,9 @@ writeDGEResults <- function(results,
     sheet_name <- substr(sheet_name, 1, 31)
   }
   if (drop_NA) {
-    result <- result[!is.na(result[[pval_col_name]]),]
+    result <- result[!is.na(result[[p_val_colname]]),]
   }
-  result <- result[order(result[[pval_col_name]]),]
+  result <- result[order(result[[p_val_colname]]),]
   openxlsx::addWorksheet(wb, sheet_name)
   openxlsx::writeData(wb,
                       sheet = sheet_name,

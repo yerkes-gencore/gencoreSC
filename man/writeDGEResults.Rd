@@ -38,20 +38,20 @@ or a similar function and write them to an excel worksheet, with one sheet for e
 }
 \examples{
 \dontrun{
-dge_results$NK_adaptive.post.1D3_vs_cnt <- FindMarkers(object = cd8_obj,
-                                                       group.by = 'condition.timepoint',
-                                                       ident.1 = 'post-ATI.1D3', ident.2 = 'post-ATI.control',
-                                                       subset.ident = 'NK (adaptive)',
-                                                       features = dge_genes,
-                                                       logfc.threshold = 0, min.pct = 0,
-                                                       test.use = 'MAST', assay = 'RNA')
-dge_results$NK_adaptive.pre.1D3_vs_cnt <- FindMarkers(object = cd8_obj,
-                                                      group.by = 'condition.timepoint',
-                                                      ident.1 = 'pre-ATI.1D3', ident.2 = 'pre-ATI.control',
-                                                      subset.ident = 'NK (adaptive)',
-                                                      features = dge_genes,
-                                                      logfc.threshold = 0, min.pct = 0,
-                                                      test.use = 'MAST', assay = 'RNA')
+dge_results$1 <- FindMarkers(object = cd8_obj,
+                             group.by = 'condition.timepoint',
+                             ident.1 = 'post-ATI.1D3', ident.2 = 'post-ATI.control',
+                             subset.ident = 'NK (adaptive)',
+                             features = dge_genes,
+                             logfc.threshold = 0, min.pct = 0,
+                             test.use = 'MAST', assay = 'RNA')
+dge_results$2 <- FindMarkers(object = cd8_obj,
+                             group.by = 'condition.timepoint',
+                             ident.1 = 'pre-ATI.1D3', ident.2 = 'pre-ATI.control',
+                             subset.ident = 'NK (adaptive)',
+                             features = dge_genes,
+                             logfc.threshold = 0, min.pct = 0,
+                             test.use = 'MAST', assay = 'RNA')
 writeDGEResults(dge_results)
 }
 }

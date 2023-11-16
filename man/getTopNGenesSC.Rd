@@ -12,8 +12,9 @@ getTopNGenesSC(
   min_pct = 0.25,
   exclusion_patterns = c("^ENS", "^MT", "^RP[SL]"),
   direction = "mixed",
-  lfc_col = "avg_log2FC",
-  pval_col = "p_val_adj"
+  lfc_col = "logFC",
+  pval_col = "padj",
+  gene_name_col = "Row.names"
 )
 }
 \arguments{
@@ -38,6 +39,9 @@ number of up and down regulated genes.}
 \item{lfc_col}{Column containing log-fold change values}
 
 \item{pval_col}{Column containing adjusted p values}
+
+\item{gene_name_col}{Column containing gene names. If set to NULL, rownames
+will be used}
 }
 \value{
 A vector of gene names

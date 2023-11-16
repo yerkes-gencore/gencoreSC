@@ -50,6 +50,7 @@ Suggests:
     ggh4x,
     hdf5r,
     knitr,
+    MAST,
     rmarkdown,
     scales,
     STACAS,
