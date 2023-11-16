@@ -155,6 +155,17 @@ gcoreVlnPlot <- function(obj,
 #'
 #' @returns A ggplot
 #' @export
+#'
+#' #' \dontrun{
+#' ## Plots only the 'Intermediate' cells (as labeled in 'coarse_labels' column)
+#' ## Groups results by 'Pre' and 'Post', as labeled in the 'stage' column'
+#' ## Facets by individual
+#'   gcoreVlnPlot_facetted(obj,
+#'     gene = 'ISG15',
+#'     facet_var = 'sample',
+#'     subset = 'Intermediate', subset_var = 'coarse_labels',
+#'     grouping_var = 'stage', groups = c('Pre', 'Post'))
+#' }
 
 gcoreVlnPlot_facetted <- function(obj,
                                   gene,
