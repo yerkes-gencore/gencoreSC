@@ -26,10 +26,10 @@ integrate_harmony(
 
 \item{npcs}{Total Number of PCs to compute and store (30 by default)}
 
-\item{group.by.vars}{Which variable(s) to remove (character vector).}
+\item{group.by.vars}{the name(s) of covariates that harmony will remove
+its effect on the data.}
 
-\item{verbose}{Whether to print progress messages. TRUE to print, FALSE to
-suppress.}
+\item{verbose}{enable verbosity}
 
 \item{regress.out}{Features to regress out in SCTransform or ScaleData vars.to.regress}
 
@@ -37,9 +37,8 @@ suppress.}
 
 \item{scale_data}{Logical; whether to run Seurat::ScaleData(). If NULL (default), will scale for log normalization but not for SCTransform.}
 
-\item{reduction.save}{Keyword to save Harmony reduction. Useful if you want
-to try Harmony with multiple parameters and save them as e.g.
-'harmony_theta0', 'harmony_theta1', 'harmony_theta2'}
+\item{reduction.save}{the name of the new slot that is going to be created by
+harmony. By default, HARMONY.}
 }
 \value{
 Seurat (v3) object. Harmony dimensions placed into dimensional reduction object specified by "reduction.save" (default = "harmony"). For downstream Seurat analyses, use reduction='harmony'. See \code{\link[harmony:RunHarmony]{harmony::RunHarmony}} for details.
