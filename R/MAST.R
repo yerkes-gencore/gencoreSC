@@ -80,7 +80,10 @@ prepare_MAST_obj <- function(obj,
 #' contrast0 <- '`(Intercept)`'
 #' res <- mastWaldTest(hypothesis = contrast1, baseline = contrast0, zlmFit = zlm_fit)
 #' }
-mastWaldTest <- function(zlmFit, hypothesis, baseline, p_adj_method = 'fdr'){
+mastWaldTest <- function(zlmFit,
+                         hypothesis,
+                         baseline,
+                         p_adj_method = 'fdr'){
   result <- MAST::waldTest(zlmFit,
                            MAST::Hypothesis(paste0(hypothesis, '-(',baseline,')'), colnames(zlmFit@coefC)))
   result_lfc <- MAST::getLogFC(zlmFit,
