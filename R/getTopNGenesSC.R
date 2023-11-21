@@ -58,7 +58,6 @@ getTopNGenesSC <- function(result,
     dplyr::filter(.data[[pval_col]] <= min_padj) %>%
     dplyr::filter(abs(.data[[lfc_col]]) > min_logFC) %>%
     # dplyr::filter(min(.data[[pct_cols]]) > min_pct) %>%
-    # tibble::rownames_to_column("Gene") %>%
     dplyr::arrange(.data[[pval_col]])
   if (is.null(gene_name_col)) {
     filtered_results <- rownames_to_column(filtered_results, 'Gene')

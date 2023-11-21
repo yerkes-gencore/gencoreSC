@@ -9,8 +9,9 @@
 #' @return Seurat object with modified metadata
 #'
 #' @export
-addQCmetrics <-
-  function(obj, mito.pattern="^MT", ribo.pattern="^RP[SL]") {
+addQCmetrics <- function(obj,
+                         mito.pattern="^MT",
+                         ribo.pattern="^RP[SL]") {
     # Add number of genes per UMI for each cell to metadata
     obj$log10GenesPerUMI <- log10(obj$nFeature_RNA)/log10(obj$nCount_RNA)
 
