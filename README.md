@@ -29,6 +29,7 @@ https://hub.docker.com/r/yerkesgencore/gencore-singlecell-rstudio
 # Making changes
 
 Before making changes, please also review tutorials on developing/maintaining simple R packages, such as this one: https://kbroman.org/pkg_primer/. The essential stuff is maybe a 30 min read and if we all familiarize with the basics, then it shouldn't be too hard to keep this simple and useful.
+
 If you want to make any changes, follow this workflow
 
 1. clone this repo into an isolated working directory (we suggest `.../illumina/runs/analyst/<your_name>`)
@@ -41,3 +42,11 @@ major issues. When you're satisfied with the changes, push the changes to Github
 6. Once the feature has been merged into the devel branch, you should safely delete that branch with `git branch -d <your-branch>`. You can always recover it with `git checkout <your-branch> <sha>`, where `<sha>` is the identifying SHA string for the commit at the tip of that branch (you can always find that in your git history).
 7. Once sufficient changes have been made to the devel branch to prompt an update to the package, modify the package description to update the version
 8. Release a new version of the package
+
+See this writeup on the git flow workflow 
+
+https://medium.com/@patrickporto/4-branching-workflows-for-git-30d0aaee7bf
+
+We could switch to other workflows as well, but for now we'll use git flow since we don't really need continuous deployment
+
+https://rakeshjain-devops.medium.com/fix-to-tip-of-your-current-branch-is-behind-its-remote-counterpart-git-error-eb75f719c2d5
