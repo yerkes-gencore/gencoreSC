@@ -47,6 +47,6 @@ See this writeup on the git flow workflow
 
 https://nvie.com/posts/a-successful-git-branching-model/
 
-https://medium.com/@patrickporto/4-branching-workflows-for-git-30d0aaee7bf
+We could switch to other workflows as well, but for now we'll use git flow since we don't really need continuous deployment. See the link below for alternatives.
 
-We could switch to other workflows as well, but for now we'll use git flow since we don't really need continuous deployment
+https://medium.com/@patrickporto/4-branching-workflows-for-git-30d0aaee7bf
