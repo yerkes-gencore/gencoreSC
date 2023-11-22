@@ -1,6 +1,6 @@
 Package: gencoreSC
 Title: ENPRC Genomics Core Single Cell Utility Functions
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: c(
     person("Micah", "Fletcher", , "mpfletc@emory.edu", role = c("aut", "cre")),
     person("Derrik", "Gratz", , "derrik.gratz@emory.edu", role = c("aut", "ctb"),
@@ -10,7 +10,6 @@ Description: Convenience functions for single cell analyses.
 License: MIT + file LICENSE
 Imports:
     clustree,
-    DoubletFinder,
     dplyr,
     forcats,
     ggplotify,
@@ -59,7 +58,6 @@ VignetteBuilder:
     knitr
 Remotes:
     github::carmonalab/STACAS,
-    github::chris-mcginnis-ucsf/DoubletFinder
 biocViews: SingleR, scater, SummarizedExperiment
 Encoding: UTF-8
 Repository: github::yerkes-gencore/gencoreSC
