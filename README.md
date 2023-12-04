@@ -33,8 +33,9 @@ If you want to make any changes, follow this workflow
 
 1. clone this repo into an isolated working directory (we suggest `.../illumina/runs/analyst/<your_name>`)
 2. Fetch updates from the github repo via `git pull`
-3. Create a new branch from the `devel` branch via `git branch <new_branch> origin/devel`
-4. Make changes on the new branch. When you're finished making changes, be sure to run 
+3. Create a new branch from the `devel` branch via `git branch <new_branch> origin/devel`. 
+Be sure to switch to the new branch to make changes via `git switch <new_branch>`.
+4. When you're finished making changes, be sure to run 
 `devtools::check()` to ensure the documentation is updated and their are no
 major issues. When you're satisfied with the changes, push the changes to Github.
 5. Open a pull request to merge your new branch into the devel branch. Ideally someone else should review the changes before merging, and the RMD Check action should pass.
