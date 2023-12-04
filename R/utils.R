@@ -27,3 +27,31 @@ IdentName <- function(obj) {
 
   return(Ident.name)
 }
+
+#' Read an excel workbook with sheets to a list of tables
+#'
+#' Read an excel workbook with sheets to a list of tables
+#'
+#' @param filename File in format .xls or .xlsx
+#' @param tibble BOOL, Return the data as a tibble instead of a data.frame
+#' @param \dots Additional arguments passed to `openxlsx::read.xlsx()`
+#'
+#' @returns A list of data.frames (or tibbles)
+#'
+#' @import openxlsx
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   dge_results <- read_excel_allsheets(here('outputs/dge.xlsx'))
+#' }
+read_excel_allsheets <- function(filename,
+                                 tibble = FALSE,
+                                 ...) {
+  # https://stackoverflow.com/a/12945838/15664425
+  sheets <- openxlsx::getSheetNames(filename)
+  x <- lapply(sheets, function(X) openxlsx::read.xlsx(filename, sheet = X, ...))
+  if(!tibble) x <- lapply(x, as.data.frame)
+  names(x) <- sheets
+  x
+}
