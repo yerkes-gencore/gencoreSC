@@ -9,8 +9,8 @@ gcoreVlnPlot(
   genes,
   grouping_var,
   groups = NULL,
-  subset = NULL,
-  subset_var = NULL,
+  subsets = NULL,
+  subset_vars = NULL,
   filter_zeros = TRUE,
   assay = "RNA"
 )
@@ -25,9 +25,9 @@ gcoreVlnPlot(
 \item{groups}{Optional. Levels of \code{grouping_var} to include in the plot. Also used
 to specify order of levels.}
 
-\item{subset}{Levels of \code{subset_var} to subset data to}
+\item{subsets}{Levels of \code{subset_vars} to subset data to}
 
-\item{subset_var}{Optional. Column of \code{obj@meta.data} to subset on. Default
+\item{subset_vars}{Optional. Column of \code{obj@meta.data} to subset on. Default
 is \code{seurat_clusters} so you could \code{subset} on a specific cluster.}
 
 \item{filter_zeros}{Remove 0s from plot: default \code{TRUE}.}
@@ -40,21 +40,51 @@ A ggplot
 \description{
 Similar to \code{Seurat::VlnPlot} but more customizable. Pass a seurat object and
 genes to plot. Optionally subset the data by a meta.data variable defined
-with \code{subset_var}, selecting level(s) \code{subset}. Useful to plot expression
+with \code{subset_vars}, selecting level(s) \code{subsets}. Useful to plot expression
 in one subset of your data without having to make separate objects.
 Group the data by meta.data variable \code{grouping_var}, selecting levels \code{groups}.
 Optionally filter zeros to focus on cells expressing gene.
 }
 \details{
+If more than one value is provided to \code{subset_vars}, you can specify multiple
+subsetting criteria to \code{subsets} via a list. So if you wanted to subset
+your object on both treatment and condition, you could specify that with
+something like:
+
+\code{subset_vars = c('timepoint', 'condition')} and
+\code{subsets = list(c('D0'), c('2ml', '4ml'))},`
+
 Requires \code{ggforce} to be installed
 }
 \examples{
 \dontrun{
-## Plots only the 'Intermediate' cells (as labeled in 'coarse_labels' column)
-## Groups results by 'Pre' and 'Post', as labeled in the 'stage' column'
-  gcoreVlnPlot(myeloid_obj,
-    genes = c('ISG15', 'ISG20', 'CD14', 'LDHA', 'IFITM1'),
-    subset = 'Intermediate', subset_var = 'coarse_labels',
-    grouping_var = 'stage', groups = c('Pre', 'Post'))
+## If you only have one value to subset for, the list convention isn't too picky
+gcoreVlnPlot(obj = obj,
+  genes = genes,
+  assay = 'RNA',
+  subset_var = 'cell_type',
+  subset = 'ISG-rich',
+  grouping_var = 'Group',
+  groups = c("Control", "1D3"))
+
+## If you want to subset for multiple values of a single subset_var, do this
+gcoreVlnPlot(obj = obj,
+  genes = genes,
+  assay = 'RNA',
+  subset_var = 'cell_type',
+  subset = list(c('ISG-rich', 'Other')),
+  grouping_var = 'Group',
+  groups = c("Control", "1D3"))
+
+## If you want to subset for multiple values of multiple subset_vars
+gcoreVlnPlot(obj = obj,
+  genes = genes,
+  assay = 'RNA',
+  subset_var = c('cell_type', 'timepoint'),
+  subset = list(c('ISG-rich', 'Other'), c('pre')),
+  grouping_var = 'Group',
+  groups = c("Control", "1D3"))
+
 }
+
 }
