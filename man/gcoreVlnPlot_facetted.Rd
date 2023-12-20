@@ -10,8 +10,8 @@ gcoreVlnPlot_facetted(
   facet_var,
   grouping_var,
   groups = NULL,
-  subset = NULL,
-  subset_var = NULL,
+  subsets = NULL,
+  subset_vars = NULL,
   filter_zeros = TRUE,
   assay = "RNA"
 )
@@ -28,9 +28,9 @@ gcoreVlnPlot_facetted(
 \item{groups}{Optional. Levels of \code{grouping_var} to include in the plot. Also used
 to specify order of levels.}
 
-\item{subset}{Levels of \code{subset_var} to subset data to}
+\item{subsets}{Levels of \code{subset_var} to subset data to}
 
-\item{subset_var}{Optional. Column of \code{obj@meta.data} to subset on. Default
+\item{subset_vars}{Optional. Column of \code{obj@meta.data} to subset on. Default
 is \code{seurat_clusters} so you could \code{subset} on a specific cluster.}
 
 \item{filter_zeros}{Remove 0s from plot: default \code{TRUE}.}

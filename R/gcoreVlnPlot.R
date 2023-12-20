@@ -70,7 +70,7 @@ gcoreVlnPlot <- function(obj,
                          subset_vars = NULL,
                          filter_zeros = TRUE,
                          assay = 'RNA'){
-  if (!require(ggforce)) {
+  if (!requireNamespace('ggforce')) {
     stop('Error: Requires ggforce to be installed')
   }
   if (missing(grouping_var)) {
@@ -92,25 +92,8 @@ gcoreVlnPlot <- function(obj,
          subset_vars. See examples for details')
   }
 
-  if (!missing(subsets) & !missing(subset_vars)) {
-    for (i in 1:length(subset_vars)) {
-      subset_var <- subset_vars[i]
-      if (subset_var %in% colnames(obj@meta.data)) {
-        for (subset in subsets[i]) {
-          if (subset %in% unique(obj@meta.data[[subset_var]])) {
-            obj <- obj[,obj@meta.data[[subset_var]] %in% subset]
-          } else {
-            stop('Error: subset value :"',subsets,
-                 '" not present as a value of ',
-                 subset_var[i], 'column in object metadata.')
-          }
-        }
-      } else {
-        stop('Error: subset_var value :"',subset_var,
-             '" not present as a column in the object metadata.')
-      }
-    }
-  }
+  ## Utils function
+  obj <- subset_seurat_object(obj, subset_vars, subsets)
 
   good_genes <- c()
   bad_genes  <- c()
@@ -193,9 +176,9 @@ gcoreVlnPlot <- function(obj,
 #' @param grouping_var Column of `obj@meta.data` to group data by.
 #' @param groups Optional. Levels of `grouping_var` to include in the plot. Also used
 #'  to specify order of levels.
-#' @param subset_var  Optional. Column of `obj@meta.data` to subset on. Default
+#' @param subset_vars  Optional. Column of `obj@meta.data` to subset on. Default
 #'  is `seurat_clusters` so you could `subset` on a specific cluster.
-#' @param subset Levels of `subset_var` to subset data to
+#' @param subsets Levels of `subset_var` to subset data to
 #' @param filter_zeros Remove 0s from plot: default `TRUE`.
 #' @param assay Assay to pull expression data from, default `RNA`
 #'
@@ -219,8 +202,8 @@ gcoreVlnPlot_facetted <- function(obj,
                                   facet_var,
                                   grouping_var,
                                   groups = NULL,
-                                  subset = NULL,
-                                  subset_var = NULL,
+                                  subsets = NULL,
+                                  subset_vars = NULL,
                                   filter_zeros = TRUE,
                                   assay = 'RNA') {
   if (!(facet_var %in% colnames(obj@meta.data))) {
@@ -236,25 +219,20 @@ gcoreVlnPlot_facetted <- function(obj,
   if (!(gene %in% rownames(obj@assays[[assay]]@data))) {
     stop('Gene not found in object/assay')
   }
-
-  if (!is.null(subset)) {
-    if (!is.null(subset_var)) {
-      if (subset_var %in% colnames(obj@meta.data)) {
-        if (subset %in% unique(obj@meta.data[[subset_var]])) {
-          obj <- obj[,obj@meta.data[[subset_var]] %in% subset]
-        } else {
-          stop('Error: subset value :"',subset,
-               '" not present as a value of ',
-               subset_var, 'column in object metadata.')
-        }
-      } else {
-        stop('Error: subset_var value :"',subset_var,
-             '" not present as a column in the object metadata.')
-      }
-    } else {
-      stop('Error: Specify a variable to subset on via subset_var')
-    }
+  if (!missing(subsets) & missing(subset_vars)) {
+    stop('Subset_vars not specified for subsetting')
   }
+  if (missing(subsets) & !missing(subset_vars)) {
+    warning('No subsets specified for subset_vars')
+  }
+  if (length(subsets) != length(subset_vars)) {
+    stop('Error: subsets should be provided as a list of character vectors,
+         where the number of vectors equals the number of entries in
+         subset_vars. See examples for details')
+  }
+
+  ## Utils function
+  obj <- subset_seurat_object(obj, subset_vars, subsets)
 
   mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data)[gene,])
   mat_to_plot <- merge(mat_to_plot,
