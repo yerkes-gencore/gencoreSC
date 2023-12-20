@@ -28,7 +28,7 @@ to specify order of levels.}
 \item{subsets}{Levels of \code{subset_vars} to subset data to}
 
 \item{subset_vars}{Optional. Column of \code{obj@meta.data} to subset on. Default
-is \code{seurat_clusters} so you could \code{subset} on a specific cluster.}
+is \code{seurat_clusters} so you could \code{subsets} on a specific cluster.}
 
 \item{filter_zeros}{Remove 0s from plot: default \code{TRUE}.}
 
@@ -62,8 +62,8 @@ Requires \code{ggforce} to be installed
 gcoreVlnPlot(obj = obj,
   genes = genes,
   assay = 'RNA',
-  subset_var = 'cell_type',
-  subset = 'ISG-rich',
+  subset_vars = 'cell_type',
+  subsets = 'ISG-rich',
   grouping_var = 'Group',
   groups = c("Control", "1D3"))
 
@@ -71,8 +71,8 @@ gcoreVlnPlot(obj = obj,
 gcoreVlnPlot(obj = obj,
   genes = genes,
   assay = 'RNA',
-  subset_var = 'cell_type',
-  subset = list(c('ISG-rich', 'Other')),
+  subset_vars = 'cell_type',
+  subsets = list(c('ISG-rich', 'Other')),
   grouping_var = 'Group',
   groups = c("Control", "1D3"))
 
@@ -80,8 +80,8 @@ gcoreVlnPlot(obj = obj,
 gcoreVlnPlot(obj = obj,
   genes = genes,
   assay = 'RNA',
-  subset_var = c('cell_type', 'timepoint'),
-  subset = list(c('ISG-rich', 'Other'), c('pre')),
+  subset_vars = c('cell_type', 'timepoint'),
+  subsets = list(c('ISG-rich', 'Other'), c('pre')),
   grouping_var = 'Group',
   groups = c("Control", "1D3"))
 

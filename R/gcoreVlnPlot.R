@@ -23,7 +23,7 @@
 #' @param groups Optional. Levels of `grouping_var` to include in the plot. Also used
 #'  to specify order of levels.
 #' @param subset_vars  Optional. Column of `obj@meta.data` to subset on. Default
-#'  is `seurat_clusters` so you could `subset` on a specific cluster.
+#'  is `seurat_clusters` so you could `subsets` on a specific cluster.
 #' @param subsets Levels of `subset_vars` to subset data to
 #' @param filter_zeros Remove 0s from plot: default `TRUE`.
 #' @param assay Assay to pull expression data from, default `RNA`
@@ -37,8 +37,8 @@
 #' gcoreVlnPlot(obj = obj,
 #'   genes = genes,
 #'   assay = 'RNA',
-#'   subset_var = 'cell_type',
-#'   subset = 'ISG-rich',
+#'   subset_vars = 'cell_type',
+#'   subsets = 'ISG-rich',
 #'   grouping_var = 'Group',
 #'   groups = c("Control", "1D3"))
 #'
@@ -46,8 +46,8 @@
 #' gcoreVlnPlot(obj = obj,
 #'   genes = genes,
 #'   assay = 'RNA',
-#'   subset_var = 'cell_type',
-#'   subset = list(c('ISG-rich', 'Other')),
+#'   subset_vars = 'cell_type',
+#'   subsets = list(c('ISG-rich', 'Other')),
 #'   grouping_var = 'Group',
 #'   groups = c("Control", "1D3"))
 #'
@@ -55,8 +55,8 @@
 #' gcoreVlnPlot(obj = obj,
 #'   genes = genes,
 #'   assay = 'RNA',
-#'   subset_var = c('cell_type', 'timepoint'),
-#'   subset = list(c('ISG-rich', 'Other'), c('pre')),
+#'   subset_vars = c('cell_type', 'timepoint'),
+#'   subsets = list(c('ISG-rich', 'Other'), c('pre')),
 #'   grouping_var = 'Group',
 #'   groups = c("Control", "1D3"))
 #'
@@ -193,7 +193,7 @@ gcoreVlnPlot <- function(obj,
 #'   gcoreVlnPlot_facetted(obj,
 #'     gene = 'ISG15',
 #'     facet_var = 'sample',
-#'     subset = 'Intermediate', subset_var = 'coarse_labels',
+#'     subsets = 'Intermediate', subset_vars = 'coarse_labels',
 #'     grouping_var = 'stage', groups = c('Pre', 'Post'))
 #' }
 
@@ -272,7 +272,7 @@ gcoreVlnPlot_facetted <- function(obj,
     ggplot2::geom_violin(draw_quantiles = 0.5) +
     ggforce::geom_sina(size = 0.01, alpha = 0.2) +
     ggplot2::theme_bw() +
-    ggplot2::labs(caption = paste0(if(!is.null(subset)) {paste0('Showing expression of ', subset, ' cells\n')},
+    ggplot2::labs(caption = paste0(if(!is.null(subsets)) {paste0('Showing expression of ', subsets, ' cells\n')},
                                    if(!is.null(filter_zeros)) {'Only showing cells with non-zero expression'}),
                   y = 'Expression') +
     ggplot2::facet_wrap({{ facet_var }})

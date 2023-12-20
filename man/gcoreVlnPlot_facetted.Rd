@@ -57,7 +57,7 @@ Requires \code{ggforce} to be installed
   gcoreVlnPlot_facetted(obj,
     gene = 'ISG15',
     facet_var = 'sample',
-    subset = 'Intermediate', subset_var = 'coarse_labels',
+    subsets = 'Intermediate', subset_vars = 'coarse_labels',
     grouping_var = 'stage', groups = c('Pre', 'Post'))
 }
 }
