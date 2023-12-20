@@ -112,15 +112,15 @@ subset_seurat_object <- function(obj,
     for (i in 1:length(subset_vars)) {
       subset_var <- subset_vars[i]
       if (subset_var %in% colnames(obj@meta.data)) {
-        for (subset in subsets[i]) {
-          if (subset %in% unique(obj@meta.data[[subset_var]])) {
-            obj <- obj[,obj@meta.data[[subset_var]] %in% subset]
-          } else {
-            stop('Error: subset value :"',subsets,
-                 '" not present as a value of ',
-                 subset_var[i], 'column in object metadata.')
-          }
-        }
+        # for (subset in unlist(subsets[[i]])) {
+        #   if (subset %in% unique(obj@meta.data[[subset_var]])) {
+            obj <- obj[,obj@meta.data[[subset_var]] %in% unlist(subsets[[i]])]
+          # } else {
+          #   stop('Error: subset value :"', subset,
+          #        '" not present as a value of ',
+          #        subset_var[i], 'column in object metadata.')
+          # }
+        # }
       } else {
         stop('Error: subset_var value :"',subset_var,
              '" not present as a column in the object metadata.')
