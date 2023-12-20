@@ -93,7 +93,9 @@ gcoreVlnPlot <- function(obj,
   }
 
   ## Utils function
-  obj <- subset_seurat_object(obj, subset_vars, subsets)
+  if (!missing(subsets) & !missing(subset_vars)) {
+    obj <- subset_seurat_object(obj, subset_vars, subsets)
+  }
 
   good_genes <- c()
   bad_genes  <- c()
@@ -232,7 +234,9 @@ gcoreVlnPlot_facetted <- function(obj,
   }
 
   ## Utils function
-  obj <- subset_seurat_object(obj, subset_vars, subsets)
+  if (!missing(subsets) & !missing(subset_vars)) {
+    obj <- subset_seurat_object(obj, subset_vars, subsets)
+  }
 
   mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data)[gene,])
   mat_to_plot <- merge(mat_to_plot,
