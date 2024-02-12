@@ -113,7 +113,7 @@ gcoreVlnPlot <- function(obj,
     stop('No genes found to plot data for!')
   }
   genes <- good_genes
-  mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data)[genes,])
+  mat_to_plot <- reshape2::melt(as.matrix(obj@assays[[assay]]@data[genes,]))
   if (length(genes) == 1) {
     mat_to_plot$Var2 <- rownames(mat_to_plot)
   }
