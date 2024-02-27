@@ -40,7 +40,8 @@
 runSoupX <- function(unfiltered_mat_path,
                      filtered_mat_path,
                      clusters_path,
-                     doPlot = TRUE){
+                     doPlot = TRUE,
+                     forceAccept = FALSE){
   if (grepl(x = unfiltered_mat_path, pattern = '\\.h5$')) {
     tod <- Seurat::Read10X_h5(file.path(unfiltered_mat_path))
   } else {
@@ -77,7 +78,7 @@ runSoupX <- function(unfiltered_mat_path,
   sc <- SoupX::SoupChannel(tod = tod,
                            toc = toc)
   sc <- SoupX::setClusters(sc, clusters)
-  sc <- SoupX::autoEstCont(sc, doPlot = doPlot)
+  sc <- SoupX::autoEstCont(sc, doPlot = doPlot, forceAccept = forceAccept)
   sc$adjusted_counts <- SoupX::adjustCounts(sc)
   sc$plot <- grDevices::recordPlot()
   sc

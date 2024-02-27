@@ -26,19 +26,13 @@ integrate_harmony(
 
 \item{npcs}{Total Number of PCs to compute and store (30 by default)}
 
-\item{group.by.vars}{the name(s) of covariates that harmony will remove
-its effect on the data.}
-
-\item{verbose}{enable verbosity}
+\item{verbose}{Print all messages from wrapped functions}
 
 \item{regress.out}{Features to regress out in SCTransform or ScaleData vars.to.regress}
 
 \item{feature.blacklist}{Vector of genes to blacklist from variable features}
 
 \item{scale_data}{Logical; whether to run Seurat::ScaleData(). If NULL (default), will scale for log normalization but not for SCTransform.}
-
-\item{reduction.save}{the name of the new slot that is going to be created by
-harmony. By default, HARMONY.}
 }
 \value{
 Seurat (v3) object. Harmony dimensions placed into dimensional reduction object specified by "reduction.save" (default = "harmony"). For downstream Seurat analyses, use reduction='harmony'. See \code{\link[harmony:RunHarmony]{harmony::RunHarmony}} for details.
