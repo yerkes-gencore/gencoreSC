@@ -18,10 +18,10 @@
 #'    classifications_col = 'DF_classifications', doublet_class = 'Doublet')
 #' }
 removeDFDoublets <- function(obj,
-                             classifications_col = 'DF_classifications',
-                             doublet_class = ''
+                             classifications_col = 'scDblFinder.class',
+                             doublet_class = 'doublet'
 ){
-  doub_idx <- obj[[classifications_col]] == 'Doublet'
+  doub_idx <- obj[[classifications_col]] == doublet_class
   print(paste0(obj@project.name, ': Removing ', as.character(sum(doub_idx)), ' doublet GEMS'))
   obj <- obj[,!doub_idx]
   obj@meta.data <- droplevels(obj@meta.data)

@@ -6,8 +6,8 @@
 \usage{
 removeDFDoublets(
   obj,
-  classifications_col = "DF_classifications",
-  doublet_class = ""
+  classifications_col = "scDblFinder.class",
+  doublet_class = "doublet"
 )
 }
 \arguments{
