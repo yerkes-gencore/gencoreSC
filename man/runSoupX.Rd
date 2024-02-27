@@ -4,7 +4,13 @@
 \alias{runSoupX}
 \title{Wrapper for running SoupX}
 \usage{
-runSoupX(unfiltered_mat_path, filtered_mat_path, clusters_path, doPlot = TRUE)
+runSoupX(
+  unfiltered_mat_path,
+  filtered_mat_path,
+  clusters_path,
+  doPlot = TRUE,
+  forceAccept = FALSE
+)
 }
 \arguments{
 \item{unfiltered_mat_path}{Path to unfiltered counts matrix file}
@@ -14,6 +20,8 @@ runSoupX(unfiltered_mat_path, filtered_mat_path, clusters_path, doPlot = TRUE)
 \item{clusters_path}{Path to Cellranger initial clustering data file}
 
 \item{doPlot}{Create a plot showing the density of estimates?}
+
+\item{forceAccept}{Passed to \code{\link[SoupX]{setContaminationFraction}}.  Should we allow very high contamination fractions to be used.}
 }
 \value{
 An object of class SoupChannel
