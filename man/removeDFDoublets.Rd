@@ -2,24 +2,35 @@
 % Please edit documentation in R/removeDFDoublets.R
 \name{removeDFDoublets}
 \alias{removeDFDoublets}
-\title{Remove cells classified as doublets by DoubletFinder}
+\title{Remove cells classified as doublets}
 \usage{
-removeDFDoublets(obj, classifications_col = "DF_classifications")
+removeDFDoublets(
+  obj,
+  classifications_col = "DF_classifications",
+  doublet_class = ""
+)
 }
 \arguments{
-\item{obj}{An Seurat object with a metadata field for DoubletFinder calls}
+\item{obj}{An Seurat object with a metadata field for doublet calls}
 
-\item{classifications_col}{Column of DoubletFinder calls}
+\item{classifications_col}{Column of doublet calls}
+
+\item{doublet_class}{String for identifying doulbets in \code{classifications_col}}
 }
 \value{
 An object of class Seurat
 }
 \description{
-Remove cells classified as doublets by DoubletFinder
+Remove cells classified as doublets
 }
 \examples{
 \dontrun{
-  objs <- lapply(objs, runDoubletFinder, PCs = 10, sct = FALSE, cores = 1)
+  ## with scDblFinder
+  objs <- lapply(objs, run_scDblFinder)
   objs <- lapply(objs, removeDFDoublets)
+  ## With DoubletFinder
+  objs <- lapply(objs, runDoubletFinder, PCs = 10, sct = FALSE, cores = 1)
+  objs <- lapply(objs, removeDFDoublets,
+   classifications_col = 'DF_classifications', doublet_class = 'Doublet')
 }
 }
