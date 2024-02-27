@@ -20,12 +20,16 @@ through cell barcodes), or the name of a colData column of `sce` containing
 that information. The way these are used depends on the `knownUse` argument.}
 
 \item{knownUse}{The way to use known doublets, either 'discard' (they are
-discarded for the purpose of training, but counted as positive) or 'positive'
-(they are used as positive doublets for training - usually leads to a mild
-decrease in accuracy due to the fact that known doublets typically include
-a sizeable fraction of homotypic doublets).}
+discarded for the purpose of training, but counted as positive for 
+thresholding) or 'positive' (they are used as positive doublets for training 
+- usually leads to a mild decrease in accuracy due to the fact that known 
+doublets typically include a sizeable fraction of homotypic doublets). Note
+that `scDblFinder` does *not* enforce that the knownDoublets be necessarily
+called as doublets in the final classification, if they are not predicted as 
+such.}
 
-\item{nfeatures}{The number of top features to use (default 1000)}
+\item{nfeatures}{The number of top features to use. Alternatively, a 
+character vectors of feature names (e.g. highly-variable genes) to use.}
 
 \item{...}{
   Arguments passed on to \code{\link[scDblFinder:scDblFinder]{scDblFinder::scDblFinder}}
@@ -58,7 +62,7 @@ is a positive integer, this number of inter-cluster markers will be selected
 and used for correlation (se `clustCor=Inf` to use all available genes).}
     \item{\code{artificialDoublets}}{The approximate number of artificial doublets to
 create. If \code{NULL}, will be the maximum of the number of cells or
-\code{5*nbClusters^2}.}
+\code{5*nbClusters^2} (with a minimum of 1500).}
     \item{\code{dbr}}{The expected doublet rate. By default this is assumed to be 1\%
 per thousand cells captured (so 4\% among 4000 thousand cells), which is
 appropriate for 10x datasets. Corrections for homeotypic doublets will be
@@ -67,7 +71,9 @@ performed on the given rate.}
 a +/- around `dbr`. During thresholding, deviation from the expected doublet
 rate will be calculated from these boundaries, and will be considered null
 within these boundaries. If NULL, will be 40\% of `dbr`. Set to `dbr.sd=0` to
- disable.}
+ disable the uncertainty around the doublet rate, or to `dbr.sd=1` to disable
+ any expectation of the number of doublets (thus letting the thresholding be
+ entirely driven by the misclassification of artificial doublets).}
     \item{\code{dims}}{The number of dimensions used.}
     \item{\code{k}}{Number of nearest neighbors (for KNN graph). If more than one value
 is given, the doublet density will be calculated at each k (and other values
